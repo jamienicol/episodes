@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 public class AddShowSearchActivity extends Activity
 {
@@ -30,6 +31,8 @@ public class AddShowSearchActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_show_search);
 
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 	        String query = intent.getStringExtra(SearchManager.QUERY);
@@ -37,4 +40,21 @@ public class AddShowSearchActivity extends Activity
 	        setTitle(query);
         }
     }
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+			                Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);
+
+			finish();
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 }
