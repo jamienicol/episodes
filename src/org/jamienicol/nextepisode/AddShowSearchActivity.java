@@ -17,14 +17,21 @@
 
 package org.jamienicol.nextepisode;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.ListAdapter;
+import java.util.List;
+import org.jamienicol.nextepisode.tvdb.Client;
+import org.jamienicol.nextepisode.tvdb.SearchResult;
 
-public class AddShowSearchActivity extends Activity
+public class AddShowSearchActivity extends ListActivity
 {
+	private SearchTask searchTask;
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -38,6 +45,9 @@ public class AddShowSearchActivity extends Activity
 	        String query = intent.getStringExtra(SearchManager.QUERY);
 
 	        setTitle(query);
+
+	        searchTask = new SearchTask(this);
+	        searchTask.execute(query);
         }
     }
 
@@ -55,6 +65,39 @@ public class AddShowSearchActivity extends Activity
 
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private static class SearchTask extends AsyncTask<String, Void, Boolean> {
+		private AddShowSearchActivity activity;
+		private Client tvdbClient;
+		private List<SearchResult> results;
+
+		public SearchTask(AddShowSearchActivity activity) {
+			this.activity = activity;
+			tvdbClient = new Client("25B864A8BC56AFAD");
+			results = null;
+		}
+
+		@Override
+		protected Boolean doInBackground(String... query) {
+			results = tvdbClient.searchShows(query[0]);
+			if (results != null) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+
+			ListAdapter adapter = null;
+			if (result) {
+				adapter = new SearchResultsAdapter(activity, results);
+			}
+
+			activity.setListAdapter(adapter);
 		}
 	}
 }
