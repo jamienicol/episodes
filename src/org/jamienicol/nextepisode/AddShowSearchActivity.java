@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ListAdapter;
 import java.util.List;
 import org.jamienicol.nextepisode.tvdb.Client;
@@ -36,6 +37,8 @@ public class AddShowSearchActivity extends ListActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.add_show_search);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -80,6 +83,11 @@ public class AddShowSearchActivity extends ListActivity
 		}
 
 		@Override
+		protected void onPreExecute() {
+			activity.setProgressBarIndeterminateVisibility(true);
+		}
+
+		@Override
 		protected Boolean doInBackground(String... query) {
 			results = tvdbClient.searchShows(query[0]);
 			if (results != null) {
@@ -91,6 +99,8 @@ public class AddShowSearchActivity extends ListActivity
 
 		@Override
 		protected void onPostExecute(Boolean result) {
+
+			activity.setProgressBarIndeterminateVisibility(false);
 
 			ListAdapter adapter = null;
 			if (result) {
