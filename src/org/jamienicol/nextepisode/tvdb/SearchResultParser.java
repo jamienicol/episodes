@@ -27,13 +27,11 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 class SearchResultParser
 {
@@ -49,8 +47,7 @@ class SearchResultParser
 
 		try {
 			InputSource inputSource = new InputSource(inputStream);
-			SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-			XMLReader xmlReader = saxParser.getXMLReader();
+			XMLReader xmlReader = XMLReaderFactory.createXMLReader("org.xmlpull.v1.sax2.Driver");
 
 			RootElement rootElement = new RootElement("Data");
 			Element seriesElement = rootElement.getChild("Series");
@@ -95,9 +92,6 @@ class SearchResultParser
 
 			return parsed;
 
-		} catch (ParserConfigurationException e) {
-			Log.w(TAG, "ParserConfigurationException - parse: " + e.toString());
-			return null;
 		} catch (SAXException e) {
 			Log.w(TAG, "SAXException - parse: " + e.toString());
 			return null;
