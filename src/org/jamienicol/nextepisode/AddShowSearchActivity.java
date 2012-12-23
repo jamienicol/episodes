@@ -33,26 +33,26 @@ public class AddShowSearchActivity extends ListActivity
 {
 	private SearchTask searchTask;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
 
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.add_show_search);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setContentView(R.layout.add_show_search);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-	        String query = intent.getStringExtra(SearchManager.QUERY);
+		Intent intent = getIntent();
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			String query = intent.getStringExtra(SearchManager.QUERY);
 
-	        setTitle(query);
+			setTitle(query);
 
-	        searchTask = new SearchTask(this);
-	        searchTask.execute(query);
-        }
-    }
+			searchTask = new SearchTask(this);
+			searchTask.execute(query);
+		}
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
