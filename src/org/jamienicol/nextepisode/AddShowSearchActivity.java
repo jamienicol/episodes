@@ -103,11 +103,13 @@ public class AddShowSearchActivity extends ListActivity
 		extends AsyncTaskLoader<List<SearchResult>>
 	{
 		private final String query;
+		private List<SearchResult> cachedResult;
 
 		public SearchLoader(Context context, String query) {
 			super(context);
 
 			this.query = query;
+			cachedResult = null;
 		}
 
 		@Override
@@ -120,8 +122,32 @@ public class AddShowSearchActivity extends ListActivity
 		}
 
 		@Override
+		public void deliverResult(List<SearchResult> data) {
+			cachedResult = data;
+
+			if (isStarted()) {
+				super.deliverResult(data);
+			}
+		}
+
+		@Override
 		public void onStartLoading() {
-			forceLoad();
+			if (cachedResult != null) {
+				deliverResult(cachedResult);
+			} else {
+				forceLoad();
+			}
+		}
+
+		@Override
+		public void onStopLoading() {
+			cancelLoad();
+		}
+
+		@Override
+		public void onReset() {
+			onStopLoading();
+			cachedResult = null;
 		}
 	}
 }
