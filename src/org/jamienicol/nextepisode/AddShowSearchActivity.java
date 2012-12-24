@@ -51,9 +51,18 @@ public class AddShowSearchActivity extends ListActivity
 
 			setTitle(query);
 
-			Bundle loaderArgs = new Bundle();
-			loaderArgs.putString("query", query);
-			getLoaderManager().initLoader(0, loaderArgs, this);
+			// if the loader exists and it's busy loading then spin the
+			// progress bar. if the loader doesn't exist then initialise it.
+			Loader loader = getLoaderManager().getLoader(0);
+			if (loader != null) {
+				if (loader.isStarted()) {
+					setProgressBarIndeterminateVisibility(true);
+				}
+			} else {
+				Bundle loaderArgs = new Bundle();
+				loaderArgs.putString("query", query);
+				getLoaderManager().initLoader(0, loaderArgs, this);
+			}
 		}
 	}
 
