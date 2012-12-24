@@ -18,9 +18,12 @@
 package org.jamienicol.nextepisode;
 
 import android.app.ListActivity;
+import android.app.LoaderManager;
 import android.app.SearchManager;
+import android.content.AsyncTaskLoader;
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.Loader;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Window;
@@ -30,9 +33,8 @@ import org.jamienicol.nextepisode.tvdb.Client;
 import org.jamienicol.nextepisode.tvdb.SearchResult;
 
 public class AddShowSearchActivity extends ListActivity
+	implements LoaderManager.LoaderCallbacks<List<SearchResult>>
 {
-	private SearchTask searchTask;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -49,8 +51,9 @@ public class AddShowSearchActivity extends ListActivity
 
 			setTitle(query);
 
-			searchTask = new SearchTask(this);
-			searchTask.execute(query);
+			Bundle loaderArgs = new Bundle();
+			loaderArgs.putString("query", query);
+			getLoaderManager().initLoader(0, loaderArgs, this);
 		}
 	}
 
@@ -71,43 +74,54 @@ public class AddShowSearchActivity extends ListActivity
 		}
 	}
 
-	private static class SearchTask extends AsyncTask<String, Void, Boolean> {
-		private AddShowSearchActivity activity;
-		private Client tvdbClient;
-		private List<SearchResult> results;
+	@Override
+	public Loader<List<SearchResult>> onCreateLoader(int id, Bundle args) {
+		setProgressBarIndeterminateVisibility(true);
 
-		public SearchTask(AddShowSearchActivity activity) {
-			this.activity = activity;
-			tvdbClient = new Client("25B864A8BC56AFAD");
-			results = null;
+		SearchLoader loader = new SearchLoader(this, args.getString("query"));
+		return loader;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<List<SearchResult>> loader,
+	                           List<SearchResult> data) {
+		setProgressBarIndeterminateVisibility(false);
+
+		ListAdapter adapter = null;
+		if (data != null) {
+			adapter = new SearchResultsAdapter(this, data);
+		}
+		setListAdapter(adapter);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<List<SearchResult>> loader) {
+		setListAdapter(null);
+	}
+
+	private static class SearchLoader
+		extends AsyncTaskLoader<List<SearchResult>>
+	{
+		private final String query;
+
+		public SearchLoader(Context context, String query) {
+			super(context);
+
+			this.query = query;
 		}
 
 		@Override
-		protected void onPreExecute() {
-			activity.setProgressBarIndeterminateVisibility(true);
+		public List<SearchResult> loadInBackground() {
+			Client tvdbClient = new Client("25B864A8BC56AFAD");
+
+			List<SearchResult> results = tvdbClient.searchShows(query);
+
+			return results;
 		}
 
 		@Override
-		protected Boolean doInBackground(String... query) {
-			results = tvdbClient.searchShows(query[0]);
-			if (results != null) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-
-			activity.setProgressBarIndeterminateVisibility(false);
-
-			ListAdapter adapter = null;
-			if (result) {
-				adapter = new SearchResultsAdapter(activity, results);
-			}
-
-			activity.setListAdapter(adapter);
+		public void onStartLoading() {
+			forceLoad();
 		}
 	}
 }
