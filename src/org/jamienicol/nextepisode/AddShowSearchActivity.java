@@ -41,7 +41,7 @@ public class AddShowSearchActivity extends ListActivity
 		super.onCreate(savedInstanceState);
 
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.add_show_search);
+		setContentView(R.layout.add_show_search_activity);
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 

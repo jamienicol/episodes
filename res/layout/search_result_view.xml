@@ -2,14 +2,12 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    >
+    android:minHeight="?android:attr/listPreferredItemHeight" >
   <TextView
       android:id="@+id/show_name_view"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:textAppearance="?android:attr/textAppearanceListItem"
-      />
+      android:textAppearance="?android:attr/textAppearanceListItem" />
 </LinearLayout>
