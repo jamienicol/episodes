@@ -21,20 +21,27 @@ import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.app.SearchManager;
 import android.content.AsyncTaskLoader;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import java.util.List;
+import org.jamienicol.nextepisode.db.ShowsProvider;
+import org.jamienicol.nextepisode.db.ShowsTable;
 import org.jamienicol.nextepisode.tvdb.Client;
 import org.jamienicol.nextepisode.tvdb.SearchResult;
 
 public class AddShowSearchActivity extends ListActivity
 	implements LoaderManager.LoaderCallbacks<List<SearchResult>>
 {
+	private List<SearchResult> searchResults;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -93,6 +100,8 @@ public class AddShowSearchActivity extends ListActivity
 	public void onLoadFinished(Loader<List<SearchResult>> loader,
 	                           List<SearchResult> data) {
 		setProgressBarIndeterminateVisibility(false);
+
+		searchResults = data;
 
 		ListAdapter adapter = null;
 		if (data != null) {
@@ -156,5 +165,21 @@ public class AddShowSearchActivity extends ListActivity
 			onStopLoading();
 			cachedResult = null;
 		}
+	}
+
+	protected void onListItemClick (ListView l, View v, int position, long id) {
+		SearchResult clickedResult = searchResults.get(position);
+
+		ContentValues values = new ContentValues();
+		values.put(ShowsTable.COLUMN_TVDB_ID, clickedResult.getId());
+		values.put(ShowsTable.COLUMN_NAME, clickedResult.getName());
+		values.put(ShowsTable.COLUMN_OVERVIEW, clickedResult.getOverview());
+		getContentResolver().insert(ShowsProvider.CONTENT_URI_SHOWS, values);
+
+		Intent intent = new Intent(this, MainActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+		                Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
+		finish();
 	}
 }
