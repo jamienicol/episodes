@@ -32,5 +32,9 @@
       <meta-data android:name="android.app.searchable"
                  android:resource="@xml/add_show_searchable" />
     </activity>
+
+    <provider android:name=".db.ShowsProvider"
+              android:authorities="org.jamienicol.nextepisode.db.ShowsProvider"
+              android:exported="false" />
   </application>
 </manifest>
