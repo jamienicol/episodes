@@ -18,16 +18,72 @@
 package org.jamienicol.nextepisode;
 
 import android.app.ListFragment;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SimpleCursorAdapter;
+import org.jamienicol.nextepisode.db.ShowsProvider;
+import org.jamienicol.nextepisode.db.ShowsTable;
 
 public class ShowsListFragment extends ListFragment
+	implements LoaderManager.LoaderCallbacks<Cursor>
 {
+	private SimpleCursorAdapter listAdapter;
+
 	public View onCreateView(LayoutInflater inflater,
 	                         ViewGroup container,
 	                         Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.shows_list_fragment, container, false);
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+		String[] from = new String[] {
+			ShowsTable.COLUMN_NAME
+		};
+		int[] to = new int[] {
+			R.id.show_name_view
+		};
+
+		listAdapter = new SimpleCursorAdapter(getActivity(),
+		                                      R.layout.shows_list_item_view,
+		                                      null,
+		                                      from,
+		                                      to,
+		                                      0);
+		setListAdapter(listAdapter);
+
+		getLoaderManager().initLoader(0, null, this);
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		String[] projection = {
+			ShowsTable.COLUMN_ID,
+			ShowsTable.COLUMN_NAME
+		};
+		return new CursorLoader(getActivity(),
+		                        ShowsProvider.CONTENT_URI_SHOWS,
+		                        projection,
+		                        null,
+		                        null,
+		                        null);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		listAdapter.swapCursor(data);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		listAdapter.swapCursor(null);
 	}
 }
