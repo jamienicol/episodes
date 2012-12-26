@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.List;
 
 public class Client
@@ -39,10 +40,11 @@ public class Client
 	public List<SearchResult> searchShows(String query) {
 
 		try {
+			String escapedQuery = URLEncoder.encode(query, "UTF-8");
 			StringBuilder urlBuilder = new StringBuilder();
 			urlBuilder.append(baseUrl);
 			urlBuilder.append("/GetSeries.php?seriesname=");
-			urlBuilder.append(query);
+			urlBuilder.append(escapedQuery);
 
 			URL url = new URL(urlBuilder.toString());
 			URLConnection connection = url.openConnection();
