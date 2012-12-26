@@ -74,7 +74,7 @@ public class ShowsListFragment extends ListFragment
 		                        projection,
 		                        null,
 		                        null,
-		                        null);
+		                        ShowsTable.COLUMN_NAME + " ASC");
 	}
 
 	@Override
