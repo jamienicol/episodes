@@ -19,7 +19,6 @@ package org.jamienicol.nextepisode;
 
 import android.app.ListActivity;
 import android.app.LoaderManager;
-import android.app.SearchManager;
 import android.content.AsyncTaskLoader;
 import android.content.ContentValues;
 import android.content.Context;
@@ -53,22 +52,20 @@ public class AddShowSearchActivity extends ListActivity
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Intent intent = getIntent();
-		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			String query = intent.getStringExtra(SearchManager.QUERY);
+		String query = intent.getStringExtra("query");
 
-			setTitle(query);
+		setTitle(query);
 
-			// if the loader exists and it's busy loading
-			// then spin the progress bar.
-			Loader loader = getLoaderManager().getLoader(0);
-			if (loader != null) {
-				setProgressBarIndeterminateVisibility(loader.isStarted());
-			}
-
-			Bundle loaderArgs = new Bundle();
-			loaderArgs.putString("query", query);
-			getLoaderManager().initLoader(0, loaderArgs, this);
+		// if the loader exists and it's busy loading
+		// then spin the progress bar.
+		Loader loader = getLoaderManager().getLoader(0);
+		if (loader != null) {
+			setProgressBarIndeterminateVisibility(loader.isStarted());
 		}
+
+		Bundle loaderArgs = new Bundle();
+		loaderArgs.putString("query", query);
+		getLoaderManager().initLoader(0, loaderArgs, this);
 	}
 
 	@Override

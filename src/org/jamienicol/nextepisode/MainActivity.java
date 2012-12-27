@@ -18,8 +18,8 @@
 package org.jamienicol.nextepisode;
 
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,9 +41,23 @@ public class MainActivity extends Activity
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main, menu);
 
-		SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
-		SearchView addShowSearchView = (SearchView)menu.findItem(R.id.menu_add_show_search).getActionView();
-		addShowSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+		SearchView addShow = (SearchView)menu.findItem(R.id.menu_add_show_search).getActionView();
+		addShow.setQueryHint(getString(R.string.menu_add_show_search_hint));
+		addShow.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+			@Override
+			public boolean onQueryTextChange(String query) {
+				return true;
+			}
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				Intent intent = new Intent(MainActivity.this,
+				                           AddShowSearchActivity.class);
+				intent.putExtra("query", query);
+				startActivity(intent);
+				return true;
+			}
+		});
 
 		return true;
 	}
