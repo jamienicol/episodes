@@ -53,7 +53,7 @@ public class ShowsListFragment extends ListFragment
 		};
 
 		listAdapter = new SimpleCursorAdapter(getActivity(),
-		                                      R.layout.shows_list_item_view,
+		                                      R.layout.shows_list_item,
 		                                      null,
 		                                      from,
 		                                      to,

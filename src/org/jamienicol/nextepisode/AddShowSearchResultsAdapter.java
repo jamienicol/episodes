@@ -26,11 +26,12 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import org.jamienicol.nextepisode.tvdb.SearchResult;
 
-public class SearchResultsAdapter extends ArrayAdapter<SearchResult>
+public class AddShowSearchResultsAdapter extends ArrayAdapter<SearchResult>
 {
 	private LayoutInflater inflater;
 
-	public SearchResultsAdapter(Context context, List<SearchResult> objects) {
+	public AddShowSearchResultsAdapter(Context context,
+	                                   List<SearchResult> objects) {
 		super(context, 0, 0, objects);
 
 		inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -39,10 +40,14 @@ public class SearchResultsAdapter extends ArrayAdapter<SearchResult>
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.search_result_view, parent, false);
+			convertView =
+				inflater.inflate(R.layout.add_show_search_results_list_item,
+				                 parent,
+				                 false);
 		}
 
-		TextView textView = (TextView)convertView.findViewById(R.id.show_name_view);
+		TextView textView =
+			(TextView)convertView.findViewById(R.id.show_name_view);
 		textView.setText(getItem(position).getName());
 
 		return convertView;

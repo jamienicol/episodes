@@ -102,7 +102,7 @@ public class AddShowSearchActivity extends ListActivity
 
 		ListAdapter adapter = null;
 		if (data != null) {
-			adapter = new SearchResultsAdapter(this, data);
+			adapter = new AddShowSearchResultsAdapter(this, data);
 		}
 		setListAdapter(adapter);
 	}
