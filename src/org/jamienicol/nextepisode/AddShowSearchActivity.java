@@ -17,27 +17,14 @@
 
 package org.jamienicol.nextepisode;
 
-import android.app.ListActivity;
-import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
-import android.content.ContentValues;
-import android.content.Context;
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.Loader;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import java.util.List;
-import org.jamienicol.nextepisode.db.ShowsProvider;
-import org.jamienicol.nextepisode.db.ShowsTable;
-import org.jamienicol.nextepisode.tvdb.Client;
-import org.jamienicol.nextepisode.tvdb.SearchResult;
 
-public class AddShowSearchActivity extends ListActivity
-	implements LoaderManager.LoaderCallbacks<List<SearchResult>>
+public class AddShowSearchActivity extends Activity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -54,16 +41,16 @@ public class AddShowSearchActivity extends ListActivity
 
 		setTitle(query);
 
-		// if the loader exists and it's busy loading
-		// then spin the progress bar.
-		Loader loader = getLoaderManager().getLoader(0);
-		if (loader != null) {
-			setProgressBarIndeterminateVisibility(loader.isStarted());
+		// create and add search fragment,
+		// but only on the first time the activity is created
+		if (savedInstanceState == null) {
+			AddShowSearchFragment fragment =
+				AddShowSearchFragment.newInstance(query);
+			FragmentTransaction transaction =
+				getFragmentManager().beginTransaction();
+			transaction.add(R.id.search_fragment_container, fragment);
+			transaction.commit();
 		}
-
-		Bundle loaderArgs = new Bundle();
-		loaderArgs.putString("query", query);
-		getLoaderManager().initLoader(0, loaderArgs, this);
 	}
 
 	@Override
@@ -81,105 +68,5 @@ public class AddShowSearchActivity extends ListActivity
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-	}
-
-	@Override
-	public Loader<List<SearchResult>> onCreateLoader(int id, Bundle args) {
-		setProgressBarIndeterminateVisibility(true);
-
-		SearchLoader loader = new SearchLoader(this, args.getString("query"));
-		return loader;
-	}
-
-	@Override
-	public void onLoadFinished(Loader<List<SearchResult>> loader,
-	                           List<SearchResult> data) {
-		setProgressBarIndeterminateVisibility(false);
-
-		AddShowSearchResults results = AddShowSearchResults.getInstance();
-		results.setData(data);
-
-		ListAdapter adapter = null;
-		if (data != null) {
-			adapter = new AddShowSearchResultsAdapter(this, data);
-		}
-		setListAdapter(adapter);
-	}
-
-	@Override
-	public void onLoaderReset(Loader<List<SearchResult>> loader) {
-		AddShowSearchResults results = AddShowSearchResults.getInstance();
-		results.setData(null);
-
-		setListAdapter(null);
-	}
-
-	private static class SearchLoader
-		extends AsyncTaskLoader<List<SearchResult>>
-	{
-		private final String query;
-		private List<SearchResult> cachedResult;
-
-		public SearchLoader(Context context, String query) {
-			super(context);
-
-			this.query = query;
-			cachedResult = null;
-		}
-
-		@Override
-		public List<SearchResult> loadInBackground() {
-			Client tvdbClient = new Client("25B864A8BC56AFAD");
-
-			List<SearchResult> results = tvdbClient.searchShows(query);
-
-			return results;
-		}
-
-		@Override
-		public void deliverResult(List<SearchResult> data) {
-			cachedResult = data;
-
-			if (isStarted()) {
-				super.deliverResult(data);
-			}
-		}
-
-		@Override
-		public void onStartLoading() {
-			if (cachedResult != null) {
-				deliverResult(cachedResult);
-			} else {
-				forceLoad();
-			}
-		}
-
-		@Override
-		public void onStopLoading() {
-			cancelLoad();
-		}
-
-		@Override
-		public void onReset() {
-			onStopLoading();
-			cachedResult = null;
-		}
-	}
-
-	protected void onListItemClick (ListView l, View v, int position, long id) {
-		AddShowSearchResults results = AddShowSearchResults.getInstance();
-		SearchResult clickedResult = results.getData().get(position);
-
-		ContentValues values = new ContentValues();
-		values.put(ShowsTable.COLUMN_TVDB_ID, clickedResult.getId());
-		values.put(ShowsTable.COLUMN_NAME, clickedResult.getName());
-		values.put(ShowsTable.COLUMN_OVERVIEW, clickedResult.getOverview());
-		getContentResolver().insert(ShowsProvider.CONTENT_URI_SHOWS, values);
-
-		Intent intent = new Intent(this, MainActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-		                Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(intent);
-		finish();
 	}
 }
