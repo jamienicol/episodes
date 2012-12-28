@@ -39,8 +39,6 @@ import org.jamienicol.nextepisode.tvdb.SearchResult;
 public class AddShowSearchActivity extends ListActivity
 	implements LoaderManager.LoaderCallbacks<List<SearchResult>>
 {
-	private List<SearchResult> searchResults;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -98,7 +96,8 @@ public class AddShowSearchActivity extends ListActivity
 	                           List<SearchResult> data) {
 		setProgressBarIndeterminateVisibility(false);
 
-		searchResults = data;
+		AddShowSearchResults results = AddShowSearchResults.getInstance();
+		results.setData(data);
 
 		ListAdapter adapter = null;
 		if (data != null) {
@@ -109,6 +108,9 @@ public class AddShowSearchActivity extends ListActivity
 
 	@Override
 	public void onLoaderReset(Loader<List<SearchResult>> loader) {
+		AddShowSearchResults results = AddShowSearchResults.getInstance();
+		results.setData(null);
+
 		setListAdapter(null);
 	}
 
@@ -165,7 +167,8 @@ public class AddShowSearchActivity extends ListActivity
 	}
 
 	protected void onListItemClick (ListView l, View v, int position, long id) {
-		SearchResult clickedResult = searchResults.get(position);
+		AddShowSearchResults results = AddShowSearchResults.getInstance();
+		SearchResult clickedResult = results.getData().get(position);
 
 		ContentValues values = new ContentValues();
 		values.put(ShowsTable.COLUMN_TVDB_ID, clickedResult.getId());
