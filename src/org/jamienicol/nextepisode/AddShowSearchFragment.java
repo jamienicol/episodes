@@ -163,19 +163,9 @@ public class AddShowSearchFragment extends ListFragment
 	}
 
 	public void onListItemClick (ListView l, View v, int position, long id) {
-		AddShowSearchResults results = AddShowSearchResults.getInstance();
-		SearchResult clickedResult = results.getData().get(position);
-
-		ContentValues values = new ContentValues();
-		values.put(ShowsTable.COLUMN_TVDB_ID, clickedResult.getId());
-		values.put(ShowsTable.COLUMN_NAME, clickedResult.getName());
-		values.put(ShowsTable.COLUMN_OVERVIEW, clickedResult.getOverview());
-		getActivity().getContentResolver().insert(ShowsProvider.CONTENT_URI_SHOWS, values);
-
-		Intent intent = new Intent(this.getActivity(), MainActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-		                Intent.FLAG_ACTIVITY_NEW_TASK);
+		Intent intent = new Intent(getActivity(),
+		                           AddShowPreviewActivity.class);
+		intent.putExtra("searchResultIndex", position);
 		startActivity(intent);
-		getActivity().finish();
 	}
 }
