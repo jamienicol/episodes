@@ -3,4 +3,5 @@
   <string name="app_name">Next Episode</string>
   <string name="menu_add_show_search_hint">Search for new show</string>
   <string name="menu_add_show_search_title">Add Show</string>
+  <string name="menu_add_show_title">Add Show</string>
 </resources>

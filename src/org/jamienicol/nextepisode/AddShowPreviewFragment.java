@@ -18,16 +18,25 @@
 package org.jamienicol.nextepisode;
 
 import android.app.Fragment;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import java.util.List;
+import org.jamienicol.nextepisode.db.ShowsTable;
+import org.jamienicol.nextepisode.db.ShowsProvider;
 import org.jamienicol.nextepisode.tvdb.SearchResult;
 
 public class AddShowPreviewFragment extends Fragment
 {
+	private SearchResult searchResult;
+
 	public static AddShowPreviewFragment newInstance(int searchResultIndex) {
 		AddShowPreviewFragment instance = new AddShowPreviewFragment();
 
@@ -36,6 +45,11 @@ public class AddShowPreviewFragment extends Fragment
 
 		instance.setArguments(args);
 		return instance;
+	}
+
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 	}
 
 	@Override
@@ -57,11 +71,39 @@ public class AddShowPreviewFragment extends Fragment
 		// may have destroyed it. If there is data display it, if there
 		// isn't do nothing and the activity will handle the situation.
 		if (resultsData != null) {
-			SearchResult show = resultsData.get(searchResultIndex);
+			searchResult = resultsData.get(searchResultIndex);
 
-			overviewView.setText(show.getOverview());
+			overviewView.setText(searchResult.getOverview());
 		}
 
 		return view;
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.add_show_preview_fragment, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_add_show:
+			addShow();
+			getActivity().finish();
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private void addShow() {
+		ContentValues values = new ContentValues();
+		values.put(ShowsTable.COLUMN_TVDB_ID, searchResult.getId());
+		values.put(ShowsTable.COLUMN_NAME, searchResult.getName());
+		values.put(ShowsTable.COLUMN_OVERVIEW, searchResult.getOverview());
+
+		ContentResolver contentResolver = getActivity().getContentResolver();
+		contentResolver.insert(ShowsProvider.CONTENT_URI_SHOWS, values);
+
 	}
 }
