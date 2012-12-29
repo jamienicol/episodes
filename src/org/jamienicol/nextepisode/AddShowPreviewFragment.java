@@ -48,7 +48,7 @@ public class AddShowPreviewFragment extends Fragment
 
 		TextView overviewView = (TextView)view.findViewById(R.id.overview);
 
-		int searchResultIndex = getArguments().getInt("searchResultsIndex");
+		int searchResultIndex = getArguments().getInt("searchResultIndex");
 
 		AddShowSearchResults results = AddShowSearchResults.getInstance();
 		List<SearchResult> resultsData = results.getData();
