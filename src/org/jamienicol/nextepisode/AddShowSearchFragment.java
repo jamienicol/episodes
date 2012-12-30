@@ -162,7 +162,7 @@ public class AddShowSearchFragment extends ListFragment
 		}
 	}
 
-	public void onListItemClick (ListView l, View v, int position, long id) {
+	public void onListItemClick(ListView l, View v, int position, long id) {
 		Intent intent = new Intent(getActivity(),
 		                           AddShowPreviewActivity.class);
 		intent.putExtra("searchResultIndex", position);
