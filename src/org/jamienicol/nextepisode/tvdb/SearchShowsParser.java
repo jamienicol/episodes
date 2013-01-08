@@ -33,17 +33,17 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-class SearchResultParser
+class SearchShowsParser
 {
-	private static final String TAG = "SearchResultParser";
+	private static final String TAG = "SearchShowsParser";
 
-	// search result which is currently being parsed
-	SearchResult current;
+	// show which is currently being parsed
+	Show current;
 
-	// search results which have finished being parsed
-	List<SearchResult> parsed;
+	// shows which have finished being parsed
+	List<Show> parsed;
 
-	public List<SearchResult> parse(InputStream inputStream) {
+	public List<Show> parse(InputStream inputStream) {
 
 		try {
 			InputSource inputSource = new InputSource(inputStream);
@@ -53,7 +53,7 @@ class SearchResultParser
 			Element seriesElement = rootElement.getChild("Series");
 			seriesElement.setStartElementListener(new StartElementListener() {
 				public void start(Attributes attributes) {
-					current = new SearchResult();
+					current = new Show();
 				}
 			});
 			seriesElement.setEndElementListener(new EndElementListener() {
@@ -87,7 +87,7 @@ class SearchResultParser
 			xmlReader.setContentHandler(rootElement.getContentHandler());
 
 			current = null;
-			parsed = new LinkedList<SearchResult>();
+			parsed = new LinkedList<Show>();
 			xmlReader.parse(inputSource);
 
 			return parsed;

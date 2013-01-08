@@ -17,13 +17,13 @@
 
 package org.jamienicol.nextepisode.tvdb;
 
-public class SearchResult
+public class Show
 {
 	private int id;
 	private String name;
 	private String overview;
 
-	public SearchResult() {
+	public Show() {
 		id = 0;
 		name = "";
 		overview = "";

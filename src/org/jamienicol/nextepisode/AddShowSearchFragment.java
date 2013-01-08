@@ -35,10 +35,10 @@ import java.util.List;
 import org.jamienicol.nextepisode.db.ShowsProvider;
 import org.jamienicol.nextepisode.db.ShowsTable;
 import org.jamienicol.nextepisode.tvdb.Client;
-import org.jamienicol.nextepisode.tvdb.SearchResult;
+import org.jamienicol.nextepisode.tvdb.Show;
 
 public class AddShowSearchFragment extends ListFragment
-	implements LoaderManager.LoaderCallbacks<List<SearchResult>>
+	implements LoaderManager.LoaderCallbacks<List<Show>>
 {
 	public static AddShowSearchFragment newInstance(String query) {
 		AddShowSearchFragment instance = new AddShowSearchFragment();
@@ -78,7 +78,7 @@ public class AddShowSearchFragment extends ListFragment
 	}
 
 	@Override
-	public Loader<List<SearchResult>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<Show>> onCreateLoader(int id, Bundle args) {
 		getActivity().setProgressBarIndeterminateVisibility(true);
 
 		SearchLoader loader = new SearchLoader(getActivity(),
@@ -87,8 +87,8 @@ public class AddShowSearchFragment extends ListFragment
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<SearchResult>> loader,
-	                           List<SearchResult> data) {
+	public void onLoadFinished(Loader<List<Show>> loader,
+	                           List<Show> data) {
 		AddShowSearchResults results = AddShowSearchResults.getInstance();
 		results.setData(data);
 
@@ -103,7 +103,7 @@ public class AddShowSearchFragment extends ListFragment
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<SearchResult>> loader) {
+	public void onLoaderReset(Loader<List<Show>> loader) {
 		AddShowSearchResults results = AddShowSearchResults.getInstance();
 		results.setData(null);
 
@@ -111,10 +111,10 @@ public class AddShowSearchFragment extends ListFragment
 	}
 
 	private static class SearchLoader
-		extends AsyncTaskLoader<List<SearchResult>>
+		extends AsyncTaskLoader<List<Show>>
 	{
 		private final String query;
-		private List<SearchResult> cachedResult;
+		private List<Show> cachedResult;
 
 		public SearchLoader(Context context, String query) {
 			super(context);
@@ -124,16 +124,16 @@ public class AddShowSearchFragment extends ListFragment
 		}
 
 		@Override
-		public List<SearchResult> loadInBackground() {
+		public List<Show> loadInBackground() {
 			Client tvdbClient = new Client("25B864A8BC56AFAD");
 
-			List<SearchResult> results = tvdbClient.searchShows(query);
+			List<Show> results = tvdbClient.searchShows(query);
 
 			return results;
 		}
 
 		@Override
-		public void deliverResult(List<SearchResult> data) {
+		public void deliverResult(List<Show> data) {
 			cachedResult = data;
 
 			if (isStarted()) {

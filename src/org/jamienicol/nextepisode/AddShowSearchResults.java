@@ -18,14 +18,14 @@
 package org.jamienicol.nextepisode;
 
 import java.util.List;
-import org.jamienicol.nextepisode.tvdb.SearchResult;
+import org.jamienicol.nextepisode.tvdb.Show;
 
 public class AddShowSearchResults
 {
 	// singleton instance
 	private static AddShowSearchResults instance = new AddShowSearchResults();
 
-	private List<SearchResult> data;
+	private List<Show> data;
 
 	private AddShowSearchResults() {
 	}
@@ -34,11 +34,11 @@ public class AddShowSearchResults
 		return instance;
 	}
 
-	public List<SearchResult> getData() {
+	public List<Show> getData() {
 		return data;
 	}
 
-	public void setData(List<SearchResult> data) {
+	public void setData(List<Show> data) {
 		this.data = data;
 	}
 }

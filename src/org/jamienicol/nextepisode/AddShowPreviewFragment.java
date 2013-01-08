@@ -31,11 +31,11 @@ import android.widget.TextView;
 import java.util.List;
 import org.jamienicol.nextepisode.db.ShowsTable;
 import org.jamienicol.nextepisode.db.ShowsProvider;
-import org.jamienicol.nextepisode.tvdb.SearchResult;
+import org.jamienicol.nextepisode.tvdb.Show;
 
 public class AddShowPreviewFragment extends Fragment
 {
-	private SearchResult searchResult;
+	private Show show;
 
 	public static AddShowPreviewFragment newInstance(int searchResultIndex) {
 		AddShowPreviewFragment instance = new AddShowPreviewFragment();
@@ -65,15 +65,15 @@ public class AddShowPreviewFragment extends Fragment
 		int searchResultIndex = getArguments().getInt("searchResultIndex");
 
 		AddShowSearchResults results = AddShowSearchResults.getInstance();
-		List<SearchResult> resultsData = results.getData();
+		List<Show> resultsData = results.getData();
 
 		// Ensure that there is actually data to display, because Android
 		// may have destroyed it. If there is data display it, if there
 		// isn't do nothing and the activity will handle the situation.
 		if (resultsData != null) {
-			searchResult = resultsData.get(searchResultIndex);
+			show = resultsData.get(searchResultIndex);
 
-			overviewView.setText(searchResult.getOverview());
+			overviewView.setText(show.getOverview());
 		}
 
 		return view;
@@ -98,9 +98,9 @@ public class AddShowPreviewFragment extends Fragment
 
 	private void addShow() {
 		ContentValues values = new ContentValues();
-		values.put(ShowsTable.COLUMN_TVDB_ID, searchResult.getId());
-		values.put(ShowsTable.COLUMN_NAME, searchResult.getName());
-		values.put(ShowsTable.COLUMN_OVERVIEW, searchResult.getOverview());
+		values.put(ShowsTable.COLUMN_TVDB_ID, show.getId());
+		values.put(ShowsTable.COLUMN_NAME, show.getName());
+		values.put(ShowsTable.COLUMN_OVERVIEW, show.getOverview());
 
 		ContentResolver contentResolver = getActivity().getContentResolver();
 		contentResolver.insert(ShowsProvider.CONTENT_URI_SHOWS, values);

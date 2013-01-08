@@ -23,7 +23,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import java.util.List;
-import org.jamienicol.nextepisode.tvdb.SearchResult;
+import org.jamienicol.nextepisode.tvdb.Show;
 
 public class AddShowPreviewActivity extends Activity
 {
@@ -40,7 +40,7 @@ public class AddShowPreviewActivity extends Activity
 		int searchResultIndex = intent.getIntExtra("searchResultIndex", 0);
 
 		AddShowSearchResults results = AddShowSearchResults.getInstance();
-		List<SearchResult> resultsData = results.getData();
+		List<Show> resultsData = results.getData();
 
 		// Ensure that there is actually data to display,
 		// because Android may have destroyed it.
@@ -51,7 +51,7 @@ public class AddShowPreviewActivity extends Activity
 			return;
 		}
 
-		SearchResult show = resultsData.get(searchResultIndex);
+		Show show = resultsData.get(searchResultIndex);
 		setTitle(show.getName());
 
 		// If this is the first time the activity has been created,

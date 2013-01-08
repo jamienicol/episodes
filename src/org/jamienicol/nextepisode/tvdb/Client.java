@@ -37,7 +37,7 @@ public class Client
 		this.apiKey = apiKey;
 	}
 
-	public List<SearchResult> searchShows(String query) {
+	public List<Show> searchShows(String query) {
 
 		try {
 			String escapedQuery = URLEncoder.encode(query, "UTF-8");
@@ -50,7 +50,7 @@ public class Client
 			URLConnection connection = url.openConnection();
 			InputStream inputStream = new BufferedInputStream(connection.getInputStream());
 
-			SearchResultParser parser = new SearchResultParser();
+			SearchShowsParser parser = new SearchShowsParser();
 			return parser.parse(inputStream);
 
 		} catch (IOException e) {

@@ -24,14 +24,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import org.jamienicol.nextepisode.tvdb.SearchResult;
+import org.jamienicol.nextepisode.tvdb.Show;
 
-public class AddShowSearchResultsAdapter extends ArrayAdapter<SearchResult>
+public class AddShowSearchResultsAdapter extends ArrayAdapter<Show>
 {
 	private LayoutInflater inflater;
 
 	public AddShowSearchResultsAdapter(Context context,
-	                                   List<SearchResult> objects) {
+	                                   List<Show> objects) {
 		super(context, 0, 0, objects);
 
 		inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
