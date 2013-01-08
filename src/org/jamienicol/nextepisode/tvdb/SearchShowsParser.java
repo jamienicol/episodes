@@ -25,6 +25,10 @@ import android.sax.StartElementListener;
 import android.util.Log;
 import java.io.InputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import org.xml.sax.Attributes;
@@ -81,6 +85,22 @@ class SearchShowsParser
 			overviewElement.setEndTextElementListener(new EndTextElementListener() {
 				public void end(String body) {
 					current.setOverview(body);
+				}
+			});
+
+			Element firstAiredElement = seriesElement.getChild("FirstAired");
+			firstAiredElement.setEndTextElementListener(new EndTextElementListener() {
+				public void end(String body) {
+					try {
+						DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+						Date firstAired = df.parse(body);
+
+						current.setFirstAired(firstAired);
+
+					} catch (ParseException e) {
+						Log.w(TAG, "Error parsing first aired date: " + e.toString());
+						current.setFirstAired(null);
+					}
 				}
 			});
 

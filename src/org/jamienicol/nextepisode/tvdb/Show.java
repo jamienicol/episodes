@@ -17,16 +17,20 @@
 
 package org.jamienicol.nextepisode.tvdb;
 
+import java.util.Date;
+
 public class Show
 {
 	private int id;
 	private String name;
 	private String overview;
+	private Date firstAired;
 
 	public Show() {
 		id = 0;
 		name = "";
 		overview = "";
+		firstAired = null;
 	}
 
 	public int getId() {
@@ -51,5 +55,13 @@ public class Show
 
 	public void setOverview(String overview) {
 		this.overview = overview;
+	}
+
+	public Date getFirstAired() {
+		return firstAired;
+	}
+
+	public void setFirstAired(Date firstAired) {
+		this.firstAired = firstAired;
 	}
 }
