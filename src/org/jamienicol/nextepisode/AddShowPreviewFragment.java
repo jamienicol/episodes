@@ -28,6 +28,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 import org.jamienicol.nextepisode.db.ShowsTable;
 import org.jamienicol.nextepisode.db.ShowsProvider;
@@ -61,6 +63,7 @@ public class AddShowPreviewFragment extends Fragment
 		                             false);
 
 		TextView overviewView = (TextView)view.findViewById(R.id.overview);
+		TextView firstAiredView = (TextView)view.findViewById(R.id.first_aired);
 
 		int searchResultIndex = getArguments().getInt("searchResultIndex");
 
@@ -74,6 +77,17 @@ public class AddShowPreviewFragment extends Fragment
 			show = resultsData.get(searchResultIndex);
 
 			overviewView.setText(show.getOverview());
+
+			Date firstAired = show.getFirstAired();
+			if (firstAired != null) {
+				DateFormat df = DateFormat.getDateInstance();
+				String text = getString(R.string.first_aired);
+				text += ": ";
+				text += df.format(show.getFirstAired());
+				firstAiredView.setText(text);
+			} else {
+				firstAiredView.setText(null);
+			}
 		}
 
 		return view;

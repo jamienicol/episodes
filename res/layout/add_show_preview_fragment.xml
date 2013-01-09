@@ -8,10 +8,22 @@
       android:orientation="vertical"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent" >
-    <TextView
-        android:id="@+id/overview"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearance" />
+        android:layout_height="wrap_content" >
+      <TextView
+          android:id="@+id/overview"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textAppearance="?android:attr/textAppearance" />
+      <TextView
+          android:id="@+id/first_aired"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="4dp"
+          android:textAppearance="?android:attr/textAppearance" />
+    </LinearLayout>
   </ScrollView>
 </LinearLayout>
