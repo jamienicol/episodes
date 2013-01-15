@@ -58,4 +58,27 @@ public class Client
 			return null;
 		}
 	}
+
+	public Show getShow(int id) {
+		try {
+			StringBuilder urlBuilder = new StringBuilder();
+			urlBuilder.append(baseUrl);
+			urlBuilder.append("/");
+			urlBuilder.append(apiKey);
+			urlBuilder.append("/series/");
+			urlBuilder.append(id);
+			urlBuilder.append("/all/en.xml");
+
+			URL url = new URL(urlBuilder.toString());
+			URLConnection connection = url.openConnection();
+			InputStream inputStream = new BufferedInputStream(connection.getInputStream());
+
+			GetShowParser parser = new GetShowParser();
+			return parser.parse(inputStream);
+
+		} catch (IOException e) {
+			Log.w(TAG, "IOException - getShow: " + e.toString());
+			return null;
+		}
+	}
 }
