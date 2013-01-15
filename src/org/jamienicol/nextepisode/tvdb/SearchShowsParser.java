@@ -57,11 +57,13 @@ class SearchShowsParser
 			Element seriesElement = rootElement.getChild("Series");
 			seriesElement.setStartElementListener(new StartElementListener() {
 				public void start(Attributes attributes) {
+					Log.i(TAG, "Begin parsing show");
 					current = new Show();
 				}
 			});
 			seriesElement.setEndElementListener(new EndElementListener() {
 				public void end() {
+					Log.i(TAG, "End parsing show");
 					parsed.add(current);
 					current = null;
 				}
@@ -70,13 +72,17 @@ class SearchShowsParser
 			Element idElement = seriesElement.requireChild("seriesid");
 			idElement.setEndTextElementListener(new EndTextElementListener() {
 				public void end(String body) {
-					current.setId(Integer.parseInt(body));
+					int id = Integer.parseInt(body);
+
+					Log.i(TAG, String.format("Parsed ID: %d", id));
+					current.setId(id);
 				}
 			});
 
 			Element nameElement = seriesElement.requireChild("SeriesName");
 			nameElement.setEndTextElementListener(new EndTextElementListener() {
 				public void end(String body) {
+					Log.i(TAG, String.format("Parsed name: %s", body));
 					current.setName(body);
 				}
 			});
@@ -84,6 +90,7 @@ class SearchShowsParser
 			Element overviewElement = seriesElement.getChild("Overview");
 			overviewElement.setEndTextElementListener(new EndTextElementListener() {
 				public void end(String body) {
+					Log.i(TAG, String.format("Parsed overview: %s", body));
 					current.setOverview(body);
 				}
 			});
@@ -95,6 +102,8 @@ class SearchShowsParser
 						DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 						Date firstAired = df.parse(body);
 
+						Log.i(TAG, String.format("Parsed first aired date: %s",
+						                         firstAired.toString()));
 						current.setFirstAired(firstAired);
 
 					} catch (ParseException e) {
