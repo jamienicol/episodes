@@ -33,10 +33,12 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		ShowsTable.onCreate(db);
+		EpisodesTable.onCreate(db);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		ShowsTable.onUpgrade(db, oldVersion, newVersion);
+		EpisodesTable.onUpgrade(db, oldVersion, newVersion);
 	}
 }
