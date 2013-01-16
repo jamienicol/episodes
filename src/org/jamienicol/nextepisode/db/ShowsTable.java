@@ -28,6 +28,7 @@ public class ShowsTable
 	public static final String COLUMN_TVDB_ID = "tvdb_id";
 	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_OVERVIEW = "overview";
+	public static final String COLUMN_FIRST_AIRED = "first_aired";
 
 	public static void onCreate(SQLiteDatabase db) {
 		String create =
@@ -35,13 +36,15 @@ public class ShowsTable
 			              "    %s INTEGER PRIMARY KEY," +
 			              "    %s INTEGER UNIQUE NOT NULL," +
 			              "    %s VARCHAR(200) NOT NULL," +
-			              "    %s TEXT" +
+			              "    %s TEXT," +
+			              "    %s DATE" +
 			              ");",
 			              TABLE_NAME,
 			              COLUMN_ID,
 			              COLUMN_TVDB_ID,
 			              COLUMN_NAME,
-			              COLUMN_OVERVIEW);
+			              COLUMN_OVERVIEW,
+			              COLUMN_FIRST_AIRED);
 		db.execSQL(create);
 	}
 
