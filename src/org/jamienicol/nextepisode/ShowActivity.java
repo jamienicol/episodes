@@ -18,6 +18,7 @@
 package org.jamienicol.nextepisode;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -50,6 +51,17 @@ public class ShowActivity extends Activity
 		Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("showId", showId);
 		getLoaderManager().initLoader(0, loaderArgs, this);
+
+		// create and add seasons list fragment,
+		// but only on the first time the activity is created
+		if (savedInstanceState == null) {
+			SeasonsListFragment fragment =
+				SeasonsListFragment.newInstance(showId);
+			FragmentTransaction transaction =
+				getFragmentManager().beginTransaction();
+			transaction.add(R.id.seasons_list_fragment_container, fragment);
+			transaction.commit();
+		}
 	}
 
 	@Override

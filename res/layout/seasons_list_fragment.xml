@@ -4,8 +4,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-  <FrameLayout
-      android:id="@+id/seasons_list_fragment_container"
+  <ListView
+      android:id="@id/android:list"
       android:layout_width="match_parent"
-      android:layout_height="match_parent" />
+      android:layout_height="wrap_content" />
+  <TextView
+      android:id="@id/android:empty"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="No Seasons" />
 </LinearLayout>
