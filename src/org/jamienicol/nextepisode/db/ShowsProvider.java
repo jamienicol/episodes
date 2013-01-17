@@ -40,13 +40,26 @@ public class ShowsProvider extends ContentProvider
 		          "/" +
 		          ShowsTable.TABLE_NAME);
 
+	public static final Uri CONTENT_URI_EPISODES =
+		Uri.parse(ContentResolver.SCHEME_CONTENT +
+		          "://" +
+		          ShowsProvider.URI_AUTHORITY +
+		          "/" +
+		          EpisodesTable.TABLE_NAME);
+
 	public static final String CONTENT_TYPE_SHOW_DIR =
 		ContentResolver.CURSOR_DIR_BASE_TYPE + "/show";
 	public static final String CONTENT_TYPE_SHOW_ITEM =
 		ContentResolver.CURSOR_ITEM_BASE_TYPE + "/show";
+	public static final String CONTENT_TYPE_EPISODE_DIR =
+		ContentResolver.CURSOR_DIR_BASE_TYPE + "/episode";
+	public static final String CONTENT_TYPE_EPISODE_ITEM =
+		ContentResolver.CURSOR_ITEM_BASE_TYPE + "/episode";
 
 	private static final int URI_TYPE_SHOWS = 1;
 	private static final int URI_TYPE_SHOWS_ID = 2;
+	private static final int URI_TYPE_EPISODES = 3;
+	private static final int URI_TYPE_EPISODES_ID = 4;
 
 	private static final UriMatcher uriMatcher =
 		new UriMatcher(UriMatcher.NO_MATCH);
@@ -57,6 +70,12 @@ public class ShowsProvider extends ContentProvider
 		uriMatcher.addURI(URI_AUTHORITY,
 		                  ShowsTable.TABLE_NAME + "/#",
 		                  URI_TYPE_SHOWS_ID);
+		uriMatcher.addURI(URI_AUTHORITY,
+		                  EpisodesTable.TABLE_NAME,
+		                  URI_TYPE_EPISODES);
+		uriMatcher.addURI(URI_AUTHORITY,
+		                  EpisodesTable.TABLE_NAME + "/#",
+		                  URI_TYPE_EPISODES_ID);
 	}
 
 	private DatabaseOpenHelper databaseOpenHelper;
@@ -67,16 +86,34 @@ public class ShowsProvider extends ContentProvider
 	                    String selection,
 	                    String[] selectionArgs,
 	                    String sortOrder) {
+		String table;
 		String sel;
 
 		switch (uriMatcher.match(uri)) {
 		case URI_TYPE_SHOWS:
+			table = ShowsTable.TABLE_NAME;
 			sel = selection;
 			break;
 
 		case URI_TYPE_SHOWS_ID:
+			table = ShowsTable.TABLE_NAME;
 			sel = String.format("%s=%s",
 			                    ShowsTable.COLUMN_ID,
+			                    uri.getLastPathSegment());
+			if (selection != null) {
+				sel += " AND " + selection;
+			}
+			break;
+
+		case URI_TYPE_EPISODES:
+			table = EpisodesTable.TABLE_NAME;
+			sel = selection;
+			break;
+
+		case URI_TYPE_EPISODES_ID:
+			table = EpisodesTable.TABLE_NAME;
+			sel = String.format("%s=%s",
+			                    EpisodesTable.COLUMN_ID,
 			                    uri.getLastPathSegment());
 			if (selection != null) {
 				sel += " AND " + selection;
@@ -88,7 +125,7 @@ public class ShowsProvider extends ContentProvider
 		}
 
 		SQLiteDatabase db = databaseOpenHelper.getReadableDatabase();
-		Cursor cursor = db.query(ShowsTable.TABLE_NAME,
+		Cursor cursor = db.query(table,
 		                         projection,
 		                         sel,
 		                         selectionArgs,
@@ -98,27 +135,34 @@ public class ShowsProvider extends ContentProvider
 		                         null);
 
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
 		return cursor;
 	}
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
 
-		if (uriMatcher.match(uri) != URI_TYPE_SHOWS) {
+		String table;
+		Uri contentUri;
+		if (uriMatcher.match(uri) == URI_TYPE_SHOWS) {
+			table = ShowsTable.TABLE_NAME;
+			contentUri = CONTENT_URI_SHOWS;
+		} else if (uriMatcher.match(uri) == URI_TYPE_EPISODES) {
+			table = EpisodesTable.TABLE_NAME;
+			contentUri = CONTENT_URI_EPISODES;
+		} else {
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 
 		SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
-		long rowId = db.insert(ShowsTable.TABLE_NAME,
-		                       null,
-		                       values);
+		long rowId = db.insert(table, null, values);
 
 		if (rowId > 0) {
-			Uri showUri = ContentUris.withAppendedId(CONTENT_URI_SHOWS,
-			                                         rowId);
-			getContext().getContentResolver().notifyChange(showUri, null);
+			Uri rowUri = ContentUris.withAppendedId(contentUri,
+			                                        rowId);
+			getContext().getContentResolver().notifyChange(rowUri, null);
 
-			return showUri;
+			return rowUri;
 		} else {
 			throw new SQLException("Failed to insert row into " + uri);
 		}
@@ -128,32 +172,50 @@ public class ShowsProvider extends ContentProvider
 	public int delete(Uri uri,
 	                  String selection,
 	                  String[] selectionArgs) {
-		SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
-		int count;
+		String table;
+		String sel;
 
 		switch (uriMatcher.match(uri)) {
 		case URI_TYPE_SHOWS:
-			count = db.delete(ShowsTable.TABLE_NAME,
-			                  selection,
-			                  selectionArgs);
+			table = ShowsTable.TABLE_NAME;
+			sel = selection;
 			break;
 
 		case URI_TYPE_SHOWS_ID:
-			String sel = String.format("%s=%s",
-			                           ShowsTable.COLUMN_ID,
-			                           uri.getLastPathSegment());
+			table = ShowsTable.TABLE_NAME;
+			sel = String.format("%s=%s",
+			                    ShowsTable.COLUMN_ID,
+			                    uri.getLastPathSegment());
 			if (selection != null) {
 				sel += " AND " + selection;
 			}
 
-			count = db.delete(ShowsTable.TABLE_NAME,
-			                  sel,
-			                  selectionArgs);
+			break;
+
+		case URI_TYPE_EPISODES:
+			table = EpisodesTable.TABLE_NAME;
+			sel = selection;
+			break;
+
+		case URI_TYPE_EPISODES_ID:
+			table = EpisodesTable.TABLE_NAME;
+			sel = String.format("%s=%s",
+			                    EpisodesTable.COLUMN_ID,
+			                    uri.getLastPathSegment());
+			if (selection != null) {
+				sel += " AND " + selection;
+			}
+
 			break;
 
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
+
+		SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
+		int count = db.delete(table,
+		                      sel,
+		                      selectionArgs);
 
 		getContext().getContentResolver().notifyChange(uri, null);
 
@@ -165,34 +227,49 @@ public class ShowsProvider extends ContentProvider
 	                  ContentValues values,
 	                  String selection,
 	                  String[] selectionArgs) {
-		SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
-		int count;
+		String table;
+		String sel;
 
 		switch (uriMatcher.match(uri)) {
 		case URI_TYPE_SHOWS:
-			count = db.update(ShowsTable.TABLE_NAME,
-			                  values,
-			                  selection,
-			                  selectionArgs);
+			table = ShowsTable.TABLE_NAME;
+			sel = selection;
 			break;
 
 		case URI_TYPE_SHOWS_ID:
-			String sel = String.format("%s=%s",
-			                           ShowsTable.COLUMN_ID,
-			                           uri.getLastPathSegment());
+			table = ShowsTable.TABLE_NAME;
+			sel = String.format("%s=%s",
+			                    ShowsTable.COLUMN_ID,
+			                    uri.getLastPathSegment());
 			if (selection != null) {
 				sel += " AND " + selection;
 			}
+			break;
 
-			count = db.update(ShowsTable.TABLE_NAME,
-			                  values,
-			                  sel,
-			                  selectionArgs);
+		case URI_TYPE_EPISODES:
+			table = EpisodesTable.TABLE_NAME;
+			sel = selection;
+			break;
+
+		case URI_TYPE_EPISODES_ID:
+			table = EpisodesTable.TABLE_NAME;
+			sel = String.format("%s=%s",
+			                    EpisodesTable.COLUMN_ID,
+			                    uri.getLastPathSegment());
+			if (selection != null) {
+				sel += " AND " + selection;
+			}
 			break;
 
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
+
+		SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
+		int count = db.update(table,
+		                      values,
+		                      sel,
+		                      selectionArgs);
 
 		getContext().getContentResolver().notifyChange(uri, null);
 
@@ -207,6 +284,12 @@ public class ShowsProvider extends ContentProvider
 
 		case URI_TYPE_SHOWS_ID:
 			return CONTENT_TYPE_SHOW_ITEM;
+
+		case URI_TYPE_EPISODES:
+			return CONTENT_TYPE_EPISODE_DIR;
+
+		case URI_TYPE_EPISODES_ID:
+			return CONTENT_TYPE_EPISODE_ITEM;
 
 		default:
 			return null;
