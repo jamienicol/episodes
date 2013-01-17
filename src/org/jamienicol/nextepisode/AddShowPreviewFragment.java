@@ -20,6 +20,9 @@ package org.jamienicol.nextepisode;
 import android.app.Fragment;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,8 +34,11 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import org.jamienicol.nextepisode.db.EpisodesTable;
 import org.jamienicol.nextepisode.db.ShowsTable;
 import org.jamienicol.nextepisode.db.ShowsProvider;
+import org.jamienicol.nextepisode.tvdb.Client;
+import org.jamienicol.nextepisode.tvdb.Episode;
 import org.jamienicol.nextepisode.tvdb.Show;
 
 public class AddShowPreviewFragment extends Fragment
@@ -111,13 +117,68 @@ public class AddShowPreviewFragment extends Fragment
 	}
 
 	private void addShow() {
-		ContentValues values = new ContentValues();
-		values.put(ShowsTable.COLUMN_TVDB_ID, show.getId());
-		values.put(ShowsTable.COLUMN_NAME, show.getName());
-		values.put(ShowsTable.COLUMN_OVERVIEW, show.getOverview());
+		AddShowTask task = new AddShowTask();
+		task.execute(show);
+	}
 
-		ContentResolver contentResolver = getActivity().getContentResolver();
-		contentResolver.insert(ShowsProvider.CONTENT_URI_SHOWS, values);
+	private class AddShowTask extends AsyncTask<Show, Void, Boolean>
+	{
+		ContentResolver contentResolver;
 
+		protected void onPreExecute() {
+			contentResolver = getActivity().getContentResolver();
+		}
+
+		protected Boolean doInBackground(Show... shows) {
+			Client tvdbClient = new Client("25B864A8BC56AFAD");
+
+			// fetch full show + episode information from tvdb
+			Show show = tvdbClient.getShow(shows[0].getId());
+
+			// fill in information about the show
+			ContentValues showValues = new ContentValues();
+			showValues.put(ShowsTable.COLUMN_TVDB_ID, show.getId());
+			showValues.put(ShowsTable.COLUMN_NAME, show.getName());
+			showValues.put(ShowsTable.COLUMN_OVERVIEW, show.getOverview());
+			if (show.getFirstAired() != null) {
+				showValues.put(ShowsTable.COLUMN_FIRST_AIRED,
+				               show.getFirstAired().getTime() / 1000);
+			}
+
+			// insert the show into the database
+			Uri showUri =
+				contentResolver.insert(ShowsProvider.CONTENT_URI_SHOWS,
+				                       showValues);
+
+			// need to obtain the ID of the inserted show for the episodes'
+			// show ID columns. the ID is just the final segment of the URI
+			int showId = Integer.parseInt(showUri.getLastPathSegment());
+
+			// insert each episode into the database
+			for (Episode ep : show.getEpisodes()) {
+				ContentValues epValues = new ContentValues();
+				epValues.put(EpisodesTable.COLUMN_TVDB_ID, ep.getId());
+				epValues.put(EpisodesTable.COLUMN_SHOW_ID, showId);
+				epValues.put(EpisodesTable.COLUMN_NAME, ep.getName());
+				epValues.put(EpisodesTable.COLUMN_OVERVIEW,
+				             ep.getOverview());
+				epValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER,
+				             ep.getEpisodeNumber());
+				epValues.put(EpisodesTable.COLUMN_SEASON_NUMBER,
+				             ep.getSeasonNumber());
+				if (ep.getFirstAired() != null) {
+					epValues.put(EpisodesTable.COLUMN_FIRST_AIRED,
+					             ep.getFirstAired().getTime() / 1000);
+				}
+
+				contentResolver.insert(ShowsProvider.CONTENT_URI_EPISODES,
+				                       epValues);
+			}
+
+			return true;
+		}
+
+		protected void onPostExecute(Boolean success) {
+		}
 	}
 }
