@@ -17,6 +17,7 @@
 
 package org.jamienicol.nextepisode;
 
+import android.app.Activity;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -26,6 +27,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import org.jamienicol.nextepisode.db.ShowsProvider;
 import org.jamienicol.nextepisode.db.ShowsTable;
@@ -34,6 +36,25 @@ public class ShowsListFragment extends ListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private SimpleCursorAdapter listAdapter;
+
+	public interface OnShowSelectedListener {
+		public void onShowSelected(int showId);
+	}
+	private OnShowSelectedListener onShowSelectedListener;
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+		try {
+			onShowSelectedListener = (OnShowSelectedListener)activity;
+		} catch (ClassCastException e) {
+			String message =
+				String.format("%s must implement OnShowSelectedListener",
+				              activity.toString());
+			throw new ClassCastException(message);
+		}
+	}
 
 	public View onCreateView(LayoutInflater inflater,
 	                         ViewGroup container,
@@ -85,5 +106,10 @@ public class ShowsListFragment extends ListFragment
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		listAdapter.swapCursor(null);
+	}
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		onShowSelectedListener.onShowSelected((int)id);
 	}
 }

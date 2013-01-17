@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.widget.SearchView;
 
 public class MainActivity extends Activity
+	implements ShowsListFragment.OnShowSelectedListener
 {
 	/** Called when the activity is first created. */
 	@Override
@@ -69,5 +70,13 @@ public class MainActivity extends Activity
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public void onShowSelected(int showId) {
+		Intent intent = new Intent(this,
+		                           ShowActivity.class);
+		intent.putExtra("showId", showId);
+		startActivity(intent);
 	}
 }

@@ -34,6 +34,10 @@
         android:name=".AddShowPreviewActivity" >
     </activity>
 
+    <activity
+        android:name=".ShowActivity" >
+    </activity>
+
     <provider
         android:name=".db.ShowsProvider"
         android:authorities="org.jamienicol.nextepisode.db.ShowsProvider"
