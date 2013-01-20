@@ -32,6 +32,7 @@ public class EpisodesTable
 	public static final String COLUMN_EPISODE_NUMBER = "episode_number";
 	public static final String COLUMN_SEASON_NUMBER = "season_number";
 	public static final String COLUMN_FIRST_AIRED = "first_aired";
+	public static final String COLUMN_WATCHED = "watched";
 
 	public static void onCreate(SQLiteDatabase db) {
 		String create =
@@ -43,7 +44,8 @@ public class EpisodesTable
 			              "    %s TEXT," +
 			              "    %s INTEGER," +
 			              "    %s INTEGER," +
-			              "    %s DATE" +
+			              "    %s DATE," +
+			              "    %s BOOLEAN" +
 			              ");",
 			              TABLE_NAME,
 			              COLUMN_ID,
@@ -53,7 +55,8 @@ public class EpisodesTable
 			              COLUMN_OVERVIEW,
 			              COLUMN_EPISODE_NUMBER,
 			              COLUMN_SEASON_NUMBER,
-			              COLUMN_FIRST_AIRED);
+			              COLUMN_FIRST_AIRED,
+			              COLUMN_WATCHED);
 		db.execSQL(create);
 	}
 
