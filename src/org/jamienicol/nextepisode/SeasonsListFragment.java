@@ -75,7 +75,6 @@ public class SeasonsListFragment extends ListFragment
 	public View onCreateView(LayoutInflater inflater,
 	                         ViewGroup container,
 	                         Bundle savedInstanceState) {
-		container.setBackgroundColor(0xFFFFFF);
 		return inflater.inflate(R.layout.seasons_list_fragment,
 		                        container,
 		                        false);
