@@ -38,6 +38,10 @@
         android:name=".ShowActivity" >
     </activity>
 
+    <activity
+        android:name=".SeasonActivity" >
+    </activity>
+
     <provider
         android:name=".db.ShowsProvider"
         android:authorities="org.jamienicol.nextepisode.db.ShowsProvider"

@@ -35,6 +35,8 @@ public class ShowActivity extends Activity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
 	           SeasonsListFragment.OnSeasonSelectedListener
 {
+	private int showId;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -44,7 +46,7 @@ public class ShowActivity extends Activity
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Intent intent = getIntent();
-		int showId = intent.getIntExtra("showId", -1);
+		showId = intent.getIntExtra("showId", -1);
 		if (showId == -1) {
 			throw new IllegalArgumentException("must provide valid showId");
 		}
@@ -113,6 +115,10 @@ public class ShowActivity extends Activity
 
 	@Override
 	public void onSeasonSelected(int seasonNumber) {
-
+		Intent intent = new Intent(this,
+		                           SeasonActivity.class);
+		intent.putExtra("showId", showId);
+		intent.putExtra("seasonNumber", seasonNumber);
+		startActivity(intent);
 	}
 }
