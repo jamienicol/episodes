@@ -5,4 +5,6 @@
   <string name="menu_add_show_search_hint">Search for new show</string>
   <string name="menu_add_show_search_title">Add Show</string>
   <string name="menu_add_show_title">Add Show</string>
+  <string name="season_name">Season %d</string>
+  <string name="season_name_specials">Specials</string>
 </resources>

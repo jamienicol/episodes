@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import java.util.HashSet;
 import java.util.Set;
 import org.jamienicol.nextepisode.db.EpisodesTable;
@@ -76,6 +77,7 @@ public class SeasonsListFragment extends ListFragment
 		                                      from,
 		                                      to,
 		                                      0);
+		listAdapter.setViewBinder(new SeasonsViewBinder());
 		setListAdapter(listAdapter);
 
 		int showId = getArguments().getInt("showId");
@@ -149,5 +151,32 @@ public class SeasonsListFragment extends ListFragment
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		listAdapter.swapCursor(null);
+	}
+
+	private class SeasonsViewBinder implements SimpleCursorAdapter.ViewBinder
+	{
+		@Override
+		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+			int seasonNumberColumnIndex =
+				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
+
+			if (columnIndex == seasonNumberColumnIndex) {
+				int seasonNumber = cursor.getInt(seasonNumberColumnIndex);
+				String text;
+				if (seasonNumber == 0) {
+					text = getString(R.string.season_name_specials);
+				} else {
+					text = String.format(getString(R.string.season_name,
+					                               seasonNumber));
+				}
+				TextView textView = (TextView)view;
+				textView.setText(text);
+
+				return true;
+
+			} else {
+				return false;
+			}
+		}
 	}
 }
