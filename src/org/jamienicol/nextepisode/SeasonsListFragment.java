@@ -17,6 +17,7 @@
 
 package org.jamienicol.nextepisode;
 
+import android.app.Activity;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -29,6 +30,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import java.util.HashSet;
@@ -41,6 +43,11 @@ public class SeasonsListFragment extends ListFragment
 {
 	private SimpleCursorAdapter listAdapter;
 
+	public interface OnSeasonSelectedListener {
+		public void onSeasonSelected(int seasonNumber);
+	}
+	private OnSeasonSelectedListener onSeasonSelectedListener;
+
 	public static SeasonsListFragment newInstance(int showId) {
 		SeasonsListFragment instance = new SeasonsListFragment();
 
@@ -49,6 +56,20 @@ public class SeasonsListFragment extends ListFragment
 
 		instance.setArguments(args);
 		return instance;
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+		try {
+			onSeasonSelectedListener = (OnSeasonSelectedListener)activity;
+		} catch (ClassCastException e) {
+			String message =
+				String.format("%s must implement OnSeasonSelectedListener",
+				              activity.toString());
+			throw new ClassCastException(message);
+		}
 	}
 
 	public View onCreateView(LayoutInflater inflater,
@@ -151,6 +172,13 @@ public class SeasonsListFragment extends ListFragment
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		listAdapter.swapCursor(null);
+	}
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		// the id has been set to be the season number,
+		// so pass it to the listener.
+		onSeasonSelectedListener.onSeasonSelected((int)id);
 	}
 
 	private class SeasonsViewBinder implements SimpleCursorAdapter.ViewBinder

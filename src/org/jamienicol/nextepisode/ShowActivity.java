@@ -32,7 +32,8 @@ import org.jamienicol.nextepisode.db.ShowsProvider;
 import org.jamienicol.nextepisode.db.ShowsTable;
 
 public class ShowActivity extends Activity
-	implements LoaderManager.LoaderCallbacks<Cursor>
+	implements LoaderManager.LoaderCallbacks<Cursor>,
+	           SeasonsListFragment.OnSeasonSelectedListener
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -108,5 +109,10 @@ public class ShowActivity extends Activity
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public void onSeasonSelected(int seasonNumber) {
+
 	}
 }
