@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.SimpleCursorAdapter;
 import org.jamienicol.nextepisode.db.EpisodesTable;
 import org.jamienicol.nextepisode.db.ShowsProvider;
@@ -60,10 +61,12 @@ public class EpisodesListFragment extends ListFragment
 		super.onActivityCreated(savedInstanceState);
 
 		String[] from = new String[] {
-			EpisodesTable.COLUMN_NAME
+			EpisodesTable.COLUMN_NAME,
+			EpisodesTable.COLUMN_WATCHED
 		};
 		int[] to = new int[] {
-			R.id.episode_name_view
+			R.id.episode_name_view,
+			R.id.episode_watched_check_box
 		};
 
 		listAdapter = new SimpleCursorAdapter(getActivity(),
@@ -72,6 +75,7 @@ public class EpisodesListFragment extends ListFragment
 		                                      from,
 		                                      to,
 		                                      0);
+		listAdapter.setViewBinder(new EpisodesViewBinder());
 		setListAdapter(listAdapter);
 
 		int showId = getArguments().getInt("showId");
@@ -89,7 +93,8 @@ public class EpisodesListFragment extends ListFragment
 
 		String[] projection = {
 			EpisodesTable.COLUMN_ID,
-			EpisodesTable.COLUMN_NAME
+			EpisodesTable.COLUMN_NAME,
+			EpisodesTable.COLUMN_WATCHED
 		};
 		String selection = String.format("%s=? AND %s=?",
 		                                 EpisodesTable.COLUMN_SHOW_ID,
@@ -115,5 +120,26 @@ public class EpisodesListFragment extends ListFragment
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		listAdapter.swapCursor(null);
+	}
+
+	private class EpisodesViewBinder implements SimpleCursorAdapter.ViewBinder
+	{
+		@Override
+		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+			int watchedColumnIndex =
+				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
+
+			if (columnIndex == watchedColumnIndex) {
+				int watched = cursor.getInt(watchedColumnIndex);
+
+				CheckBox checkBox = (CheckBox)view;
+				checkBox.setChecked(watched != 0);
+
+				return true;
+
+			} else {
+				return false;
+			}
+		}
 	}
 }
