@@ -19,6 +19,7 @@ package org.jamienicol.nextepisode;
 
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -27,14 +28,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.SimpleCursorAdapter;
+import android.widget.CursorAdapter;
+import android.widget.TextView;
 import org.jamienicol.nextepisode.db.EpisodesTable;
 import org.jamienicol.nextepisode.db.ShowsProvider;
 
 public class EpisodesListFragment extends ListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
-	private SimpleCursorAdapter listAdapter;
+	private EpisodesCursorAdapter listAdapter;
 
 	public static EpisodesListFragment newInstance(int showId,
 	                                               int seasonNumber) {
@@ -60,22 +62,7 @@ public class EpisodesListFragment extends ListFragment
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		String[] from = new String[] {
-			EpisodesTable.COLUMN_NAME,
-			EpisodesTable.COLUMN_WATCHED
-		};
-		int[] to = new int[] {
-			R.id.episode_name_view,
-			R.id.episode_watched_check_box
-		};
-
-		listAdapter = new SimpleCursorAdapter(getActivity(),
-		                                      R.layout.episodes_list_item,
-		                                      null,
-		                                      from,
-		                                      to,
-		                                      0);
-		listAdapter.setViewBinder(new EpisodesViewBinder());
+		listAdapter = new EpisodesCursorAdapter(getActivity(), null, 0);
 		setListAdapter(listAdapter);
 
 		int showId = getArguments().getInt("showId");
@@ -122,24 +109,34 @@ public class EpisodesListFragment extends ListFragment
 		listAdapter.swapCursor(null);
 	}
 
-	private class EpisodesViewBinder implements SimpleCursorAdapter.ViewBinder
+	private static class EpisodesCursorAdapter
+		extends CursorAdapter
 	{
+		public EpisodesCursorAdapter(Context context, Cursor c, int flags) {
+			super(context, c, flags);
+		}
+
 		@Override
-		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+		public void bindView(View view, Context context, Cursor cursor) {
+			int nameColumnIndex =
+				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_NAME);
+			String name = cursor.getString(nameColumnIndex);
+			TextView nameView =
+				(TextView)view.findViewById(R.id.episode_name_view);
+			nameView.setText(name);
+
 			int watchedColumnIndex =
 				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
+			int watched = cursor.getInt(watchedColumnIndex);
+			CheckBox watchedCheckBox =
+				(CheckBox)view.findViewById(R.id.episode_watched_check_box);
+			watchedCheckBox.setChecked(watched != 0);
+		}
 
-			if (columnIndex == watchedColumnIndex) {
-				int watched = cursor.getInt(watchedColumnIndex);
-
-				CheckBox checkBox = (CheckBox)view;
-				checkBox.setChecked(watched != 0);
-
-				return true;
-
-			} else {
-				return false;
-			}
+		@Override
+		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			LayoutInflater inflater = LayoutInflater.from(context);
+			return inflater.inflate(R.layout.episodes_list_item, parent, false);
 		}
 	}
 }
