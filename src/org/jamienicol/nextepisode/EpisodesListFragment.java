@@ -19,15 +19,20 @@ package org.jamienicol.nextepisode;
 
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 import org.jamienicol.nextepisode.db.EpisodesTable;
@@ -118,6 +123,13 @@ public class EpisodesListFragment extends ListFragment
 
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
+			int idColumnIndex =
+				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_ID);
+			final int id = cursor.getInt(idColumnIndex);
+
+			final ContentResolver contentResolver =
+				context.getContentResolver();
+
 			int nameColumnIndex =
 				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_NAME);
 			String name = cursor.getString(nameColumnIndex);
@@ -130,7 +142,30 @@ public class EpisodesListFragment extends ListFragment
 			int watched = cursor.getInt(watchedColumnIndex);
 			CheckBox watchedCheckBox =
 				(CheckBox)view.findViewById(R.id.episode_watched_check_box);
+
+			watchedCheckBox.setOnCheckedChangeListener(null);
+
 			watchedCheckBox.setChecked(watched != 0);
+
+			watchedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				public void onCheckedChanged(CompoundButton buttonView,
+				                             boolean isChecked) {
+					AsyncQueryHandler handler =
+						new AsyncQueryHandler(contentResolver) {};
+					ContentValues epValues = new ContentValues();
+					epValues.put(EpisodesTable.COLUMN_WATCHED, isChecked);
+
+					Uri epUri =
+						Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
+						                     new Integer(id).toString());
+					handler.startUpdate(0,
+					                    null,
+					                    epUri,
+					                    epValues,
+					                    null,
+					                    null);
+				}
+			});
 		}
 
 		@Override
