@@ -29,6 +29,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -41,6 +44,8 @@ import org.jamienicol.nextepisode.db.ShowsProvider;
 public class EpisodesListFragment extends ListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
+	private int showId;
+	private int seasonNumber;
 	private EpisodesCursorAdapter listAdapter;
 
 	public static EpisodesListFragment newInstance(int showId,
@@ -53,6 +58,11 @@ public class EpisodesListFragment extends ListFragment
 
 		instance.setArguments(args);
 		return instance;
+	}
+
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 	}
 
 	public View onCreateView(LayoutInflater inflater,
@@ -70,12 +80,29 @@ public class EpisodesListFragment extends ListFragment
 		listAdapter = new EpisodesCursorAdapter(getActivity(), null, 0);
 		setListAdapter(listAdapter);
 
-		int showId = getArguments().getInt("showId");
-		int seasonNumber = getArguments().getInt("seasonNumber");
+		showId = getArguments().getInt("showId");
+		seasonNumber = getArguments().getInt("seasonNumber");
+
 		Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("showId", showId);
 		loaderArgs.putInt("seasonNumber", seasonNumber);
 		getLoaderManager().initLoader(0, loaderArgs, this);
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.episodes_list_fragment, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_mark_all_watched:
+			markAllWatched();
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	@Override
@@ -112,6 +139,27 @@ public class EpisodesListFragment extends ListFragment
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		listAdapter.swapCursor(null);
+	}
+
+	private void markAllWatched() {
+		ContentResolver contentResolver = getActivity().getContentResolver();
+		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
+		ContentValues epValues = new ContentValues();
+		epValues.put(EpisodesTable.COLUMN_WATCHED, true);
+		String selection = String.format("%s=? AND %s=?",
+		                                 EpisodesTable.COLUMN_SHOW_ID,
+		                                 EpisodesTable.COLUMN_SEASON_NUMBER);
+		String[] selectionArgs = {
+			new Integer(showId).toString(),
+			new Integer(seasonNumber).toString()
+		};
+
+		handler.startUpdate(0,
+		                    null,
+		                    ShowsProvider.CONTENT_URI_EPISODES,
+		                    epValues,
+		                    selection,
+		                    selectionArgs);
 	}
 
 	private static class EpisodesCursorAdapter
