@@ -20,6 +20,8 @@ package org.jamienicol.nextepisode;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -27,7 +29,10 @@ import android.database.Cursor;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import org.jamienicol.nextepisode.db.EpisodesTable;
 import org.jamienicol.nextepisode.db.ShowsProvider;
 import org.jamienicol.nextepisode.db.ShowsTable;
 
@@ -65,6 +70,14 @@ public class ShowActivity extends Activity
 			transaction.add(R.id.seasons_list_fragment_container, fragment);
 			transaction.commit();
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.show_activity, menu);
+
+		return true;
 	}
 
 	@Override
@@ -108,6 +121,11 @@ public class ShowActivity extends Activity
 			finish();
 			return true;
 
+		case R.id.menu_delete_show:
+			deleteShow();
+			finish();
+			return true;
+
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -120,5 +138,32 @@ public class ShowActivity extends Activity
 		intent.putExtra("showId", showId);
 		intent.putExtra("seasonNumber", seasonNumber);
 		startActivity(intent);
+	}
+
+	private void deleteShow() {
+		ContentResolver contentResolver = getContentResolver();
+		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
+
+		/* delete all the show's episodes */
+		String epSelection = String.format("%s=?",
+		                                   EpisodesTable.COLUMN_SHOW_ID);
+		String[] epSelectionArgs = {
+			new Integer(showId).toString()
+		};
+
+		handler.startDelete(0,
+		                    null,
+		                    ShowsProvider.CONTENT_URI_EPISODES,
+		                    epSelection,
+		                    epSelectionArgs);
+
+		/* delete the show itself */
+		Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
+		                                   new Integer(showId).toString());
+		handler.startDelete(0,
+		                    null,
+		                    showUri,
+		                    null,
+		                    null);
 	}
 }
