@@ -99,6 +99,7 @@ public class EpisodesListFragment extends ListFragment
 		switch (item.getItemId()) {
 		case R.id.menu_mark_all_watched:
 			markAllWatched();
+			return true;
 
 		default:
 			return super.onOptionsItemSelected(item);
