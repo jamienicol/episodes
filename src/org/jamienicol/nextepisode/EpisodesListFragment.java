@@ -17,6 +17,7 @@
 
 package org.jamienicol.nextepisode;
 
+import android.app.Activity;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.AsyncQueryHandler;
@@ -37,6 +38,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import org.jamienicol.nextepisode.db.EpisodesTable;
 import org.jamienicol.nextepisode.db.ShowsProvider;
@@ -47,6 +49,11 @@ public class EpisodesListFragment extends ListFragment
 	private int showId;
 	private int seasonNumber;
 	private EpisodesCursorAdapter listAdapter;
+
+	public interface OnEpisodeSelectedListener {
+		public void onEpisodeSelected(int episodeId);
+	}
+	private OnEpisodeSelectedListener onEpisodeSelectedListener;
 
 	public static EpisodesListFragment newInstance(int showId,
 	                                               int seasonNumber) {
@@ -63,6 +70,20 @@ public class EpisodesListFragment extends ListFragment
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+		try {
+			onEpisodeSelectedListener = (OnEpisodeSelectedListener)activity;
+		} catch (ClassCastException e) {
+			String message =
+				String.format("%s must implement OnEpisodeSelectedListener",
+				              activity.toString());
+			throw new ClassCastException(message);
+		}
 	}
 
 	public View onCreateView(LayoutInflater inflater,
@@ -140,6 +161,12 @@ public class EpisodesListFragment extends ListFragment
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		listAdapter.swapCursor(null);
+	}
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		// pass the episode id to the listener.
+		onEpisodeSelectedListener.onEpisodeSelected((int)id);
 	}
 
 	private void markAllWatched() {

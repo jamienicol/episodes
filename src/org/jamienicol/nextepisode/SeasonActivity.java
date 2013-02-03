@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 public class SeasonActivity extends Activity
+	implements EpisodesListFragment.OnEpisodeSelectedListener
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -72,5 +73,9 @@ public class SeasonActivity extends Activity
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public void onEpisodeSelected(int episodeId) {
 	}
 }
