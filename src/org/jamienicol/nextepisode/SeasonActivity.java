@@ -77,5 +77,9 @@ public class SeasonActivity extends Activity
 
 	@Override
 	public void onEpisodeSelected(int episodeId) {
+		Intent intent = new Intent(this,
+		                           EpisodeActivity.class);
+		intent.putExtra("episodeId", episodeId);
+		startActivity(intent);
 	}
 }

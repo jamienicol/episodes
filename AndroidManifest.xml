@@ -42,6 +42,10 @@
         android:name=".SeasonActivity" >
     </activity>
 
+    <activity
+        android:name=".EpisodeActivity" >
+    </activity>
+
     <provider
         android:name=".db.ShowsProvider"
         android:authorities="org.jamienicol.nextepisode.db.ShowsProvider"
