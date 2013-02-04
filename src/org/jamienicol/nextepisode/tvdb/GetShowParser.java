@@ -57,7 +57,7 @@ class GetShowParser
 
 			Element seriesElement = rootElement.requireChild("Series");
 
-			Element idElement = seriesElement.requireChild("SeriesID");
+			Element idElement = seriesElement.requireChild("id");
 			idElement.setEndTextElementListener(new EndTextElementListener() {
 				public void end(String body) {
 					int id = Integer.parseInt(body);

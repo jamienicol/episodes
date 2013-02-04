@@ -69,7 +69,7 @@ class SearchShowsParser
 				}
 			});
 
-			Element idElement = seriesElement.requireChild("seriesid");
+			Element idElement = seriesElement.requireChild("id");
 			idElement.setEndTextElementListener(new EndTextElementListener() {
 				public void end(String body) {
 					int id = Integer.parseInt(body);
