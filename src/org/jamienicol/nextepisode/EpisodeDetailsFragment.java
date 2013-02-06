@@ -18,48 +18,56 @@
 package org.jamienicol.nextepisode;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
+import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import org.jamienicol.nextepisode.db.EpisodesTable;
 import org.jamienicol.nextepisode.db.ShowsProvider;
 
-public class EpisodeActivity extends Activity
+public class EpisodeDetailsFragment extends Fragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
+	private TextView overviewView;
+
+	public static EpisodeDetailsFragment newInstance(int episodeId) {
+		EpisodeDetailsFragment instance = new EpisodeDetailsFragment();
+
+		Bundle args = new Bundle();
+		args.putInt("episodeId", episodeId);
+
+		instance.setArguments(args);
+		return instance;
+	}
+
+	public View onCreateView(LayoutInflater inflater,
+	                         ViewGroup container,
+	                         Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.episode_details_fragment,
+		                             container,
+		                             false);
+
+		overviewView = (TextView)view.findViewById(R.id.overview);
+
+		return view;
+	}
+
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.episode_activity);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-
-		Intent intent = getIntent();
-		int episodeId = intent.getIntExtra("episodeId", -1);
-		if (episodeId == -1) {
-			throw new IllegalArgumentException("must provide valid episodeId");
-		}
+		int episodeId = getArguments().getInt("episodeId");
 
 		Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("episodeId", episodeId);
 		getLoaderManager().initLoader(0, loaderArgs, this);
-
-		// create and add episode details fragment,
-		// but only on the first time the activity is created
-		if (savedInstanceState == null) {
-			EpisodeDetailsFragment fragment =
-				EpisodeDetailsFragment.newInstance(episodeId);
-			FragmentTransaction transaction =
-				getFragmentManager().beginTransaction();
-			transaction.add(R.id.episode_details_fragment_container, fragment);
-			transaction.commit();
-		}
 	}
 
 	@Override
@@ -68,9 +76,9 @@ public class EpisodeActivity extends Activity
 		Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
 		                               new Integer(episodeId).toString());
 		String[] projection = {
-			EpisodesTable.COLUMN_NAME
+			EpisodesTable.COLUMN_OVERVIEW
 		};
-		return new CursorLoader(this,
+		return new CursorLoader(getActivity(),
 		                        uri,
 		                        projection,
 		                        null,
@@ -81,30 +89,18 @@ public class EpisodeActivity extends Activity
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		if (data.getCount() >= 1) {
-			int columnIndex =
-				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_NAME);
-
 			data.moveToFirst();
-			setTitle(data.getString(columnIndex));
+
+			int overviewColumnIndex =
+				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_OVERVIEW);
+			overviewView.setText(data.getString(overviewColumnIndex));
 		} else {
-			setTitle("");
+			overviewView.setText("");
 		}
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		setTitle("");
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			finish();
-			return true;
-
-		default:
-			return super.onOptionsItemSelected(item);
-		}
+		overviewView.setText("");
 	}
 }
