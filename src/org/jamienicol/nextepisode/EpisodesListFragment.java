@@ -119,7 +119,11 @@ public class EpisodesListFragment extends ListFragment
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_mark_all_watched:
-			markAllWatched();
+			markAllWatched(true);
+			return true;
+
+		case R.id.menu_mark_all_not_watched:
+			markAllWatched(false);
 			return true;
 
 		default:
@@ -169,11 +173,11 @@ public class EpisodesListFragment extends ListFragment
 		onEpisodeSelectedListener.onEpisodeSelected((int)id);
 	}
 
-	private void markAllWatched() {
+	private void markAllWatched(boolean watched) {
 		ContentResolver contentResolver = getActivity().getContentResolver();
 		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
 		ContentValues epValues = new ContentValues();
-		epValues.put(EpisodesTable.COLUMN_WATCHED, true);
+		epValues.put(EpisodesTable.COLUMN_WATCHED, watched);
 		String selection = String.format("%s=? AND %s=?",
 		                                 EpisodesTable.COLUMN_SHOW_ID,
 		                                 EpisodesTable.COLUMN_SEASON_NUMBER);

@@ -6,6 +6,7 @@
   <string name="menu_add_show_search_title">Add Show</string>
   <string name="menu_add_show_title">Add Show</string>
   <string name="menu_delete_show">Delete show</string>
+  <string name="menu_mark_all_not_watched">Mark all episodes as not watched</string>
   <string name="menu_mark_all_watched">Mark all episodes as watched</string>
   <string name="season_episode">Season %1$d Episode %2$d</string>
   <string name="season_name">Season %d</string>
