@@ -36,6 +36,7 @@ public class EpisodeDetailsFragment extends Fragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private TextView overviewView;
+	private TextView seasonEpisodeView;
 
 	public static EpisodeDetailsFragment newInstance(int episodeId) {
 		EpisodeDetailsFragment instance = new EpisodeDetailsFragment();
@@ -55,6 +56,7 @@ public class EpisodeDetailsFragment extends Fragment
 		                             false);
 
 		overviewView = (TextView)view.findViewById(R.id.overview);
+		seasonEpisodeView = (TextView)view.findViewById(R.id.season_episode);
 
 		return view;
 	}
@@ -76,7 +78,9 @@ public class EpisodeDetailsFragment extends Fragment
 		Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
 		                               new Integer(episodeId).toString());
 		String[] projection = {
-			EpisodesTable.COLUMN_OVERVIEW
+			EpisodesTable.COLUMN_OVERVIEW,
+			EpisodesTable.COLUMN_SEASON_NUMBER,
+			EpisodesTable.COLUMN_EPISODE_NUMBER
 		};
 		return new CursorLoader(getActivity(),
 		                        uri,
@@ -94,13 +98,25 @@ public class EpisodeDetailsFragment extends Fragment
 			int overviewColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_OVERVIEW);
 			overviewView.setText(data.getString(overviewColumnIndex));
+
+			int seasonNumberColumnIndex =
+				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
+			int episodeNumberColumnIndex =
+				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_EPISODE_NUMBER);
+			String seasonEpisodeText =
+				String.format(getActivity().getString(R.string.season_episode),
+				              data.getInt(seasonNumberColumnIndex),
+				              data.getInt(episodeNumberColumnIndex));
+			seasonEpisodeView.setText(seasonEpisodeText);
 		} else {
 			overviewView.setText("");
+			seasonEpisodeView.setText("");
 		}
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		overviewView.setText("");
+		seasonEpisodeView.setText("");
 	}
 }
