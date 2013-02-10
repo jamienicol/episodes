@@ -47,6 +47,10 @@
         android:name=".EpisodeActivity" >
     </activity>
 
+    <service
+        android:name=".services.AddShowService" >
+    </service>
+
     <provider
         android:name=".db.ShowsProvider"
         android:authorities="org.jamienicol.nextepisode.db.ShowsProvider"
