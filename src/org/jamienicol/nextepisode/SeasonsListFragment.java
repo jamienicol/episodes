@@ -20,6 +20,9 @@ package org.jamienicol.nextepisode;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -28,6 +31,9 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -41,6 +47,7 @@ import org.jamienicol.nextepisode.db.ShowsProvider;
 public class SeasonsListFragment extends ListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
+	private int showId;
 	private SimpleCursorAdapter listAdapter;
 
 	public interface OnSeasonSelectedListener {
@@ -56,6 +63,12 @@ public class SeasonsListFragment extends ListFragment
 
 		instance.setArguments(args);
 		return instance;
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 	}
 
 	@Override
@@ -100,7 +113,7 @@ public class SeasonsListFragment extends ListFragment
 		listAdapter.setViewBinder(new SeasonsViewBinder());
 		setListAdapter(listAdapter);
 
-		int showId = getArguments().getInt("showId");
+		showId = getArguments().getInt("showId");
 		Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("showId", showId);
 		// FIXME: initLoader causes no data to be displayed after a
@@ -109,6 +122,27 @@ public class SeasonsListFragment extends ListFragment
 		// Using restartLoader causes the MatrixCursor to be recreated so
 		// this works fine for now, but there's probably a better fix.
 		getLoaderManager().restartLoader(0, loaderArgs, this);
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.seasons_list_fragment, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_mark_all_watched:
+			markAllWatched(true);
+			return true;
+
+		case R.id.menu_mark_all_not_watched:
+			markAllWatched(false);
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	@Override
@@ -178,6 +212,25 @@ public class SeasonsListFragment extends ListFragment
 		// the id has been set to be the season number,
 		// so pass it to the listener.
 		onSeasonSelectedListener.onSeasonSelected((int)id);
+	}
+
+	private void markAllWatched(boolean watched) {
+		ContentResolver contentResolver = getActivity().getContentResolver();
+		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
+		ContentValues epValues = new ContentValues();
+		epValues.put(EpisodesTable.COLUMN_WATCHED, watched);
+		String selection = String.format("%s=?",
+		                                 EpisodesTable.COLUMN_SHOW_ID);
+		String[] selectionArgs = {
+			new Integer(showId).toString()
+		};
+
+		handler.startUpdate(0,
+		                    null,
+		                    ShowsProvider.CONTENT_URI_EPISODES,
+		                    epValues,
+		                    selection,
+		                    selectionArgs);
 	}
 
 	private class SeasonsViewBinder implements SimpleCursorAdapter.ViewBinder

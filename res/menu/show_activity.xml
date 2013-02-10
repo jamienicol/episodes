@@ -3,5 +3,6 @@
   <item android:id="@+id/menu_delete_show"
         android:icon="@drawable/ic_menu_delete_show"
         android:title="@string/menu_delete_show"
+        android:orderInCategory="20"
         android:showAsAction="never" />
 </menu>
