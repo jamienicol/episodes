@@ -29,6 +29,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import java.text.DateFormat;
+import java.util.Date;
 import org.jamienicol.nextepisode.db.EpisodesTable;
 import org.jamienicol.nextepisode.db.ShowsProvider;
 
@@ -37,6 +39,7 @@ public class EpisodeDetailsFragment extends Fragment
 {
 	private TextView overviewView;
 	private TextView seasonEpisodeView;
+	private TextView firstAiredView;
 
 	public static EpisodeDetailsFragment newInstance(int episodeId) {
 		EpisodeDetailsFragment instance = new EpisodeDetailsFragment();
@@ -57,6 +60,7 @@ public class EpisodeDetailsFragment extends Fragment
 
 		overviewView = (TextView)view.findViewById(R.id.overview);
 		seasonEpisodeView = (TextView)view.findViewById(R.id.season_episode);
+		firstAiredView = (TextView)view.findViewById(R.id.first_aired);
 
 		return view;
 	}
@@ -80,7 +84,8 @@ public class EpisodeDetailsFragment extends Fragment
 		String[] projection = {
 			EpisodesTable.COLUMN_OVERVIEW,
 			EpisodesTable.COLUMN_SEASON_NUMBER,
-			EpisodesTable.COLUMN_EPISODE_NUMBER
+			EpisodesTable.COLUMN_EPISODE_NUMBER,
+			EpisodesTable.COLUMN_FIRST_AIRED
 		};
 		return new CursorLoader(getActivity(),
 		                        uri,
@@ -108,9 +113,20 @@ public class EpisodeDetailsFragment extends Fragment
 				              data.getInt(seasonNumberColumnIndex),
 				              data.getInt(episodeNumberColumnIndex));
 			seasonEpisodeView.setText(seasonEpisodeText);
+
+			int firstAiredColumnIndex =
+				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_FIRST_AIRED);
+			Date firstAired =
+				new Date(data.getLong(firstAiredColumnIndex) * 1000);
+			DateFormat df = DateFormat.getDateInstance();
+			String firstAiredText =
+				String.format(getString(R.string.first_aired),
+				              df.format(firstAired));
+			firstAiredView.setText(firstAiredText);
 		} else {
 			overviewView.setText("");
 			seasonEpisodeView.setText("");
+			firstAiredView.setText("");
 		}
 	}
 
@@ -118,5 +134,6 @@ public class EpisodeDetailsFragment extends Fragment
 	public void onLoaderReset(Loader<Cursor> loader) {
 		overviewView.setText("");
 		seasonEpisodeView.setText("");
+		firstAiredView.setText("");
 	}
 }
