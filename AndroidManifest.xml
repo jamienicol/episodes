@@ -4,9 +4,11 @@
     package="org.jamienicol.nextepisode"
     android:versionCode="1"
     android:versionName="0.1" >
+
   <uses-sdk
       android:minSdkVersion="11"
       android:targetSdkVersion="17" />
+
   <uses-permission
       android:name="android.permission.INTERNET" />
 
@@ -22,9 +24,6 @@
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
-      <meta-data
-          android:name="android.app.default_searchable"
-          android:value=".AddShowSearchActivity" />
     </activity>
 
     <activity
@@ -54,6 +53,8 @@
     <provider
         android:name=".db.ShowsProvider"
         android:authorities="org.jamienicol.nextepisode.db.ShowsProvider"
-        android:exported="false" />
+        android:exported="false" >
+    </provider>
+
   </application>
 </manifest>
