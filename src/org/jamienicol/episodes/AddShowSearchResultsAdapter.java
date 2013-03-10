@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode;
+package org.jamienicol.episodes;
 
 import android.content.Context;
 import java.util.List;
@@ -24,7 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import org.jamienicol.nextepisode.tvdb.Show;
+import org.jamienicol.episodes.tvdb.Show;
 
 public class AddShowSearchResultsAdapter extends ArrayAdapter<Show>
 {

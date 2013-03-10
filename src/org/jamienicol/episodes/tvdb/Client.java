@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode.tvdb;
+package org.jamienicol.episodes.tvdb;
 
 import android.util.Log;
 import java.io.BufferedInputStream;

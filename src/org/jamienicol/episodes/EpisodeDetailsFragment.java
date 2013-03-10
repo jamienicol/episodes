@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode;
+package org.jamienicol.episodes;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -31,8 +31,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.Date;
-import org.jamienicol.nextepisode.db.EpisodesTable;
-import org.jamienicol.nextepisode.db.ShowsProvider;
+import org.jamienicol.episodes.db.EpisodesTable;
+import org.jamienicol.episodes.db.ShowsProvider;
 
 public class EpisodeDetailsFragment extends Fragment
 	implements LoaderManager.LoaderCallbacks<Cursor>

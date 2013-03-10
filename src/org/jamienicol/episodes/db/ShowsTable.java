@@ -15,48 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode.db;
+package org.jamienicol.episodes.db;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
-public class EpisodesTable
+public class ShowsTable
 {
-	public static final String TABLE_NAME = "episodes";
+	public static final String TABLE_NAME = "shows";
 
 	public static final String COLUMN_ID = BaseColumns._ID;
 	public static final String COLUMN_TVDB_ID = "tvdb_id";
-	public static final String COLUMN_SHOW_ID = "show_id";
 	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_OVERVIEW = "overview";
-	public static final String COLUMN_EPISODE_NUMBER = "episode_number";
-	public static final String COLUMN_SEASON_NUMBER = "season_number";
 	public static final String COLUMN_FIRST_AIRED = "first_aired";
-	public static final String COLUMN_WATCHED = "watched";
 
 	public static void onCreate(SQLiteDatabase db) {
 		String create =
 			String.format("CREATE TABLE %s ("  +
 			              "    %s INTEGER PRIMARY KEY," +
 			              "    %s INTEGER UNIQUE NOT NULL," +
-			              "    %s INTEGER NOT NULL," +
 			              "    %s VARCHAR(200) NOT NULL," +
 			              "    %s TEXT," +
-			              "    %s INTEGER," +
-			              "    %s INTEGER," +
-			              "    %s DATE," +
-			              "    %s BOOLEAN" +
+			              "    %s DATE" +
 			              ");",
 			              TABLE_NAME,
 			              COLUMN_ID,
 			              COLUMN_TVDB_ID,
-			              COLUMN_SHOW_ID,
 			              COLUMN_NAME,
 			              COLUMN_OVERVIEW,
-			              COLUMN_EPISODE_NUMBER,
-			              COLUMN_SEASON_NUMBER,
-			              COLUMN_FIRST_AIRED,
-			              COLUMN_WATCHED);
+			              COLUMN_FIRST_AIRED);
 		db.execSQL(create);
 	}
 

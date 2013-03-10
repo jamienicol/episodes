@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode.db;
+package org.jamienicol.episodes.db;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -31,7 +31,7 @@ import android.net.Uri;
 public class ShowsProvider extends ContentProvider
 {
 	private static final String URI_AUTHORITY =
-		"org.jamienicol.nextepisode.db.ShowsProvider";
+		"org.jamienicol.episodes.db.ShowsProvider";
 
 	public static final Uri CONTENT_URI_SHOWS =
 		Uri.parse(ContentResolver.SCHEME_CONTENT +

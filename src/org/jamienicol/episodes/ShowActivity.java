@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode;
+package org.jamienicol.episodes;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
@@ -32,9 +32,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import org.jamienicol.nextepisode.db.EpisodesTable;
-import org.jamienicol.nextepisode.db.ShowsProvider;
-import org.jamienicol.nextepisode.db.ShowsTable;
+import org.jamienicol.episodes.db.EpisodesTable;
+import org.jamienicol.episodes.db.ShowsProvider;
+import org.jamienicol.episodes.db.ShowsTable;
 
 public class ShowActivity extends Activity
 	implements LoaderManager.LoaderCallbacks<Cursor>,

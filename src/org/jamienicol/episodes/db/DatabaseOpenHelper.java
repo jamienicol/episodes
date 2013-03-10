@@ -15,30 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode;
+package org.jamienicol.episodes.db;
 
-import java.util.List;
-import org.jamienicol.nextepisode.tvdb.Show;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
-public class AddShowSearchResults
+public class DatabaseOpenHelper extends SQLiteOpenHelper
 {
-	// singleton instance
-	private static AddShowSearchResults instance = new AddShowSearchResults();
+	private static final String name = "episodes.db";
+	private static final int version = 1;
 
-	private List<Show> data;
-
-	private AddShowSearchResults() {
+	DatabaseOpenHelper(Context context) {
+		super(context, name, null, version);
 	}
 
-	public static AddShowSearchResults getInstance() {
-		return instance;
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		ShowsTable.onCreate(db);
+		EpisodesTable.onCreate(db);
 	}
 
-	public List<Show> getData() {
-		return data;
-	}
-
-	public void setData(List<Show> data) {
-		this.data = data;
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		ShowsTable.onUpgrade(db, oldVersion, newVersion);
+		EpisodesTable.onUpgrade(db, oldVersion, newVersion);
 	}
 }

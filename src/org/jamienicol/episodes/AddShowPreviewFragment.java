@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode;
+package org.jamienicol.episodes;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -31,8 +31,8 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import org.jamienicol.nextepisode.services.AddShowService;
-import org.jamienicol.nextepisode.tvdb.Show;
+import org.jamienicol.episodes.services.AddShowService;
+import org.jamienicol.episodes.tvdb.Show;
 
 public class AddShowPreviewFragment extends Fragment
 {

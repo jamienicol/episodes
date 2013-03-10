@@ -15,19 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode.services;
+package org.jamienicol.episodes.services;
 
 import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
-import org.jamienicol.nextepisode.db.EpisodesTable;
-import org.jamienicol.nextepisode.db.ShowsTable;
-import org.jamienicol.nextepisode.db.ShowsProvider;
-import org.jamienicol.nextepisode.tvdb.Client;
-import org.jamienicol.nextepisode.tvdb.Episode;
-import org.jamienicol.nextepisode.tvdb.Show;
+import org.jamienicol.episodes.db.EpisodesTable;
+import org.jamienicol.episodes.db.ShowsTable;
+import org.jamienicol.episodes.db.ShowsProvider;
+import org.jamienicol.episodes.tvdb.Client;
+import org.jamienicol.episodes.tvdb.Episode;
+import org.jamienicol.episodes.tvdb.Show;
 
 public class AddShowService extends IntentService {
 	public AddShowService() {

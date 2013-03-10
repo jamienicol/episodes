@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode;
+package org.jamienicol.episodes;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
@@ -27,8 +27,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
-import org.jamienicol.nextepisode.db.EpisodesTable;
-import org.jamienicol.nextepisode.db.ShowsProvider;
+import org.jamienicol.episodes.db.EpisodesTable;
+import org.jamienicol.episodes.db.ShowsProvider;
 
 public class EpisodeActivity extends Activity
 	implements LoaderManager.LoaderCallbacks<Cursor>

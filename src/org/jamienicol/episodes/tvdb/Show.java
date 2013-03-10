@@ -15,26 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode.tvdb;
+package org.jamienicol.episodes.tvdb;
 
 import java.util.Date;
+import java.util.List;
 
-public class Episode
+public class Show
 {
 	private int id;
 	private String name;
 	private String overview;
-	private int episodeNumber;
-	private int seasonNumber;
 	private Date firstAired;
+	private List<Episode> episodes;
 
-	public Episode() {
+	public Show() {
 		id = 0;
 		name = "";
 		overview = "";
-		episodeNumber = 0;
-		seasonNumber = 0;
 		firstAired = null;
+		episodes = null;
 	}
 
 	public int getId() {
@@ -61,27 +60,19 @@ public class Episode
 		this.overview = overview;
 	}
 
-	public int getEpisodeNumber() {
-		return episodeNumber;
-	}
-
-	public void setEpisodeNumber(int episodeNumber) {
-		this.episodeNumber = episodeNumber;
-	}
-
-	public int getSeasonNumber() {
-		return seasonNumber;
-	}
-
-	public void setSeasonNumber(int seasonNumber) {
-		this.seasonNumber = seasonNumber;
-	}
-
 	public Date getFirstAired() {
 		return firstAired;
 	}
 
 	public void setFirstAired(Date firstAired) {
 		this.firstAired = firstAired;
+	}
+
+	public List<Episode> getEpisodes() {
+		return episodes;
+	}
+
+	public void setEpisodes(List<Episode> episodes) {
+		this.episodes = episodes;
 	}
 }

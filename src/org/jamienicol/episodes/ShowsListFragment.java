@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode;
+package org.jamienicol.episodes;
 
 import android.app.Activity;
 import android.app.ListFragment;
@@ -29,8 +29,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import org.jamienicol.nextepisode.db.ShowsProvider;
-import org.jamienicol.nextepisode.db.ShowsTable;
+import org.jamienicol.episodes.db.ShowsProvider;
+import org.jamienicol.episodes.db.ShowsTable;
 
 public class ShowsListFragment extends ListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>

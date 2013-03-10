@@ -15,40 +15,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode;
+package org.jamienicol.episodes;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.Window;
+import java.util.List;
+import org.jamienicol.episodes.tvdb.Show;
 
-public class AddShowSearchActivity extends Activity
+public class AddShowPreviewActivity extends Activity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.add_show_search_activity);
+		setContentView(R.layout.add_show_preview_activity);
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Intent intent = getIntent();
-		String query = intent.getStringExtra("query");
+		int searchResultIndex = intent.getIntExtra("searchResultIndex", 0);
 
-		setTitle(query);
+		AddShowSearchResults results = AddShowSearchResults.getInstance();
+		List<Show> resultsData = results.getData();
 
-		// create and add search fragment,
-		// but only on the first time the activity is created
+		// Ensure that there is actually data to display,
+		// because Android may have destroyed it.
+		if (resultsData == null) {
+			// Android has killed the singleton instance which held the
+			// data. There's nothing this activity can do, so finish.
+			finish();
+			return;
+		}
+
+		Show show = resultsData.get(searchResultIndex);
+		setTitle(show.getName());
+
+		// If this is the first time the activity has been created,
+		// create and add the preview fragment.
 		if (savedInstanceState == null) {
-			AddShowSearchFragment fragment =
-				AddShowSearchFragment.newInstance(query);
+			AddShowPreviewFragment fragment =
+				AddShowPreviewFragment.newInstance(searchResultIndex);
 			FragmentTransaction transaction =
 				getFragmentManager().beginTransaction();
-			transaction.add(R.id.search_fragment_container, fragment);
+			transaction.add(R.id.preview_fragment_container, fragment);
 			transaction.commit();
 		}
 	}
@@ -57,11 +70,6 @@ public class AddShowSearchActivity extends Activity
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			Intent intent = new Intent(this, MainActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-			                Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(intent);
-
 			finish();
 			return true;
 

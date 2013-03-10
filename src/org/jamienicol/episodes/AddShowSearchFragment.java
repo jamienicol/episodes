@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.nextepisode;
+package org.jamienicol.episodes;
 
 import android.app.Activity;
 import android.app.ListFragment;
@@ -32,10 +32,10 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import java.util.List;
-import org.jamienicol.nextepisode.db.ShowsProvider;
-import org.jamienicol.nextepisode.db.ShowsTable;
-import org.jamienicol.nextepisode.tvdb.Client;
-import org.jamienicol.nextepisode.tvdb.Show;
+import org.jamienicol.episodes.db.ShowsProvider;
+import org.jamienicol.episodes.db.ShowsTable;
+import org.jamienicol.episodes.tvdb.Client;
+import org.jamienicol.episodes.tvdb.Show;
 
 public class AddShowSearchFragment extends ListFragment
 	implements LoaderManager.LoaderCallbacks<List<Show>>
