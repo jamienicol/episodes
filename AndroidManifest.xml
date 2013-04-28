@@ -50,6 +50,10 @@
         android:name=".services.AddShowService" >
     </service>
 
+    <service
+        android:name=".services.RefreshShowService" >
+    </service>
+
     <provider
         android:name=".db.ShowsProvider"
         android:authorities="org.jamienicol.episodes.db.ShowsProvider"

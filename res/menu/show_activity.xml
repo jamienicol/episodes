@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:id="@+id/menu_refresh_show"
+        android:icon="@drawable/ic_menu_refresh_show"
+        android:title="@string/menu_refresh_show"
+        android:orderInCategory="0"
+        android:showAsAction="ifRoom" />
   <item android:id="@+id/menu_delete_show"
         android:icon="@drawable/ic_menu_delete_show"
         android:title="@string/menu_delete_show"

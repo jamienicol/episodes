@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
+import org.jamienicol.episodes.services.RefreshShowService;
 
 public class ShowActivity extends Activity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -121,6 +122,10 @@ public class ShowActivity extends Activity
 			finish();
 			return true;
 
+		case R.id.menu_refresh_show:
+			refreshShow();
+			return true;
+
 		case R.id.menu_delete_show:
 			deleteShow();
 			finish();
@@ -138,6 +143,13 @@ public class ShowActivity extends Activity
 		intent.putExtra("showId", showId);
 		intent.putExtra("seasonNumber", seasonNumber);
 		startActivity(intent);
+	}
+
+	private void refreshShow() {
+		Intent intent = new Intent(this, RefreshShowService.class);
+		intent.putExtra("showId", showId);
+
+		startService(intent);
 	}
 
 	private void deleteShow() {
