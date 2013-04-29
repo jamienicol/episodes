@@ -102,7 +102,12 @@ public class EpisodeDetailsFragment extends Fragment
 
 			int overviewColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_OVERVIEW);
-			overviewView.setText(data.getString(overviewColumnIndex));
+			if (data.isNull(overviewColumnIndex)) {
+				overviewView.setVisibility(View.INVISIBLE);
+			} else {
+				overviewView.setText(data.getString(overviewColumnIndex));
+				overviewView.setVisibility(View.VISIBLE);
+			}
 
 			int seasonNumberColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
@@ -113,27 +118,34 @@ public class EpisodeDetailsFragment extends Fragment
 				              data.getInt(seasonNumberColumnIndex),
 				              data.getInt(episodeNumberColumnIndex));
 			seasonEpisodeView.setText(seasonEpisodeText);
+			seasonEpisodeView.setVisibility(View.VISIBLE);
 
 			int firstAiredColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_FIRST_AIRED);
-			Date firstAired =
-				new Date(data.getLong(firstAiredColumnIndex) * 1000);
-			DateFormat df = DateFormat.getDateInstance();
-			String firstAiredText =
-				String.format(getString(R.string.first_aired),
-				              df.format(firstAired));
-			firstAiredView.setText(firstAiredText);
+			if (data.isNull(firstAiredColumnIndex)) {
+				firstAiredView.setVisibility(View.INVISIBLE);
+			} else {
+				Date firstAired =
+					new Date(data.getLong(firstAiredColumnIndex) * 1000);
+				DateFormat df = DateFormat.getDateInstance();
+				String firstAiredText =
+					String.format(getString(R.string.first_aired),
+					              df.format(firstAired));
+				firstAiredView.setText(firstAiredText);
+				firstAiredView.setVisibility(View.VISIBLE);
+			}
+
 		} else {
-			overviewView.setText("");
-			seasonEpisodeView.setText("");
-			firstAiredView.setText("");
+			overviewView.setVisibility(View.INVISIBLE);
+			seasonEpisodeView.setVisibility(View.INVISIBLE);
+			firstAiredView.setVisibility(View.INVISIBLE);
 		}
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		overviewView.setText("");
-		seasonEpisodeView.setText("");
-		firstAiredView.setText("");
+		overviewView.setVisibility(View.INVISIBLE);
+		seasonEpisodeView.setVisibility(View.INVISIBLE);
+		firstAiredView.setVisibility(View.INVISIBLE);
 	}
 }
