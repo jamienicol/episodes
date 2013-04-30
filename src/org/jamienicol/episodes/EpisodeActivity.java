@@ -21,16 +21,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.MenuItem;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
-public class EpisodeActivity extends FragmentActivity
+public class EpisodeActivity extends SherlockFragmentActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	@Override
@@ -38,7 +38,7 @@ public class EpisodeActivity extends FragmentActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.episode_activity);
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Intent intent = getIntent();
 		int episodeId = intent.getIntExtra("episodeId", -1);

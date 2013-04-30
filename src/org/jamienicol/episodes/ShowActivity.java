@@ -20,24 +20,24 @@ package org.jamienicol.episodes;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.services.RefreshShowService;
 
-public class ShowActivity extends FragmentActivity
+public class ShowActivity extends SherlockFragmentActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
 	           SeasonsListFragment.OnSeasonSelectedListener
 {
@@ -49,7 +49,7 @@ public class ShowActivity extends FragmentActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.show_activity);
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Intent intent = getIntent();
 		showId = intent.getIntExtra("showId", -1);
@@ -75,7 +75,7 @@ public class ShowActivity extends FragmentActivity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
+		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.show_activity, menu);
 
 		return true;

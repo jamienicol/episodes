@@ -19,11 +19,11 @@ package org.jamienicol.episodes;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.view.MenuItem;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 
-public class SeasonActivity extends FragmentActivity
+public class SeasonActivity extends SherlockFragmentActivity
 	implements EpisodesListFragment.OnEpisodeSelectedListener
 {
 	@Override
@@ -32,7 +32,7 @@ public class SeasonActivity extends FragmentActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.season_activity);
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Intent intent = getIntent();
 		int showId = intent.getIntExtra("showId", -1);

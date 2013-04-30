@@ -19,13 +19,13 @@ package org.jamienicol.episodes;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.view.MenuItem;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import java.util.List;
 import org.jamienicol.episodes.tvdb.Show;
 
-public class AddShowPreviewActivity extends FragmentActivity
+public class AddShowPreviewActivity extends SherlockFragmentActivity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -34,7 +34,7 @@ public class AddShowPreviewActivity extends FragmentActivity
 
 		setContentView(R.layout.add_show_preview_activity);
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Intent intent = getIntent();
 		int searchResultIndex = intent.getIntExtra("searchResultIndex", 0);

@@ -20,13 +20,13 @@ package org.jamienicol.episodes;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.SearchView;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 
-public class MainActivity extends FragmentActivity
+public class MainActivity extends SherlockFragmentActivity
 	implements ShowsListFragment.OnShowSelectedListener
 {
 	/** Called when the activity is first created. */
@@ -39,7 +39,7 @@ public class MainActivity extends FragmentActivity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
+		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.main, menu);
 
 		SearchView addShow = (SearchView)menu.findItem(R.id.menu_add_show_search).getActionView();

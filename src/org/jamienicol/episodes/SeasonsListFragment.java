@@ -25,26 +25,26 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import java.util.HashSet;
 import java.util.Set;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
-public class SeasonsListFragment extends ListFragment
+public class SeasonsListFragment extends SherlockListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private int showId;

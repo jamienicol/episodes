@@ -19,12 +19,12 @@ package org.jamienicol.episodes;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.view.MenuItem;
 import android.view.Window;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 
-public class AddShowSearchActivity extends FragmentActivity
+public class AddShowSearchActivity extends SherlockFragmentActivity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -34,7 +34,7 @@ public class AddShowSearchActivity extends FragmentActivity
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.add_show_search_activity);
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Intent intent = getIntent();
 		String query = intent.getStringExtra("query");
