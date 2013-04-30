@@ -17,20 +17,20 @@
 
 package org.jamienicol.episodes;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
-public class EpisodeActivity extends Activity
+public class EpisodeActivity extends FragmentActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	@Override
@@ -48,7 +48,7 @@ public class EpisodeActivity extends Activity
 
 		Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("episodeId", episodeId);
-		getLoaderManager().initLoader(0, loaderArgs, this);
+		getSupportLoaderManager().initLoader(0, loaderArgs, this);
 
 		// create and add episode details fragment,
 		// but only on the first time the activity is created
@@ -56,7 +56,7 @@ public class EpisodeActivity extends Activity
 			EpisodeDetailsFragment fragment =
 				EpisodeDetailsFragment.newInstance(episodeId);
 			FragmentTransaction transaction =
-				getFragmentManager().beginTransaction();
+				getSupportFragmentManager().beginTransaction();
 			transaction.add(R.id.episode_details_fragment_container, fragment);
 			transaction.commit();
 		}

@@ -17,18 +17,18 @@
 
 package org.jamienicol.episodes;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
-import android.app.LoaderManager;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,7 +37,7 @@ import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.services.RefreshShowService;
 
-public class ShowActivity extends Activity
+public class ShowActivity extends FragmentActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
 	           SeasonsListFragment.OnSeasonSelectedListener
 {
@@ -59,7 +59,7 @@ public class ShowActivity extends Activity
 
 		Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("showId", showId);
-		getLoaderManager().initLoader(0, loaderArgs, this);
+		getSupportLoaderManager().initLoader(0, loaderArgs, this);
 
 		// create and add seasons list fragment,
 		// but only on the first time the activity is created
@@ -67,7 +67,7 @@ public class ShowActivity extends Activity
 			SeasonsListFragment fragment =
 				SeasonsListFragment.newInstance(showId);
 			FragmentTransaction transaction =
-				getFragmentManager().beginTransaction();
+				getSupportFragmentManager().beginTransaction();
 			transaction.add(R.id.seasons_list_fragment_container, fragment);
 			transaction.commit();
 		}

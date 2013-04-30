@@ -17,15 +17,15 @@
 
 package org.jamienicol.episodes;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import java.util.List;
 import org.jamienicol.episodes.tvdb.Show;
 
-public class AddShowPreviewActivity extends Activity
+public class AddShowPreviewActivity extends FragmentActivity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -60,7 +60,7 @@ public class AddShowPreviewActivity extends Activity
 			AddShowPreviewFragment fragment =
 				AddShowPreviewFragment.newInstance(searchResultIndex);
 			FragmentTransaction transaction =
-				getFragmentManager().beginTransaction();
+				getSupportFragmentManager().beginTransaction();
 			transaction.add(R.id.preview_fragment_container, fragment);
 			transaction.commit();
 		}

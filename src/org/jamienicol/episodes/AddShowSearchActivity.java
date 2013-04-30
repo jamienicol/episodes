@@ -17,14 +17,14 @@
 
 package org.jamienicol.episodes;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.Window;
 
-public class AddShowSearchActivity extends Activity
+public class AddShowSearchActivity extends FragmentActivity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -47,7 +47,7 @@ public class AddShowSearchActivity extends Activity
 			AddShowSearchFragment fragment =
 				AddShowSearchFragment.newInstance(query);
 			FragmentTransaction transaction =
-				getFragmentManager().beginTransaction();
+				getSupportFragmentManager().beginTransaction();
 			transaction.add(R.id.search_fragment_container, fragment);
 			transaction.commit();
 		}

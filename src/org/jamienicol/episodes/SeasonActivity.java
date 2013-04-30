@@ -17,13 +17,13 @@
 
 package org.jamienicol.episodes;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
-public class SeasonActivity extends Activity
+public class SeasonActivity extends FragmentActivity
 	implements EpisodesListFragment.OnEpisodeSelectedListener
 {
 	@Override
@@ -57,7 +57,7 @@ public class SeasonActivity extends Activity
 			EpisodesListFragment fragment =
 				EpisodesListFragment.newInstance(showId, seasonNumber);
 			FragmentTransaction transaction =
-				getFragmentManager().beginTransaction();
+				getSupportFragmentManager().beginTransaction();
 			transaction.add(R.id.episodes_list_fragment_container, fragment);
 			transaction.commit();
 		}
