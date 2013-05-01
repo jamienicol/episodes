@@ -17,6 +17,9 @@
 
 package org.jamienicol.episodes;
 
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,8 +29,13 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import java.text.DateFormat;
 import java.util.Date;
 import org.jamienicol.episodes.db.EpisodesTable;
@@ -36,9 +44,11 @@ import org.jamienicol.episodes.db.ShowsProvider;
 public class EpisodeDetailsFragment extends SherlockFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
+	private int episodeId;
 	private TextView overviewView;
 	private TextView seasonEpisodeView;
 	private TextView firstAiredView;
+	private CheckBox watchedCheckBox;
 
 	public static EpisodeDetailsFragment newInstance(int episodeId) {
 		EpisodeDetailsFragment instance = new EpisodeDetailsFragment();
@@ -48,6 +58,15 @@ public class EpisodeDetailsFragment extends SherlockFragment
 
 		instance.setArguments(args);
 		return instance;
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		episodeId = getArguments().getInt("episodeId");
+
+		setHasOptionsMenu(true);
 	}
 
 	public View onCreateView(LayoutInflater inflater,
@@ -65,11 +84,39 @@ public class EpisodeDetailsFragment extends SherlockFragment
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.episode_details_fragment, menu);
 
-		int episodeId = getArguments().getInt("episodeId");
+		watchedCheckBox =
+			(CheckBox)menu.findItem(R.id.menu_watched).getActionView();
 
+		final ContentResolver contentResolver =
+			getActivity().getContentResolver();
+		watchedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView,
+			                             boolean isChecked) {
+				AsyncQueryHandler handler =
+					new AsyncQueryHandler(contentResolver) {};
+
+				Uri episodeUri =
+					Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
+					                     new Integer(episodeId).toString());
+
+				ContentValues episodeValues = new ContentValues();
+				episodeValues.put(EpisodesTable.COLUMN_WATCHED, isChecked);
+
+				handler.startUpdate(0,
+				                    null,
+				                    episodeUri,
+				                    episodeValues,
+				                    null,
+				                    null);
+			}});
+
+		/* initialise and start the loader now that we finally have
+		 * the reference to watchedCheckBox. if we'd started it
+		 * during onActivityCreated then watchedCheckBox would still be
+		 * null when the data finished loading */
 		Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("episodeId", episodeId);
 		getLoaderManager().initLoader(0, loaderArgs, this);
@@ -84,7 +131,8 @@ public class EpisodeDetailsFragment extends SherlockFragment
 			EpisodesTable.COLUMN_OVERVIEW,
 			EpisodesTable.COLUMN_SEASON_NUMBER,
 			EpisodesTable.COLUMN_EPISODE_NUMBER,
-			EpisodesTable.COLUMN_FIRST_AIRED
+			EpisodesTable.COLUMN_FIRST_AIRED,
+			EpisodesTable.COLUMN_WATCHED
 		};
 		return new CursorLoader(getActivity(),
 		                        uri,
@@ -134,10 +182,17 @@ public class EpisodeDetailsFragment extends SherlockFragment
 				firstAiredView.setVisibility(View.VISIBLE);
 			}
 
+			int watchedColumnIndex =
+				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
+			int watched = data.getInt(watchedColumnIndex);
+			watchedCheckBox.setChecked(watched != 0);
+			watchedCheckBox.setVisibility(View.VISIBLE);
+
 		} else {
 			overviewView.setVisibility(View.INVISIBLE);
 			seasonEpisodeView.setVisibility(View.INVISIBLE);
 			firstAiredView.setVisibility(View.INVISIBLE);
+			watchedCheckBox.setVisibility(View.INVISIBLE);
 		}
 	}
 
@@ -146,5 +201,6 @@ public class EpisodeDetailsFragment extends SherlockFragment
 		overviewView.setVisibility(View.INVISIBLE);
 		seasonEpisodeView.setVisibility(View.INVISIBLE);
 		firstAiredView.setVisibility(View.INVISIBLE);
+		watchedCheckBox.setVisibility(View.INVISIBLE);
 	}
 }
