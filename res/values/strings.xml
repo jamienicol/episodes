@@ -12,5 +12,7 @@
   <string name="season_episode">Season %1$d Episode %2$d</string>
   <string name="season_name">Season %d</string>
   <string name="season_name_specials">Specials</string>
+  <string name="show_tab_overview">Overview</string>
+  <string name="show_tab_episodes">Episodes</string>
   <string name="watched_action_check_box">Watched</string>
 </resources>

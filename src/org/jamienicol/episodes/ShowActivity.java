@@ -32,6 +32,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -46,7 +47,7 @@ public class ShowActivity extends SherlockFragmentActivity
 	           SeasonsListFragment.OnSeasonSelectedListener
 {
 	private int showId;
-	private PagerAdapter pagerAdapter;
+	private TabsAdapter pagerAdapter;
 	private ViewPager pager;
 
 	@Override
@@ -67,8 +68,29 @@ public class ShowActivity extends SherlockFragmentActivity
 		loaderArgs.putInt("showId", showId);
 		getSupportLoaderManager().initLoader(0, loaderArgs, this);
 
-		pagerAdapter = new PagerAdapter(getSupportFragmentManager(), showId);
+		final ActionBar bar = getSupportActionBar();
+		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
 		pager = (ViewPager)findViewById(R.id.pager);
+		pagerAdapter = new TabsAdapter(this,
+		                               getSupportFragmentManager(),
+		                               bar,
+		                               pager);
+
+		Bundle fragmentArgs = new Bundle();
+		fragmentArgs.putInt("showId", showId);
+
+		ActionBar.Tab overviewTab = bar.newTab();
+		overviewTab.setText(R.string.show_tab_overview);
+		pagerAdapter.addTab(overviewTab,
+		                    ShowDetailsFragment.class,
+		                    fragmentArgs);
+		ActionBar.Tab episodesTab = bar.newTab();
+		episodesTab.setText(R.string.show_tab_episodes);
+		pagerAdapter.addTab(episodesTab,
+		                    SeasonsListFragment.class,
+		                    fragmentArgs);
+
 		pager.setAdapter(pagerAdapter);
 	}
 
@@ -176,36 +198,5 @@ public class ShowActivity extends SherlockFragmentActivity
 		                    showUri,
 		                    null,
 		                    null);
-	}
-
-	private static class PagerAdapter
-		extends FragmentPagerAdapter
-	{
-		private int showId;
-
-		public PagerAdapter(FragmentManager fragmentManager, int showId) {
-			super(fragmentManager);
-
-			this.showId = showId;
-		}
-
-		@Override
-		public int getCount() {
-			return 2;
-		}
-
-		@Override
-		public Fragment getItem(int position) {
-			switch (position) {
-			case 0:
-				return ShowDetailsFragment.newInstance(showId);
-
-			case 1:
-				return SeasonsListFragment.newInstance(showId);
-
-			default:
-				return null;
-			}
-		}
 	}
 }
