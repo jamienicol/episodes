@@ -24,10 +24,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -42,6 +46,8 @@ public class ShowActivity extends SherlockFragmentActivity
 	           SeasonsListFragment.OnSeasonSelectedListener
 {
 	private int showId;
+	private PagerAdapter pagerAdapter;
+	private ViewPager pager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -61,16 +67,9 @@ public class ShowActivity extends SherlockFragmentActivity
 		loaderArgs.putInt("showId", showId);
 		getSupportLoaderManager().initLoader(0, loaderArgs, this);
 
-		// create and add seasons list fragment,
-		// but only on the first time the activity is created
-		if (savedInstanceState == null) {
-			SeasonsListFragment fragment =
-				SeasonsListFragment.newInstance(showId);
-			FragmentTransaction transaction =
-				getSupportFragmentManager().beginTransaction();
-			transaction.add(R.id.seasons_list_fragment_container, fragment);
-			transaction.commit();
-		}
+		pagerAdapter = new PagerAdapter(getSupportFragmentManager(), showId);
+		pager = (ViewPager)findViewById(R.id.pager);
+		pager.setAdapter(pagerAdapter);
 	}
 
 	@Override
@@ -177,5 +176,36 @@ public class ShowActivity extends SherlockFragmentActivity
 		                    showUri,
 		                    null,
 		                    null);
+	}
+
+	private static class PagerAdapter
+		extends FragmentPagerAdapter
+	{
+		private int showId;
+
+		public PagerAdapter(FragmentManager fragmentManager, int showId) {
+			super(fragmentManager);
+
+			this.showId = showId;
+		}
+
+		@Override
+		public int getCount() {
+			return 2;
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			switch (position) {
+			case 0:
+				return ShowDetailsFragment.newInstance(showId);
+
+			case 1:
+				return SeasonsListFragment.newInstance(showId);
+
+			default:
+				return null;
+			}
+		}
 	}
 }
