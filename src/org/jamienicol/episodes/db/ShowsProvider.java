@@ -24,12 +24,16 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 public class ShowsProvider extends ContentProvider
 {
+	private static final String TAG = "ShowsProvider";
+
 	private static final String URI_AUTHORITY =
 		"org.jamienicol.episodes.db.ShowsProvider";
 
@@ -155,16 +159,19 @@ public class ShowsProvider extends ContentProvider
 		}
 
 		SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
-		long rowId = db.insert(table, null, values);
-
-		if (rowId > 0) {
+		try {
+			long rowId = db.insertOrThrow(table, null, values);
+			Log.i(TAG, String.format("succesfully inserted row. id: %d",
+			                         rowId));
 			Uri rowUri = ContentUris.withAppendedId(contentUri,
 			                                        rowId);
 			getContext().getContentResolver().notifyChange(rowUri, null);
 
 			return rowUri;
-		} else {
-			throw new SQLException("Failed to insert row into " + uri);
+		} catch (SQLiteConstraintException e) {
+			Log.i(TAG, String.format("constraint error inserting row: %s",
+			                         e.toString()));
+			return null;
 		}
 	}
 

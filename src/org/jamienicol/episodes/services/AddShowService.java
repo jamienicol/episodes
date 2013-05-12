@@ -22,6 +22,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.db.ShowsProvider;
@@ -29,7 +30,10 @@ import org.jamienicol.episodes.tvdb.Client;
 import org.jamienicol.episodes.tvdb.Episode;
 import org.jamienicol.episodes.tvdb.Show;
 
-public class AddShowService extends IntentService {
+public class AddShowService extends IntentService
+{
+	private static final String TAG = "AddShowService";
+
 	public AddShowService() {
 		super("AddShowService");
 	}
@@ -58,29 +62,39 @@ public class AddShowService extends IntentService {
 			getContentResolver().insert(ShowsProvider.CONTENT_URI_SHOWS,
 			                            showValues);
 
-		// need to obtain the ID of the inserted show for the episodes'
-		// show ID columns. the ID is just the final segment of the URI
-		int showId = Integer.parseInt(showUri.getLastPathSegment());
+		if (showUri != null) {
+			// need to obtain the ID of the inserted show.
+			// the ID is just the final segment of the URI
+			int showId = Integer.parseInt(showUri.getLastPathSegment());
 
-		// insert each episode into the database
-		for (Episode ep : show.getEpisodes()) {
-			ContentValues epValues = new ContentValues();
-			epValues.put(EpisodesTable.COLUMN_TVDB_ID, ep.getId());
-			epValues.put(EpisodesTable.COLUMN_SHOW_ID, showId);
-			epValues.put(EpisodesTable.COLUMN_NAME, ep.getName());
-			epValues.put(EpisodesTable.COLUMN_OVERVIEW,
-			             ep.getOverview());
-			epValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER,
-			             ep.getEpisodeNumber());
-			epValues.put(EpisodesTable.COLUMN_SEASON_NUMBER,
-			             ep.getSeasonNumber());
-			if (ep.getFirstAired() != null) {
-				epValues.put(EpisodesTable.COLUMN_FIRST_AIRED,
-				             ep.getFirstAired().getTime() / 1000);
+			Log.i(TAG, String.format("show %s successfully added to database as row %d. adding episodes",
+			                         show.getName(),
+			                         showId));
+
+			// insert each episode into the database
+			for (Episode ep : show.getEpisodes()) {
+				ContentValues epValues = new ContentValues();
+				epValues.put(EpisodesTable.COLUMN_TVDB_ID, ep.getId());
+				epValues.put(EpisodesTable.COLUMN_SHOW_ID, showId);
+				epValues.put(EpisodesTable.COLUMN_NAME, ep.getName());
+				epValues.put(EpisodesTable.COLUMN_OVERVIEW,
+				             ep.getOverview());
+				epValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER,
+				             ep.getEpisodeNumber());
+				epValues.put(EpisodesTable.COLUMN_SEASON_NUMBER,
+				             ep.getSeasonNumber());
+				if (ep.getFirstAired() != null) {
+					epValues.put(EpisodesTable.COLUMN_FIRST_AIRED,
+					             ep.getFirstAired().getTime() / 1000);
+				}
+
+				getContentResolver().insert(ShowsProvider.CONTENT_URI_EPISODES,
+				                            epValues);
 			}
 
-			getContentResolver().insert(ShowsProvider.CONTENT_URI_EPISODES,
-			                            epValues);
+		} else {
+			Log.i(TAG, String.format("show %s not added to database. skipping episodes",
+			                         show.getName()));
 		}
 	}
 }
