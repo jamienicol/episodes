@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:id="@+id/menu_refresh_show"
-        android:icon="@drawable/ic_menu_refresh_show"
-        android:title="@string/menu_refresh_show"
-        android:orderInCategory="0"
-        android:showAsAction="ifRoom" />
-  <item android:id="@+id/menu_delete_show"
-        android:icon="@drawable/ic_menu_delete_show"
-        android:title="@string/menu_delete_show"
-        android:orderInCategory="20"
-        android:showAsAction="never" />
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+      android:id="@+id/menu_refresh_show"
+      android:icon="@drawable/ic_menu_refresh_show"
+      android:title="@string/menu_refresh_show"
+      android:showAsAction="ifRoom" />
+  <item
+      android:id="@+id/menu_mark_show_watched"
+      android:title="@string/menu_mark_show_watched"
+      android:showAsAction="never" />
+  <item
+      android:id="@+id/menu_mark_show_not_watched"
+      android:title="@string/menu_mark_show_not_watched"
+      android:showAsAction="never" />
+  <item
+      android:id="@+id/menu_delete_show"
+      android:icon="@drawable/ic_menu_delete_show"
+      android:title="@string/menu_delete_show"
+      android:showAsAction="never" />
 </menu>

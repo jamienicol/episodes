@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:id="@+id/menu_mark_all_watched"
-        android:title="@string/menu_mark_all_watched"
-        android:showAsAction="never" />
-  <item android:id="@+id/menu_mark_all_not_watched"
-        android:title="@string/menu_mark_all_not_watched"
-        android:showAsAction="never" />
-</menu>

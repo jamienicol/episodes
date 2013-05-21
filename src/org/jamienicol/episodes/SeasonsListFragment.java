@@ -18,9 +18,6 @@
 package org.jamienicol.episodes;
 
 import android.app.Activity;
-import android.content.AsyncQueryHandler;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
@@ -36,9 +33,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import java.util.HashSet;
 import java.util.Set;
 import org.jamienicol.episodes.db.EpisodesTable;
@@ -63,12 +57,6 @@ public class SeasonsListFragment extends SherlockListFragment
 
 		instance.setArguments(args);
 		return instance;
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
 	}
 
 	@Override
@@ -122,27 +110,6 @@ public class SeasonsListFragment extends SherlockListFragment
 		// Using restartLoader causes the MatrixCursor to be recreated so
 		// this works fine for now, but there's probably a better fix.
 		getLoaderManager().restartLoader(0, loaderArgs, this);
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.seasons_list_fragment, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_mark_all_watched:
-			markAllWatched(true);
-			return true;
-
-		case R.id.menu_mark_all_not_watched:
-			markAllWatched(false);
-			return true;
-
-		default:
-			return super.onOptionsItemSelected(item);
-		}
 	}
 
 	@Override
@@ -212,25 +179,6 @@ public class SeasonsListFragment extends SherlockListFragment
 		// the id has been set to be the season number,
 		// so pass it to the listener.
 		onSeasonSelectedListener.onSeasonSelected((int)id);
-	}
-
-	private void markAllWatched(boolean watched) {
-		ContentResolver contentResolver = getActivity().getContentResolver();
-		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
-		ContentValues epValues = new ContentValues();
-		epValues.put(EpisodesTable.COLUMN_WATCHED, watched);
-		String selection = String.format("%s=?",
-		                                 EpisodesTable.COLUMN_SHOW_ID);
-		String[] selectionArgs = {
-			new Integer(showId).toString()
-		};
-
-		handler.startUpdate(0,
-		                    null,
-		                    ShowsProvider.CONTENT_URI_EPISODES,
-		                    epValues,
-		                    selection,
-		                    selectionArgs);
 	}
 
 	private class SeasonsViewBinder implements SimpleCursorAdapter.ViewBinder

@@ -17,15 +17,25 @@
 
 package org.jamienicol.episodes;
 
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import org.jamienicol.episodes.db.EpisodesTable;
+import org.jamienicol.episodes.db.ShowsProvider;
 
 public class SeasonActivity extends SherlockFragmentActivity
 	implements EpisodesListFragment.OnEpisodeSelectedListener
 {
+	private int showId;
+	private int seasonNumber;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -35,11 +45,11 @@ public class SeasonActivity extends SherlockFragmentActivity
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Intent intent = getIntent();
-		int showId = intent.getIntExtra("showId", -1);
+		showId = intent.getIntExtra("showId", -1);
 		if (showId == -1) {
 			throw new IllegalArgumentException("must provide valid showId");
 		}
-		int seasonNumber = intent.getIntExtra("seasonNumber", -1);
+		seasonNumber = intent.getIntExtra("seasonNumber", -1);
 		if (seasonNumber == -1) {
 			throw new IllegalArgumentException("must provide valid seasonNumber");
 		}
@@ -64,10 +74,26 @@ public class SeasonActivity extends SherlockFragmentActivity
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.season_activity, menu);
+
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			finish();
+			return true;
+
+		case R.id.menu_mark_season_watched:
+			markSeasonWatched(true);
+			return true;
+
+		case R.id.menu_mark_season_not_watched:
+			markSeasonWatched(false);
 			return true;
 
 		default:
@@ -81,5 +107,26 @@ public class SeasonActivity extends SherlockFragmentActivity
 		                           EpisodeActivity.class);
 		intent.putExtra("episodeId", episodeId);
 		startActivity(intent);
+	}
+
+	private void markSeasonWatched(boolean watched) {
+		ContentResolver contentResolver = getContentResolver();
+		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
+		ContentValues epValues = new ContentValues();
+		epValues.put(EpisodesTable.COLUMN_WATCHED, watched);
+		String selection = String.format("%s=? AND %s=?",
+		                                 EpisodesTable.COLUMN_SHOW_ID,
+		                                 EpisodesTable.COLUMN_SEASON_NUMBER);
+		String[] selectionArgs = {
+			new Integer(showId).toString(),
+			new Integer(seasonNumber).toString()
+		};
+
+		handler.startUpdate(0,
+		                    null,
+		                    ShowsProvider.CONTENT_URI_EPISODES,
+		                    epValues,
+		                    selection,
+		                    selectionArgs);
 	}
 }

@@ -19,7 +19,7 @@ package org.jamienicol.episodes;
 
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
-import android.content.Intent;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -147,6 +147,14 @@ public class ShowActivity extends SherlockFragmentActivity
 			refreshShow();
 			return true;
 
+		case R.id.menu_mark_show_watched:
+			markShowWatched(true);
+			return true;
+
+		case R.id.menu_mark_show_not_watched:
+			markShowWatched(false);
+			return true;
+
 		case R.id.menu_delete_show:
 			deleteShow();
 			finish();
@@ -171,6 +179,25 @@ public class ShowActivity extends SherlockFragmentActivity
 		intent.putExtra("showId", showId);
 
 		startService(intent);
+	}
+
+	private void markShowWatched(boolean watched) {
+		ContentResolver contentResolver = getContentResolver();
+		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
+		ContentValues epValues = new ContentValues();
+		epValues.put(EpisodesTable.COLUMN_WATCHED, watched);
+		String selection = String.format("%s=?",
+		                                 EpisodesTable.COLUMN_SHOW_ID);
+		String[] selectionArgs = {
+			new Integer(showId).toString()
+		};
+
+		handler.startUpdate(0,
+		                    null,
+		                    ShowsProvider.CONTENT_URI_EPISODES,
+		                    epValues,
+		                    selection,
+		                    selectionArgs);
 	}
 
 	private void deleteShow() {

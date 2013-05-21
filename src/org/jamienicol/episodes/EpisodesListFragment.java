@@ -37,9 +37,6 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
@@ -65,11 +62,6 @@ public class EpisodesListFragment extends SherlockListFragment
 
 		instance.setArguments(args);
 		return instance;
-	}
-
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
 	}
 
 	@Override
@@ -108,27 +100,6 @@ public class EpisodesListFragment extends SherlockListFragment
 		loaderArgs.putInt("showId", showId);
 		loaderArgs.putInt("seasonNumber", seasonNumber);
 		getLoaderManager().initLoader(0, loaderArgs, this);
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.episodes_list_fragment, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_mark_all_watched:
-			markAllWatched(true);
-			return true;
-
-		case R.id.menu_mark_all_not_watched:
-			markAllWatched(false);
-			return true;
-
-		default:
-			return super.onOptionsItemSelected(item);
-		}
 	}
 
 	@Override
@@ -171,27 +142,6 @@ public class EpisodesListFragment extends SherlockListFragment
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// pass the episode id to the listener.
 		onEpisodeSelectedListener.onEpisodeSelected((int)id);
-	}
-
-	private void markAllWatched(boolean watched) {
-		ContentResolver contentResolver = getActivity().getContentResolver();
-		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
-		ContentValues epValues = new ContentValues();
-		epValues.put(EpisodesTable.COLUMN_WATCHED, watched);
-		String selection = String.format("%s=? AND %s=?",
-		                                 EpisodesTable.COLUMN_SHOW_ID,
-		                                 EpisodesTable.COLUMN_SEASON_NUMBER);
-		String[] selectionArgs = {
-			new Integer(showId).toString(),
-			new Integer(seasonNumber).toString()
-		};
-
-		handler.startUpdate(0,
-		                    null,
-		                    ShowsProvider.CONTENT_URI_EPISODES,
-		                    epValues,
-		                    selection,
-		                    selectionArgs);
 	}
 
 	private static class EpisodesCursorAdapter
