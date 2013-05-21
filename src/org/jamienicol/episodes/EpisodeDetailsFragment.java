@@ -177,14 +177,19 @@ public class EpisodeDetailsFragment extends SherlockFragment
 
 			int seasonNumberColumnIndex =
 				episodeData.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
-			int episodeNumberColumnIndex =
-				episodeData.getColumnIndexOrThrow(EpisodesTable.COLUMN_EPISODE_NUMBER);
-			String seasonEpisodeText =
-				String.format(getActivity().getString(R.string.season_episode),
-				              episodeData.getInt(seasonNumberColumnIndex),
-				              episodeData.getInt(episodeNumberColumnIndex));
-			seasonEpisodeView.setText(seasonEpisodeText);
-			seasonEpisodeView.setVisibility(View.VISIBLE);
+			int seasonNumber = episodeData.getInt(seasonNumberColumnIndex);
+			if (seasonNumber == 0) {
+				seasonEpisodeView.setVisibility(View.INVISIBLE);
+			} else {
+				int episodeNumberColumnIndex =
+					episodeData.getColumnIndexOrThrow(EpisodesTable.COLUMN_EPISODE_NUMBER);
+				String seasonEpisodeText =
+					String.format(getActivity().getString(R.string.season_episode),
+					              episodeData.getInt(seasonNumberColumnIndex),
+					              episodeData.getInt(episodeNumberColumnIndex));
+				seasonEpisodeView.setText(seasonEpisodeText);
+				seasonEpisodeView.setVisibility(View.VISIBLE);
+			}
 
 			int firstAiredColumnIndex =
 				episodeData.getColumnIndexOrThrow(EpisodesTable.COLUMN_FIRST_AIRED);
