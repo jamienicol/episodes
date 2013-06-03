@@ -21,6 +21,7 @@ import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import org.jamienicol.episodes.db.EpisodesTable;
@@ -44,9 +45,38 @@ public class AddShowService extends IntentService
 
 		int tvdbId = intent.getIntExtra("tvdbId", 0);
 
-		// fetch full show + episode information from tvdb
-		Show show = tvdbClient.getShow(tvdbId);
+		if (isShowAlreadyAdded(tvdbId) == false) {
 
+			// fetch full show + episode information from tvdb
+			Show show = tvdbClient.getShow(tvdbId);
+
+			// add show and episodes to database
+			int showId = insertShow(show);
+			for (Episode episode : show.getEpisodes()) {
+				insertEpisode(episode, showId);
+			}
+		}
+	}
+
+	private boolean isShowAlreadyAdded(int tvdbId) {
+		final String[] projection = {
+		};
+		final String selection = String.format("%s=?",
+		                                       ShowsTable.COLUMN_TVDB_ID);
+		final String[] selectionArgs = {
+			new Integer(tvdbId).toString()
+		};
+		Cursor cursor =
+			getContentResolver().query(ShowsProvider.CONTENT_URI_SHOWS,
+			                           projection,
+			                           selection,
+			                           selectionArgs,
+			                           null);
+
+		return cursor.moveToFirst();
+	}
+
+	private int insertShow(Show show) {
 		// fill in information about the show
 		ContentValues showValues = new ContentValues();
 		showValues.put(ShowsTable.COLUMN_TVDB_ID, show.getId());
@@ -62,39 +92,34 @@ public class AddShowService extends IntentService
 			getContentResolver().insert(ShowsProvider.CONTENT_URI_SHOWS,
 			                            showValues);
 
-		if (showUri != null) {
-			// need to obtain the ID of the inserted show.
-			// the ID is just the final segment of the URI
-			int showId = Integer.parseInt(showUri.getLastPathSegment());
+		// need to obtain the ID of the inserted show.
+		// the ID is just the final segment of the URI
+		int showId = Integer.parseInt(showUri.getLastPathSegment());
 
-			Log.i(TAG, String.format("show %s successfully added to database as row %d. adding episodes",
-			                         show.getName(),
-			                         showId));
+		Log.i(TAG, String.format("show %s successfully added to database as row %d. adding episodes",
+		                         show.getName(),
+		                         showId));
 
-			// insert each episode into the database
-			for (Episode ep : show.getEpisodes()) {
-				ContentValues epValues = new ContentValues();
-				epValues.put(EpisodesTable.COLUMN_TVDB_ID, ep.getId());
-				epValues.put(EpisodesTable.COLUMN_SHOW_ID, showId);
-				epValues.put(EpisodesTable.COLUMN_NAME, ep.getName());
-				epValues.put(EpisodesTable.COLUMN_OVERVIEW,
-				             ep.getOverview());
-				epValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER,
-				             ep.getEpisodeNumber());
-				epValues.put(EpisodesTable.COLUMN_SEASON_NUMBER,
-				             ep.getSeasonNumber());
-				if (ep.getFirstAired() != null) {
-					epValues.put(EpisodesTable.COLUMN_FIRST_AIRED,
-					             ep.getFirstAired().getTime() / 1000);
-				}
+		return showId;
+	}
 
-				getContentResolver().insert(ShowsProvider.CONTENT_URI_EPISODES,
-				                            epValues);
-			}
-
-		} else {
-			Log.i(TAG, String.format("show %s not added to database. skipping episodes",
-			                         show.getName()));
+	private void insertEpisode(Episode episode, int showId) {
+		ContentValues episodeValues = new ContentValues();
+		episodeValues.put(EpisodesTable.COLUMN_TVDB_ID, episode.getId());
+		episodeValues.put(EpisodesTable.COLUMN_SHOW_ID, showId);
+		episodeValues.put(EpisodesTable.COLUMN_NAME, episode.getName());
+		episodeValues.put(EpisodesTable.COLUMN_OVERVIEW,
+		             episode.getOverview());
+		episodeValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER,
+		             episode.getEpisodeNumber());
+		episodeValues.put(EpisodesTable.COLUMN_SEASON_NUMBER,
+		             episode.getSeasonNumber());
+		if (episode.getFirstAired() != null) {
+			episodeValues.put(EpisodesTable.COLUMN_FIRST_AIRED,
+			             episode.getFirstAired().getTime() / 1000);
 		}
+
+		getContentResolver().insert(ShowsProvider.CONTENT_URI_EPISODES,
+		                            episodeValues);
 	}
 }
