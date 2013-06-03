@@ -28,8 +28,9 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import java.util.List;
 import org.jamienicol.episodes.db.ShowsProvider;
@@ -95,9 +96,9 @@ public class AddShowSearchFragment extends SherlockListFragment
 		Activity activity = getActivity();
 		activity.setProgressBarIndeterminateVisibility(false);
 
-		ListAdapter adapter = null;
+		SearchResultsAdapter adapter = null;
 		if (data != null) {
-			adapter = new AddShowSearchResultsAdapter(activity, data);
+			adapter = new SearchResultsAdapter(activity, data);
 		}
 		setListAdapter(adapter);
 	}
@@ -167,5 +168,33 @@ public class AddShowSearchFragment extends SherlockListFragment
 		                           AddShowPreviewActivity.class);
 		intent.putExtra("searchResultIndex", position);
 		startActivity(intent);
+	}
+
+	private static class SearchResultsAdapter
+		extends ArrayAdapter<Show>
+	{
+		private LayoutInflater inflater;
+
+		public SearchResultsAdapter(Context context, List<Show> objects) {
+			super(context, 0, 0, objects);
+
+			inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if (convertView == null) {
+				convertView =
+					inflater.inflate(R.layout.add_show_search_results_list_item,
+					                 parent,
+					                 false);
+			}
+
+			TextView textView =
+				(TextView)convertView.findViewById(R.id.show_name_view);
+			textView.setText(getItem(position).getName());
+
+			return convertView;
+		}
 	}
 }
