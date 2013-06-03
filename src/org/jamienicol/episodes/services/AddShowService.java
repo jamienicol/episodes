@@ -20,23 +20,36 @@ package org.jamienicol.episodes.services;
 import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.tvdb.Client;
 import org.jamienicol.episodes.tvdb.Episode;
 import org.jamienicol.episodes.tvdb.Show;
+import org.jamienicol.episodes.R;
 
 public class AddShowService extends IntentService
 {
 	private static final String TAG = "AddShowService";
 
+	private Handler handler;
+
 	public AddShowService() {
 		super("AddShowService");
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		handler = new Handler();
+
+		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
@@ -44,8 +57,12 @@ public class AddShowService extends IntentService
 		Client tvdbClient = new Client("25B864A8BC56AFAD");
 
 		int tvdbId = intent.getIntExtra("tvdbId", 0);
+		String showName = intent.getStringExtra("showName");
 
 		if (isShowAlreadyAdded(tvdbId) == false) {
+
+			String adding_message = getString(R.string.adding_show);
+			showMessage(String.format(adding_message, showName));
 
 			// fetch full show + episode information from tvdb
 			Show show = tvdbClient.getShow(tvdbId);
@@ -55,6 +72,13 @@ public class AddShowService extends IntentService
 			for (Episode episode : show.getEpisodes()) {
 				insertEpisode(episode, showId);
 			}
+
+			String added_message = getString(R.string.show_added);
+			showMessage(String.format(added_message, showName));
+
+		} else {
+			String already_message = getString(R.string.show_already_added);
+			showMessage(String.format(already_message, showName));
 		}
 	}
 
@@ -121,5 +145,19 @@ public class AddShowService extends IntentService
 
 		getContentResolver().insert(ShowsProvider.CONTENT_URI_EPISODES,
 		                            episodeValues);
+	}
+
+	private void showMessage(String message) {
+		final Context context = AddShowService.this;
+		final String text = message;
+		final int duration = Toast.LENGTH_SHORT;
+
+		handler.post(new Runnable() {
+				@Override
+				public void run() {
+					Toast toast = Toast.makeText(context, text, duration);
+					toast.show();
+				}
+			});
 	}
 }

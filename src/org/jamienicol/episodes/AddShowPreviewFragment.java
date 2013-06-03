@@ -111,6 +111,7 @@ public class AddShowPreviewFragment extends SherlockFragment
 	private void addShow() {
 		Intent intent = new Intent(getActivity(), AddShowService.class);
 		intent.putExtra("tvdbId", show.getId());
+		intent.putExtra("showName", show.getName());
 
 		getActivity().startService(intent);
 	}

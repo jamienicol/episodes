@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">Episodes</string>
+  <string name="adding_show">Adding %s to library</string>
   <string name="first_aired">First Aired: %s</string>
   <string name="menu_add_show_search_hint">Search for new show</string>
   <string name="menu_add_show_search_title">Add show</string>
@@ -14,6 +15,8 @@
   <string name="season_episode">Season %1$d Episode %2$d</string>
   <string name="season_name">Season %d</string>
   <string name="season_name_specials">Specials</string>
+  <string name="show_added">%s added to library</string>
+  <string name="show_already_added">%s is already in library</string>
   <string name="show_tab_overview">Overview</string>
   <string name="show_tab_episodes">Episodes</string>
   <string name="watched_action_check_box">Watched</string>
