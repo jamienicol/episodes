@@ -216,10 +216,20 @@ public class EpisodeDetailsFragment extends SherlockFragment
 			}
 
 		} else {
-			overviewView.setVisibility(View.INVISIBLE);
-			seasonEpisodeView.setVisibility(View.INVISIBLE);
-			firstAiredView.setVisibility(View.INVISIBLE);
-			// watchedCheckBox might not be inflated yet
+			// on old android versions (on 8, not on 17) the first load
+			// will complete before these are inflated,
+			// so we must check for null
+			if (overviewView != null) {
+				overviewView.setVisibility(View.INVISIBLE);
+			}
+			if (seasonEpisodeView != null) {
+				seasonEpisodeView.setVisibility(View.INVISIBLE);
+			}
+			if (firstAiredView != null) {
+				firstAiredView.setVisibility(View.INVISIBLE);
+			}
+			// even on newer android versions watchedCheckBox
+			// wont be inflated before the first load completes
 			if (watchedCheckBox != null) {
 				watchedCheckBox.setVisibility(View.INVISIBLE);
 			}
