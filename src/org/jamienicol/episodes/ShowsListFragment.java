@@ -18,6 +18,7 @@
 package org.jamienicol.episodes;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -29,13 +30,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
+import org.jamienicol.episodes.services.RefreshShowService;
 
 public class ShowsListFragment extends SherlockListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private SimpleCursorAdapter listAdapter;
+	private Cursor showsData;
 
 	public interface OnShowSelectedListener {
 		public void onShowSelected(int showId);
@@ -55,6 +61,13 @@ public class ShowsListFragment extends SherlockListFragment
 			throw new ClassCastException(message);
 		}
 	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setHasOptionsMenu(true);
+    }
 
 	public View onCreateView(LayoutInflater inflater,
 	                         ViewGroup container,
@@ -85,6 +98,33 @@ public class ShowsListFragment extends SherlockListFragment
 	}
 
 	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.shows_list_fragment, menu);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+
+		// hide refresh all option if no shows exist
+		boolean showsExist = (showsData != null && showsData.moveToFirst());
+
+		menu.findItem(R.id.menu_refresh_all_shows).setVisible(showsExist);
+
+		super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_refresh_all_shows:
+			refreshAllShows();
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String[] projection = {
 			ShowsTable.COLUMN_ID,
@@ -100,16 +140,45 @@ public class ShowsListFragment extends SherlockListFragment
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		listAdapter.swapCursor(data);
+		showsData = data;
+		refreshViews();
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		listAdapter.swapCursor(null);
+		showsData = null;
+		refreshViews();
 	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		onShowSelectedListener.onShowSelected((int)id);
+	}
+
+	// ensures views are updated to display newest data.
+	// to be called whenever a new cursor has been loaded
+	private void refreshViews() {
+		listAdapter.swapCursor(showsData);
+
+		// force a new decision on whether to display certain menu items
+		getActivity().supportInvalidateOptionsMenu();
+	}
+
+	private void refreshAllShows() {
+		if (showsData != null && showsData.moveToFirst()) {
+			do {
+				int idColumnIndex =
+					showsData.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
+
+				int id = showsData.getInt(idColumnIndex);
+
+				Intent intent = new Intent(getActivity(),
+				                           RefreshShowService.class);
+				intent.putExtra("showId", id);
+
+				getActivity().startService(intent);
+
+			} while (showsData.moveToNext());
+		}
 	}
 }
