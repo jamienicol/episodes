@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <style name="ListItem">
+    <item name="android:paddingLeft">?android:attr/listPreferredItemPaddingLeft</item>
+    <item name="android:paddingRight">?android:attr/listPreferredItemPaddingRight</item>
+  </style>
+
+  <style name="ListItemHeading">
+    <item name="android:textAppearance">?android:attr/textAppearanceListItem</item>
+  </style>
+</resources>

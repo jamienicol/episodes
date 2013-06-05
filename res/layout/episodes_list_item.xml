@@ -4,15 +4,14 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:padding="4dp" >
+    style="@style/ListItem" >
   <TextView
       android:id="@+id/episode_name_view"
       android:layout_alignParentLeft="true"
       android:layout_toLeftOf="@+id/episode_watched_check_box"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:textAppearance="?android:attr/textAppearanceListItem" />
+      style="@style/ListItemHeading" />
   <CheckBox
       android:id="@id/episode_watched_check_box"
       android:focusable="false"

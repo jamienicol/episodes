@@ -4,11 +4,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:padding="4dp" >
+    style="@style/ListItem" >
   <TextView
       android:id="@+id/season_number_view"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:textAppearance="?android:attr/textAppearanceListItem" />
+      style="@style/ListItemHeading" />
 </LinearLayout>
