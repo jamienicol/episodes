@@ -88,13 +88,6 @@ public class ShowsListFragment extends SherlockListFragment
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		String[] from = new String[] {
-			ShowsTable.COLUMN_NAME
-		};
-		int[] to = new int[] {
-			R.id.show_name_view
-		};
-
 		listAdapter = new ShowsListAdapter(getActivity(),
 		                                   null,
 		                                   null);
