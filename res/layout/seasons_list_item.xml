@@ -10,4 +10,9 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       style="@style/ListItemHeading" />
+  <ProgressBar
+      android:id="@+id/season_progress_bar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      style="?android:attr/progressBarStyleHorizontal" />
 </LinearLayout>

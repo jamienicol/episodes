@@ -18,23 +18,24 @@
 package org.jamienicol.episodes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Set;
+import java.util.TreeSet;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
@@ -42,7 +43,7 @@ public class SeasonsListFragment extends SherlockListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private int showId;
-	private SimpleCursorAdapter listAdapter;
+	private SeasonsListAdapter listAdapter;
 
 	public interface OnSeasonSelectedListener {
 		public void onSeasonSelected(int seasonNumber);
@@ -85,31 +86,14 @@ public class SeasonsListFragment extends SherlockListFragment
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		String[] from = new String[] {
-			EpisodesTable.COLUMN_SEASON_NUMBER
-		};
-		int[] to = new int[] {
-			R.id.season_number_view
-		};
-
-		listAdapter = new SimpleCursorAdapter(getActivity(),
-		                                      R.layout.seasons_list_item,
-		                                      null,
-		                                      from,
-		                                      to,
-		                                      0);
-		listAdapter.setViewBinder(new SeasonsViewBinder());
+		listAdapter = new SeasonsListAdapter(getActivity(),
+		                                     null);
 		setListAdapter(listAdapter);
 
 		showId = getArguments().getInt("showId");
 		Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("showId", showId);
-		// FIXME: initLoader causes no data to be displayed after a
-		// screen rotation, for example. Must be to do with us using a
-		// custom MatrixCursor instead of Cursor returned from the loader.
-		// Using restartLoader causes the MatrixCursor to be recreated so
-		// this works fine for now, but there's probably a better fix.
-		getLoaderManager().restartLoader(0, loaderArgs, this);
+		getLoaderManager().initLoader(0, loaderArgs, this);
 	}
 
 	@Override
@@ -117,7 +101,8 @@ public class SeasonsListFragment extends SherlockListFragment
 		int showId = args.getInt("showId");
 
 		String[] projection = {
-			EpisodesTable.COLUMN_SEASON_NUMBER
+			EpisodesTable.COLUMN_SEASON_NUMBER,
+			EpisodesTable.COLUMN_WATCHED
 		};
 		String selection = EpisodesTable.COLUMN_SHOW_ID + "=?";
 		String[] selectionArgs = {
@@ -134,44 +119,12 @@ public class SeasonsListFragment extends SherlockListFragment
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		// The Cursor data contains a row for each episode of the show.
-		// We just want a row for each season, so we need to create a new
-		// Cursor and add a row to it for each season number
-
-		int seasonNumberColumnIndex =
-			data.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
-
-		// CursorAdapter requires an _id column to work,
-		// so we'll just use the season number for that too.
-		String[] columns = {
-			BaseColumns._ID,
-			EpisodesTable.COLUMN_SEASON_NUMBER
-		};
-		MatrixCursor seasonsCursor = new MatrixCursor(columns);
-
-		// holds the season numbers that we've already seen
-		Set<Integer> seen = new HashSet<Integer>();
-
-		while (data.moveToNext()) {
-			int seasonNumber = data.getInt(seasonNumberColumnIndex);
-
-			if (!seen.contains(seasonNumber)) {
-				seen.add(seasonNumber);
-
-				Object[] row = {
-					seasonNumber,
-					seasonNumber
-				};
-				seasonsCursor.addRow(row);
-			}
-		}
-
-		listAdapter.swapCursor(seasonsCursor);
+		listAdapter.swapEpisodesCursor(data);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		listAdapter.swapCursor(null);
+		listAdapter.swapEpisodesCursor(null);
 	}
 
 	@Override
@@ -181,30 +134,129 @@ public class SeasonsListFragment extends SherlockListFragment
 		onSeasonSelectedListener.onSeasonSelected((int)id);
 	}
 
-	private class SeasonsViewBinder implements SimpleCursorAdapter.ViewBinder
+	private static class SeasonsListAdapter
+		extends BaseAdapter
 	{
-		@Override
-		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-			int seasonNumberColumnIndex =
-				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
+		private Context context;
+		Set<Integer> seasonNumbersSet;
+		private HashMap<Integer, Integer> numEpisodesMap;
+		private HashMap<Integer, Integer> numWatchedEpisodesMap;
 
-			if (columnIndex == seasonNumberColumnIndex) {
-				int seasonNumber = cursor.getInt(seasonNumberColumnIndex);
-				String text;
-				if (seasonNumber == 0) {
-					text = getString(R.string.season_name_specials);
-				} else {
-					text = String.format(getString(R.string.season_name,
-					                               seasonNumber));
-				}
-				TextView textView = (TextView)view;
-				textView.setText(text);
+		public SeasonsListAdapter(Context context, Cursor episodesCursor) {
+			this.context = context;
 
-				return true;
+			processCursor(episodesCursor);
+		}
 
-			} else {
-				return false;
+		public void swapEpisodesCursor(Cursor episodesCursor) {
+			processCursor(episodesCursor);
+
+			notifyDataSetChanged();
+		}
+
+		private void processCursor(Cursor episodesCursor) {
+			seasonNumbersSet = new TreeSet<Integer>();
+			numEpisodesMap = new HashMap<Integer, Integer>();
+			numWatchedEpisodesMap = new HashMap<Integer, Integer>();
+
+			if (episodesCursor != null && episodesCursor.moveToFirst()) {
+				do {
+					int seasonNumberColumnIndex =
+						episodesCursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
+					int seasonNumber =
+						episodesCursor.getInt(seasonNumberColumnIndex);
+
+					seasonNumbersSet.add(seasonNumber);
+
+					// ensure entries exist in maps for this season
+					if (numEpisodesMap.containsKey(seasonNumber) == false) {
+						numEpisodesMap.put(seasonNumber, 0);
+					}
+					if (numWatchedEpisodesMap.containsKey(seasonNumber) == false) {
+						numWatchedEpisodesMap.put(seasonNumber, 0);
+					}
+
+					// increment num episodes for this season
+					numEpisodesMap.put(seasonNumber,
+					                   numEpisodesMap.get(seasonNumber) + 1);
+
+					// if episode is watched, increment value for this season
+					int watchedColumnIndex =
+						episodesCursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
+					boolean watched =
+						episodesCursor.getInt(watchedColumnIndex) > 0 ? true : false;
+					if (watched) {
+						numWatchedEpisodesMap.put(seasonNumber,
+						                          numWatchedEpisodesMap.get(seasonNumber) + 1);
+					}
+				} while (episodesCursor.moveToNext());
 			}
+		}
+
+		@Override
+		public int getCount() {
+			if (seasonNumbersSet != null) {
+				Integer[] array = seasonNumbersSet.toArray(new Integer[] {});
+				return array.length;
+			} else {
+				return 0;
+			}
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// use season number as id
+			Integer[] array = seasonNumbersSet.toArray(new Integer[] {});
+			return array[position];
+		}
+
+		@Override
+		public View getView(int position,
+		                    View convertView,
+		                    ViewGroup parent) {
+
+			LayoutInflater inflater = LayoutInflater.from(context);
+			if(convertView == null) {
+				convertView = inflater.inflate(R.layout.seasons_list_item,
+				                               parent,
+				                               false);
+			}
+
+			Integer[] array = seasonNumbersSet.toArray(new Integer[] {});
+			int seasonNumber = array[position];
+
+			TextView numberView =
+				(TextView)convertView.findViewById(R.id.season_number_view);
+			String numberText;
+			if (seasonNumber == 0) {
+				numberText =
+					context.getString(R.string.season_name_specials);
+			} else {
+				numberText =
+					String.format(context.getString(R.string.season_name),
+					              seasonNumber);
+			}
+			numberView.setText(numberText);
+
+			ProgressBar progressBar =
+				(ProgressBar)convertView.findViewById(R.id.season_progress_bar);
+			int numEpisodes = 0;
+			if (numEpisodesMap.containsKey(seasonNumber)) {
+				numEpisodes = numEpisodesMap.get(seasonNumber);
+			}
+			int numWatched = 0;
+			if (numWatchedEpisodesMap.containsKey(seasonNumber)) {
+				numWatched = numWatchedEpisodesMap.get(seasonNumber);
+			}
+			progressBar.setMax(numEpisodes);
+			progressBar.setProgress(numWatched);
+
+			return convertView;
 		}
 	}
 }
