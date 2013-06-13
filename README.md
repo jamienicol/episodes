@@ -2,6 +2,8 @@
 
 Keep track of which episodes you've watched of your favourite TV shows.
 
+TV Show information is supplied by TheTVDB.com.
+
 ## Contributing
 
 Contributions are very welcome. Please file bugs, fork the repository, and send pull requests.
