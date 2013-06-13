@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="about_description">Keep track of which episodes you\'ve watched of your favourite TV shows</string>
+  <string name="about_license">Episodes is free software licensed under the GNU GPL (version 3 or later). Please file bugs, write code, or do anything else you can to help!</string>
+  <string name="about_title">About</string>
+  <string name="about_tvdb">TV show information is supplied by TheTVDB.com, and is licensed under the Creative Commons Attribution license. Please contribute information or artwork to TheTVDB.com if you can.</string>
+  <string name="about_website">http://github.com/jamienicol/episodes</string>
   <string name="app_name">Episodes</string>
   <string name="adding_show">Adding %s to library</string>
   <string name="first_aired">First Aired: %s</string>
+  <string name="menu_about">About</string>
   <string name="menu_add_show_search_hint">Search for new show</string>
   <string name="menu_add_show_search_title">Add show</string>
   <string name="menu_add_show_title">Add show</string>

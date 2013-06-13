@@ -66,6 +66,9 @@ public class MainActivity extends SherlockFragmentActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.menu_about:
+			showAbout();
+			return true;
 
 		default:
 			return super.onOptionsItemSelected(item);
@@ -77,6 +80,11 @@ public class MainActivity extends SherlockFragmentActivity
 		Intent intent = new Intent(this,
 		                           ShowActivity.class);
 		intent.putExtra("showId", showId);
+		startActivity(intent);
+	}
+
+	private void showAbout() {
+		Intent intent = new Intent(this, AboutActivity.class);
 		startActivity(intent);
 	}
 }
