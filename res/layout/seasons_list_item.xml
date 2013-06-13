@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingBottom="4dp"
     style="@style/ListItem" >
   <TextView
       android:id="@+id/season_number_view"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_alignParentTop="true"
       style="@style/ListItemHeading" />
   <ProgressBar
       android:id="@+id/season_progress_bar"
       android:layout_width="match_parent"
       android:layout_height="8dp"
+      android:layout_alignParentBottom="true"
       style="@style/WatchedProgressBar" />
-</LinearLayout>
+</RelativeLayout>
