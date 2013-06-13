@@ -11,4 +11,10 @@
   <style name="ListItemHeading">
     <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
   </style>
+
+  <style
+      name="WatchedProgressBar"
+      parent="android:Widget.ProgressBar.Horizontal" >
+    <item name="android:progressDrawable">@drawable/watched_progress</item>
+  </style>
 </resources>
