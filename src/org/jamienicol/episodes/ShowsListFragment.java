@@ -332,8 +332,6 @@ public class ShowsListFragment extends SherlockListFragment
 			String name = showsCursor.getString(nameColumnIndex);
 			nameView.setText(name);
 
-			ProgressBar progressBar =
-				(ProgressBar)convertView.findViewById(R.id.show_progress_bar);
 			int numEpisodes = 0;
 			if (numEpisodesMap.containsKey(id)) {
 				numEpisodes = numEpisodesMap.get(id);
@@ -342,8 +340,19 @@ public class ShowsListFragment extends SherlockListFragment
 			if (numWatchedEpisodesMap.containsKey(id)) {
 				numWatched = numWatchedEpisodesMap.get(id);
 			}
+
+			ProgressBar progressBar =
+				(ProgressBar)convertView.findViewById(R.id.show_progress_bar);
 			progressBar.setMax(numEpisodes);
 			progressBar.setProgress(numWatched);
+
+			TextView watchedCountView =
+				(TextView)convertView.findViewById(R.id.watched_count_view);
+			watchedCountView.
+				setText(String.format(context.
+				                      getString(R.string.watched_count),
+				                      numWatched,
+				                      numEpisodes));
 
 			return convertView;
 		}

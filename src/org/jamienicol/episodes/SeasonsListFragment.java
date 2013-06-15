@@ -243,8 +243,6 @@ public class SeasonsListFragment extends SherlockListFragment
 			}
 			numberView.setText(numberText);
 
-			ProgressBar progressBar =
-				(ProgressBar)convertView.findViewById(R.id.season_progress_bar);
 			int numEpisodes = 0;
 			if (numEpisodesMap.containsKey(seasonNumber)) {
 				numEpisodes = numEpisodesMap.get(seasonNumber);
@@ -253,8 +251,18 @@ public class SeasonsListFragment extends SherlockListFragment
 			if (numWatchedEpisodesMap.containsKey(seasonNumber)) {
 				numWatched = numWatchedEpisodesMap.get(seasonNumber);
 			}
+
+			ProgressBar progressBar =
+				(ProgressBar)convertView.findViewById(R.id.season_progress_bar);
 			progressBar.setMax(numEpisodes);
 			progressBar.setProgress(numWatched);
+			TextView watchedCountView =
+				(TextView)convertView.findViewById(R.id.watched_count_view);
+			watchedCountView.
+				setText(String.format(context.
+				                      getString(R.string.watched_count),
+				                      numWatched,
+				                      numEpisodes));
 
 			return convertView;
 		}

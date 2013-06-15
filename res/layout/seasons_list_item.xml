@@ -4,6 +4,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
+    android:paddingTop="0dp"
     android:paddingBottom="4dp"
     style="@style/ListItem" >
   <TextView
@@ -11,11 +14,22 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentTop="true"
+      android:paddingLeft="2dp"
       style="@style/ListItemHeading" />
-  <ProgressBar
-      android:id="@+id/season_progress_bar"
+  <FrameLayout
       android:layout_width="match_parent"
-      android:layout_height="8dp"
-      android:layout_alignParentBottom="true"
-      style="@style/WatchedProgressBar" />
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true" >
+    <ProgressBar
+        android:id="@+id/season_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/WatchedProgressBar" />
+    <TextView
+        android:id="@+id/watched_count_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="2dp"
+        style="@style/WatchedProgressText" />
+  </FrameLayout>
 </RelativeLayout>
