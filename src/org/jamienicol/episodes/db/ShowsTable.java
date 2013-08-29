@@ -29,27 +29,46 @@ public class ShowsTable
 	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_OVERVIEW = "overview";
 	public static final String COLUMN_FIRST_AIRED = "first_aired";
+	public static final String COLUMN_PINNED = "pinned";
+
+	public static final String COLUMN_TYPE_ID = "INTEGER PRIMARY KEY";
+	public static final String COLUMN_TYPE_TVDB_ID = "INTEGER UNIQUE NOT NULL";
+	public static final String COLUMN_TYPE_NAME = "VARCHAR(200) NOT NULL";
+	public static final String COLUMN_TYPE_OVERVIEW = "TEXT";
+	public static final String COLUMN_TYPE_FIRST_AIRED = "DATE";
+	public static final String COLUMN_TYPE_PINNED = "BOOLEAN DEFAULT 0";
 
 	public static void onCreate(SQLiteDatabase db) {
 		String create =
 			String.format("CREATE TABLE %s ("  +
-			              "    %s INTEGER PRIMARY KEY," +
-			              "    %s INTEGER UNIQUE NOT NULL," +
-			              "    %s VARCHAR(200) NOT NULL," +
-			              "    %s TEXT," +
-			              "    %s DATE" +
+			              "    %s %s," +
+			              "    %s %s," +
+			              "    %s %s," +
+			              "    %s %s," +
+			              "    %s %s," +
+			              "    %s %s" +
 			              ");",
 			              TABLE_NAME,
-			              COLUMN_ID,
-			              COLUMN_TVDB_ID,
-			              COLUMN_NAME,
-			              COLUMN_OVERVIEW,
-			              COLUMN_FIRST_AIRED);
+			              COLUMN_ID, COLUMN_TYPE_ID,
+			              COLUMN_TVDB_ID, COLUMN_TYPE_TVDB_ID,
+			              COLUMN_NAME, COLUMN_TYPE_NAME,
+			              COLUMN_OVERVIEW, COLUMN_TYPE_OVERVIEW,
+			              COLUMN_FIRST_AIRED, COLUMN_TYPE_FIRST_AIRED,
+			              COLUMN_PINNED, COLUMN_TYPE_PINNED);
 		db.execSQL(create);
 	}
 
 	public static void onUpgrade(SQLiteDatabase db,
 	                             int oldVersion,
 	                             int newVersion) {
+		switch (oldVersion) {
+			case 1:
+				// Add pinned column
+				db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s",
+				                         TABLE_NAME,
+				                         COLUMN_PINNED,
+				                         COLUMN_TYPE_PINNED));
+				// fall through
+		}
 	}
 }
