@@ -132,14 +132,14 @@ public class ShowsListFragment extends SherlockListFragment
 			String[] projection = {
 				ShowsTable.COLUMN_ID,
 				ShowsTable.COLUMN_NAME,
-				ShowsTable.COLUMN_PINNED
+				ShowsTable.COLUMN_STARRED
 			};
 			return new CursorLoader(getActivity(),
 			                        ShowsProvider.CONTENT_URI_SHOWS,
 			                        projection,
 			                        null,
 			                        null,
-			                        ShowsTable.COLUMN_PINNED + " DESC," +
+			                        ShowsTable.COLUMN_STARRED + " DESC," +
 			                        ShowsTable.COLUMN_NAME + " ASC");
 
 		} else if (id == LOADER_ID_EPISODES) {

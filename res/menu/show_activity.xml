@@ -2,9 +2,9 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android">
   <item
-      android:id="@+id/menu_pin_unpin_show"
-      android:icon="@drawable/ic_show_unpinned"
-      android:title="@string/menu_pin_show"
+      android:id="@+id/menu_toggle_show_starred"
+      android:icon="@drawable/ic_show_unstarred"
+      android:title="@string/menu_star_show"
       android:showAsAction="ifRoom" />
   <item
       android:id="@+id/menu_refresh_show"

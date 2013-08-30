@@ -17,10 +17,10 @@
   <string name="menu_mark_season_watched">Mark season as watched</string>
   <string name="menu_mark_show_not_watched">Mark show as not watched</string>
   <string name="menu_mark_show_watched">Mark show as watched</string>
-  <string name="menu_pin_show">Pin show</string>
   <string name="menu_refresh_all_shows">Refresh all shows</string>
   <string name="menu_refresh_show">Refresh show</string>
-  <string name="menu_unpin_show">Unpin show</string>
+  <string name="menu_star_show">Star show</string>
+  <string name="menu_unstar_show">Unstar show</string>
   <string name="season_episode">Season %1$d Episode %2$d</string>
   <string name="season_name">Season %d</string>
   <string name="season_name_specials">Specials</string>

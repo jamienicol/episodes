@@ -29,14 +29,14 @@ public class ShowsTable
 	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_OVERVIEW = "overview";
 	public static final String COLUMN_FIRST_AIRED = "first_aired";
-	public static final String COLUMN_PINNED = "pinned";
+	public static final String COLUMN_STARRED = "starred";
 
 	public static final String COLUMN_TYPE_ID = "INTEGER PRIMARY KEY";
 	public static final String COLUMN_TYPE_TVDB_ID = "INTEGER UNIQUE NOT NULL";
 	public static final String COLUMN_TYPE_NAME = "VARCHAR(200) NOT NULL";
 	public static final String COLUMN_TYPE_OVERVIEW = "TEXT";
 	public static final String COLUMN_TYPE_FIRST_AIRED = "DATE";
-	public static final String COLUMN_TYPE_PINNED = "BOOLEAN DEFAULT 0";
+	public static final String COLUMN_TYPE_STARRED = "BOOLEAN DEFAULT 0";
 
 	public static void onCreate(SQLiteDatabase db) {
 		String create =
@@ -54,7 +54,7 @@ public class ShowsTable
 			              COLUMN_NAME, COLUMN_TYPE_NAME,
 			              COLUMN_OVERVIEW, COLUMN_TYPE_OVERVIEW,
 			              COLUMN_FIRST_AIRED, COLUMN_TYPE_FIRST_AIRED,
-			              COLUMN_PINNED, COLUMN_TYPE_PINNED);
+			              COLUMN_STARRED, COLUMN_TYPE_STARRED);
 		db.execSQL(create);
 	}
 
@@ -63,11 +63,11 @@ public class ShowsTable
 	                             int newVersion) {
 		switch (oldVersion) {
 			case 1:
-				// Add pinned column
+				// Add starred column
 				db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s",
 				                         TABLE_NAME,
-				                         COLUMN_PINNED,
-				                         COLUMN_TYPE_PINNED));
+				                         COLUMN_STARRED,
+				                         COLUMN_TYPE_STARRED));
 				// fall through
 		}
 	}

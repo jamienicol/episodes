@@ -49,7 +49,7 @@ public class ShowActivity extends SherlockFragmentActivity
 	private int showId;
 	private TabsAdapter pagerAdapter;
 	private ViewPager pager;
-	private boolean isShowPinned;
+	private boolean isShowStarred;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -106,13 +106,14 @@ public class ShowActivity extends SherlockFragmentActivity
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 
-		final MenuItem pinUnpin = menu.findItem(R.id.menu_pin_unpin_show);
-		if (isShowPinned) {
-			pinUnpin.setIcon(R.drawable.ic_show_pinned);
-			pinUnpin.setTitle(R.string.menu_unpin_show);
+		final MenuItem toggleStarred =
+			menu.findItem(R.id.menu_toggle_show_starred);
+		if (isShowStarred) {
+			toggleStarred.setIcon(R.drawable.ic_show_starred);
+			toggleStarred.setTitle(R.string.menu_unstar_show);
 		} else {
-			pinUnpin.setIcon(R.drawable.ic_show_unpinned);
-			pinUnpin.setTitle(R.string.menu_pin_show);
+			toggleStarred.setIcon(R.drawable.ic_show_unstarred);
+			toggleStarred.setTitle(R.string.menu_star_show);
 		}
 
 		return super.onPrepareOptionsMenu(menu);
@@ -125,7 +126,7 @@ public class ShowActivity extends SherlockFragmentActivity
 		                               new Integer(showId).toString());
 		String[] projection = {
 			ShowsTable.COLUMN_NAME,
-			ShowsTable.COLUMN_PINNED
+			ShowsTable.COLUMN_STARRED
 		};
 		return new CursorLoader(this,
 		                        uri,
@@ -144,14 +145,14 @@ public class ShowActivity extends SherlockFragmentActivity
 				data.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
 			setTitle(data.getString(nameColumnIndex));
 
-			// maybe update the state of the pin/unpin menu item
-			int pinnedColumnIndex =
-				data.getColumnIndexOrThrow(ShowsTable.COLUMN_PINNED);
-			boolean newPinned =
-				data.getInt(pinnedColumnIndex) > 0 ? true : false;
-			if (newPinned != isShowPinned) {
-				isShowPinned = newPinned;
-				// pin/unpin menu item needs updated
+			// maybe update the state of the toggle starred menu item
+			int starredColumnIndex =
+				data.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
+			boolean starred =
+				data.getInt(starredColumnIndex) > 0 ? true : false;
+			if (isShowStarred != starred) {
+				isShowStarred = starred;
+				// toggle starred menu item needs updated
 				supportInvalidateOptionsMenu();
 			}
 		}
@@ -169,8 +170,8 @@ public class ShowActivity extends SherlockFragmentActivity
 			finish();
 			return true;
 
-		case R.id.menu_pin_unpin_show:
-			pinUnpinShow();
+		case R.id.menu_toggle_show_starred:
+			toggleShowStarred();
 			return true;
 
 		case R.id.menu_refresh_show:
@@ -204,11 +205,11 @@ public class ShowActivity extends SherlockFragmentActivity
 		startActivity(intent);
 	}
 
-	private void pinUnpinShow() {
+	private void toggleShowStarred() {
 		ContentResolver contentResolver = getContentResolver();
 		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
 		ContentValues values = new ContentValues();
-		values.put(ShowsTable.COLUMN_PINNED, !isShowPinned);
+		values.put(ShowsTable.COLUMN_STARRED, !isShowStarred);
 		String selection = String.format("%s=?",
 		                                 ShowsTable.COLUMN_ID);
 		String[] selectionArgs = {
