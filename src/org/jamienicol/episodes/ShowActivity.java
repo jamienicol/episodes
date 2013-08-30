@@ -49,6 +49,7 @@ public class ShowActivity extends SherlockFragmentActivity
 	private int showId;
 	private TabsAdapter pagerAdapter;
 	private ViewPager pager;
+	private boolean isShowPinned;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -103,12 +104,28 @@ public class ShowActivity extends SherlockFragmentActivity
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+
+		final MenuItem pinUnpin = menu.findItem(R.id.menu_pin_unpin_show);
+		if (isShowPinned) {
+			pinUnpin.setIcon(R.drawable.ic_show_pinned);
+			pinUnpin.setTitle(R.string.menu_unpin_show);
+		} else {
+			pinUnpin.setIcon(R.drawable.ic_show_unpinned);
+			pinUnpin.setTitle(R.string.menu_pin_show);
+		}
+
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		int showId = args.getInt("showId");
 		Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
 		                               new Integer(showId).toString());
 		String[] projection = {
-			ShowsTable.COLUMN_NAME
+			ShowsTable.COLUMN_NAME,
+			ShowsTable.COLUMN_PINNED
 		};
 		return new CursorLoader(this,
 		                        uri,
@@ -120,14 +137,23 @@ public class ShowActivity extends SherlockFragmentActivity
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		if (data.getCount() >= 1) {
-			int columnIndex =
-				data.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
+		if (data != null && data.moveToFirst()) {
 
-			data.moveToFirst();
-			setTitle(data.getString(columnIndex));
-		} else {
-			setTitle("");
+			// make activity title the show name
+			int nameColumnIndex =
+				data.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
+			setTitle(data.getString(nameColumnIndex));
+
+			// maybe update the state of the pin/unpin menu item
+			int pinnedColumnIndex =
+				data.getColumnIndexOrThrow(ShowsTable.COLUMN_PINNED);
+			boolean newPinned =
+				data.getInt(pinnedColumnIndex) > 0 ? true : false;
+			if (newPinned != isShowPinned) {
+				isShowPinned = newPinned;
+				// pin/unpin menu item needs updated
+				supportInvalidateOptionsMenu();
+			}
 		}
 	}
 
@@ -141,6 +167,10 @@ public class ShowActivity extends SherlockFragmentActivity
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			finish();
+			return true;
+
+		case R.id.menu_pin_unpin_show:
+			pinUnpinShow();
 			return true;
 
 		case R.id.menu_refresh_show:
@@ -172,6 +202,25 @@ public class ShowActivity extends SherlockFragmentActivity
 		intent.putExtra("showId", showId);
 		intent.putExtra("seasonNumber", seasonNumber);
 		startActivity(intent);
+	}
+
+	private void pinUnpinShow() {
+		ContentResolver contentResolver = getContentResolver();
+		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
+		ContentValues values = new ContentValues();
+		values.put(ShowsTable.COLUMN_PINNED, !isShowPinned);
+		String selection = String.format("%s=?",
+		                                 ShowsTable.COLUMN_ID);
+		String[] selectionArgs = {
+			new Integer(showId).toString()
+		};
+
+		handler.startUpdate(0,
+		                    null,
+		                    ShowsProvider.CONTENT_URI_SHOWS,
+		                    values,
+		                    selection,
+		                    selectionArgs);
 	}
 
 	private void refreshShow() {
