@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
   <item
-      android:id="@+id/menu_add_show_search"
-      android:icon="@drawable/ic_menu_add_show_search"
-      android:title="@string/menu_add_show_search_title"
+      android:id="@+id/menu_add_new_show"
+      android:icon="@drawable/ic_menu_add_show"
+      android:title="@string/menu_add_new_show"
       android:showAsAction="ifRoom|withText|collapseActionView"
       android:actionViewClass="com.actionbarsherlock.widget.SearchView" />
   <item

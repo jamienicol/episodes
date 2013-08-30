@@ -42,7 +42,8 @@ public class MainActivity extends SherlockFragmentActivity
 		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.main, menu);
 
-		SearchView addShow = (SearchView)menu.findItem(R.id.menu_add_show_search).getActionView();
+		SearchView addShow =
+			(SearchView)menu.findItem(R.id.menu_add_new_show).getActionView();
 		addShow.setQueryHint(getString(R.string.menu_add_show_search_hint));
 		addShow.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 			@Override

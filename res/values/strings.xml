@@ -10,8 +10,8 @@
   <string name="first_aired">First Aired: %s</string>
   <string name="menu_about">About</string>
   <string name="menu_add_show_search_hint">Search for new show</string>
-  <string name="menu_add_show_search_title">Add show</string>
-  <string name="menu_add_show_title">Add show</string>
+  <string name="menu_add_new_show">Add new show to library</string>
+  <string name="menu_add_show">Add show to library</string>
   <string name="menu_delete_show">Delete show</string>
   <string name="menu_mark_season_not_watched">Mark season as not watched</string>
   <string name="menu_mark_season_watched">Mark season as watched</string>
