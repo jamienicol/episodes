@@ -28,11 +28,9 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AlphabetIndexer;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
@@ -224,14 +222,11 @@ public class ShowsListFragment extends SherlockListFragment
 
 	private static class ShowsListAdapter
 		extends BaseAdapter
-		implements SectionIndexer
 	{
 		private Context context;
 		private HashMap<Integer, Integer> numEpisodesMap;
 		private HashMap<Integer, Integer> numWatchedEpisodesMap;
 		private Cursor showsCursor;
-
-		private AlphabetIndexer indexer;
 
 		public ShowsListAdapter(Context context,
 		                        Cursor showsCursor,
@@ -244,16 +239,6 @@ public class ShowsListFragment extends SherlockListFragment
 
 		public void swapShowsCursor(Cursor showsCursor) {
 			this.showsCursor = showsCursor;
-
-			if (showsCursor != null) {
-				int nameColumnIndex =
-					showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
-				indexer = new AlphabetIndexer(showsCursor,
-				                              nameColumnIndex,
-				                              " ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-			} else {
-				indexer = null;
-			}
 
 			notifyDataSetChanged();
 		}
@@ -373,21 +358,6 @@ public class ShowsListFragment extends SherlockListFragment
 				                      numEpisodes));
 
 			return convertView;
-		}
-
-		@Override
-		public int getPositionForSection(int section) {
-			return indexer.getPositionForSection(section);
-		}
-
-		@Override
-		public int getSectionForPosition(int position) {
-			return indexer.getSectionForPosition(position);
-		}
-
-		@Override
-		public Object[] getSections() {
-			return indexer.getSections();
 		}
 	}
 }
