@@ -227,6 +227,9 @@ public class ShowsListFragment extends SherlockListFragment
 		private HashMap<Integer, Integer> numEpisodesMap;
 		private HashMap<Integer, Integer> numWatchedEpisodesMap;
 		private Cursor showsCursor;
+		private boolean hasStarredShows;
+		private boolean hasUnstarredShows;
+		private int firstUnstarredShowIndex;
 
 		public ShowsListAdapter(Context context,
 		                        Cursor showsCursor,
@@ -239,6 +242,23 @@ public class ShowsListFragment extends SherlockListFragment
 
 		public void swapShowsCursor(Cursor showsCursor) {
 			this.showsCursor = showsCursor;
+
+			hasStarredShows = false;
+			hasUnstarredShows = false;
+			if (showsCursor != null) {
+				int starredColumnIndex =
+					showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
+				while (showsCursor.moveToNext() && hasUnstarredShows == false) {
+					boolean starred =
+						showsCursor.getInt(starredColumnIndex) > 0 ? true : false;
+					if (starred == true) {
+						hasStarredShows = true;
+					} else {
+						hasUnstarredShows = true;
+						firstUnstarredShowIndex = showsCursor.getPosition();
+					}
+				}
+			}
 
 			notifyDataSetChanged();
 		}
@@ -356,6 +376,24 @@ public class ShowsListFragment extends SherlockListFragment
 				                      getString(R.string.watched_count),
 				                      numWatched,
 				                      numEpisodes));
+
+			// Show section headers for the first starred and
+			// first unstarred shows in the list, but only if
+			// there are both starred and unstarred shows.
+			TextView sectionHeader =
+				(TextView)convertView.findViewById(R.id.section_header);
+			if (hasUnstarredShows && hasStarredShows) {
+				sectionHeader.setVisibility(View.VISIBLE);
+				if (position == 0) {
+					sectionHeader.setText(R.string.shows_list_header_starred);
+				} else if (position == firstUnstarredShowIndex) {
+					sectionHeader.setText(R.string.shows_list_header_unstarred);
+				} else {
+					sectionHeader.setVisibility(View.GONE);
+				}
+			} else {
+				sectionHeader.setVisibility(View.GONE);
+			}
 
 			return convertView;
 		}
