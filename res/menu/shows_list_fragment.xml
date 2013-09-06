@@ -5,5 +5,5 @@
       android:id="@+id/menu_refresh_all_shows"
       android:icon="@drawable/ic_menu_refresh_all_shows"
       android:title="@string/menu_refresh_all_shows"
-      android:showAsAction="ifRoom" />
+      android:showAsAction="never" />
 </menu>
