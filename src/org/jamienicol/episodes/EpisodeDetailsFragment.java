@@ -158,7 +158,7 @@ public class EpisodeDetailsFragment extends SherlockFragment
 			int overviewColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_OVERVIEW);
 			if (data.isNull(overviewColumnIndex)) {
-				overviewView.setVisibility(View.INVISIBLE);
+				overviewView.setVisibility(View.GONE);
 			} else {
 				overviewView.setText(data.getString(overviewColumnIndex));
 				overviewView.setVisibility(View.VISIBLE);
@@ -168,7 +168,7 @@ public class EpisodeDetailsFragment extends SherlockFragment
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
 			int seasonNumber = data.getInt(seasonNumberColumnIndex);
 			if (seasonNumber == 0) {
-				seasonEpisodeView.setVisibility(View.INVISIBLE);
+				seasonEpisodeView.setVisibility(View.GONE);
 			} else {
 				int episodeNumberColumnIndex =
 					data.getColumnIndexOrThrow(EpisodesTable.COLUMN_EPISODE_NUMBER);
@@ -183,7 +183,7 @@ public class EpisodeDetailsFragment extends SherlockFragment
 			int firstAiredColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_FIRST_AIRED);
 			if (data.isNull(firstAiredColumnIndex)) {
-				firstAiredView.setVisibility(View.INVISIBLE);
+				firstAiredView.setVisibility(View.GONE);
 			} else {
 				Date firstAired =
 					new Date(data.getLong(firstAiredColumnIndex) * 1000);

@@ -103,7 +103,7 @@ public class ShowDetailsFragment extends SherlockFragment
 			int overviewColumnIndex =
 				data.getColumnIndexOrThrow(ShowsTable.COLUMN_OVERVIEW);
 			if (data.isNull(overviewColumnIndex)) {
-				overviewView.setVisibility(View.INVISIBLE);
+				overviewView.setVisibility(View.GONE);
 			} else {
 				overviewView.setText(data.getString(overviewColumnIndex));
 				overviewView.setVisibility(View.VISIBLE);
@@ -112,7 +112,7 @@ public class ShowDetailsFragment extends SherlockFragment
 			int firstAiredColumnIndex =
 				data.getColumnIndexOrThrow(ShowsTable.COLUMN_FIRST_AIRED);
 			if (data.isNull(firstAiredColumnIndex)) {
-				firstAiredView.setVisibility(View.INVISIBLE);
+				firstAiredView.setVisibility(View.GONE);
 			} else {
 				Date firstAired =
 					new Date(data.getLong(firstAiredColumnIndex) * 1000);
@@ -125,8 +125,8 @@ public class ShowDetailsFragment extends SherlockFragment
 			}
 
 		} else {
-			overviewView.setVisibility(View.INVISIBLE);
-			firstAiredView.setVisibility(View.INVISIBLE);
+			overviewView.setVisibility(View.GONE);
+			firstAiredView.setVisibility(View.GONE);
 		}
 	}
 
