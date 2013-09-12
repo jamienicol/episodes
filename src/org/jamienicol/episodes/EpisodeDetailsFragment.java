@@ -48,8 +48,8 @@ public class EpisodeDetailsFragment extends SherlockFragment
 	private TextView overviewView;
 	private TextView seasonEpisodeView;
 	private TextView firstAiredView;
+	private boolean watched = false;
 	private CheckBox watchedCheckBox;
-	private Cursor episodeData;
 
 	public static EpisodeDetailsFragment newInstance(int episodeId) {
 		EpisodeDetailsFragment instance = new EpisodeDetailsFragment();
@@ -128,7 +128,7 @@ public class EpisodeDetailsFragment extends SherlockFragment
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		refreshViews();
+		watchedCheckBox.setChecked(watched);
 	}
 
 	@Override
@@ -153,51 +153,40 @@ public class EpisodeDetailsFragment extends SherlockFragment
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		episodeData = data;
-		refreshViews();
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		episodeData = null;
-		refreshViews();
-	}
-
-	private void refreshViews() {
-		if (episodeData != null && episodeData.moveToFirst()) {
+		if (data != null && data.moveToFirst()) {
 
 			int overviewColumnIndex =
-				episodeData.getColumnIndexOrThrow(EpisodesTable.COLUMN_OVERVIEW);
-			if (episodeData.isNull(overviewColumnIndex)) {
+				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_OVERVIEW);
+			if (data.isNull(overviewColumnIndex)) {
 				overviewView.setVisibility(View.INVISIBLE);
 			} else {
-				overviewView.setText(episodeData.getString(overviewColumnIndex));
+				overviewView.setText(data.getString(overviewColumnIndex));
 				overviewView.setVisibility(View.VISIBLE);
 			}
 
 			int seasonNumberColumnIndex =
-				episodeData.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
-			int seasonNumber = episodeData.getInt(seasonNumberColumnIndex);
+				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
+			int seasonNumber = data.getInt(seasonNumberColumnIndex);
 			if (seasonNumber == 0) {
 				seasonEpisodeView.setVisibility(View.INVISIBLE);
 			} else {
 				int episodeNumberColumnIndex =
-					episodeData.getColumnIndexOrThrow(EpisodesTable.COLUMN_EPISODE_NUMBER);
+					data.getColumnIndexOrThrow(EpisodesTable.COLUMN_EPISODE_NUMBER);
 				String seasonEpisodeText =
 					String.format(getActivity().getString(R.string.season_episode),
-					              episodeData.getInt(seasonNumberColumnIndex),
-					              episodeData.getInt(episodeNumberColumnIndex));
+					              data.getInt(seasonNumberColumnIndex),
+					              data.getInt(episodeNumberColumnIndex));
 				seasonEpisodeView.setText(seasonEpisodeText);
 				seasonEpisodeView.setVisibility(View.VISIBLE);
 			}
 
 			int firstAiredColumnIndex =
-				episodeData.getColumnIndexOrThrow(EpisodesTable.COLUMN_FIRST_AIRED);
-			if (episodeData.isNull(firstAiredColumnIndex)) {
+				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_FIRST_AIRED);
+			if (data.isNull(firstAiredColumnIndex)) {
 				firstAiredView.setVisibility(View.INVISIBLE);
 			} else {
 				Date firstAired =
-					new Date(episodeData.getLong(firstAiredColumnIndex) * 1000);
+					new Date(data.getLong(firstAiredColumnIndex) * 1000);
 				DateFormat df = DateFormat.getDateInstance();
 				String firstAiredText =
 					String.format(getString(R.string.first_aired),
@@ -207,32 +196,18 @@ public class EpisodeDetailsFragment extends SherlockFragment
 			}
 
 			// watchedCheckBox might not be inflated yet
+			int watchedColumnIndex =
+				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
+			watched = data.getInt(watchedColumnIndex) > 0 ? true : false;
 			if (watchedCheckBox != null) {
-				int watchedColumnIndex =
-					episodeData.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
-				int watched = episodeData.getInt(watchedColumnIndex);
-				watchedCheckBox.setChecked(watched != 0);
-				watchedCheckBox.setVisibility(View.VISIBLE);
+				watchedCheckBox.setChecked(watched);
 			}
 
-		} else {
-			// on old android versions (on 8, not on 17) the first load
-			// will complete before these are inflated,
-			// so we must check for null
-			if (overviewView != null) {
-				overviewView.setVisibility(View.INVISIBLE);
-			}
-			if (seasonEpisodeView != null) {
-				seasonEpisodeView.setVisibility(View.INVISIBLE);
-			}
-			if (firstAiredView != null) {
-				firstAiredView.setVisibility(View.INVISIBLE);
-			}
-			// even on newer android versions watchedCheckBox
-			// wont be inflated before the first load completes
-			if (watchedCheckBox != null) {
-				watchedCheckBox.setVisibility(View.INVISIBLE);
-			}
 		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		onLoadFinished(loader, null);
 	}
 }

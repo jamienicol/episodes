@@ -135,7 +135,7 @@ public class EpisodesListFragment extends SherlockListFragment
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		listAdapter.swapCursor(null);
+		onLoadFinished(loader, null);
 	}
 
 	@Override

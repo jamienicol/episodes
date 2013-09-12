@@ -162,44 +162,26 @@ public class ShowsListFragment extends SherlockListFragment
 		switch (loader.getId()) {
 		case LOADER_ID_SHOWS:
 			showsData = data;
+			listAdapter.swapShowsCursor(data);
 			break;
 
 		case LOADER_ID_EPISODES:
 			episodesData = data;
+			listAdapter.swapEpisodesCursor(data);
 			break;
 		}
 
-		refreshViews();
+		getActivity().supportInvalidateOptionsMenu();
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		switch (loader.getId()) {
-		case LOADER_ID_SHOWS:
-			showsData = null;
-			break;
-
-		case LOADER_ID_EPISODES:
-			episodesData = null;
-			break;
-		}
-
-		refreshViews();
+		onLoadFinished(loader, null);
 	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		onShowSelectedListener.onShowSelected((int)id);
-	}
-
-	// ensures views are updated to display newest data.
-	// to be called whenever a new cursor has been loaded
-	private void refreshViews() {
-		listAdapter.swapShowsCursor(showsData);
-		listAdapter.swapEpisodesCursor(episodesData);
-
-		// force a new decision on whether to display certain menu items
-		getActivity().supportInvalidateOptionsMenu();
 	}
 
 	private void refreshAllShows() {

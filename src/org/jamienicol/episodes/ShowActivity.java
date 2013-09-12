@@ -155,12 +155,14 @@ public class ShowActivity extends SherlockFragmentActivity
 				// toggle starred menu item needs updated
 				supportInvalidateOptionsMenu();
 			}
+		} else {
+			setTitle("");
 		}
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		setTitle("");
+		onLoadFinished(loader, null);
 	}
 
 	@Override

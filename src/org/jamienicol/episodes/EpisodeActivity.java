@@ -80,11 +80,10 @@ public class EpisodeActivity extends SherlockFragmentActivity
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		if (data.getCount() >= 1) {
+		if (data != null && data.moveToFirst()) {
 			int columnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_NAME);
 
-			data.moveToFirst();
 			setTitle(data.getString(columnIndex));
 		} else {
 			setTitle("");
@@ -93,7 +92,7 @@ public class EpisodeActivity extends SherlockFragmentActivity
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		setTitle("");
+		onLoadFinished(loader, null);
 	}
 
 	@Override

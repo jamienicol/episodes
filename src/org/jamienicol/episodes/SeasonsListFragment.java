@@ -124,7 +124,7 @@ public class SeasonsListFragment extends SherlockListFragment
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		listAdapter.swapEpisodesCursor(null);
+		onLoadFinished(loader, null);
 	}
 
 	@Override

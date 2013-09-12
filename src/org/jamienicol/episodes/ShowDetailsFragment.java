@@ -37,7 +37,6 @@ public class ShowDetailsFragment extends SherlockFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private int showId;
-	private Cursor showData;
 	private TextView overviewView;
 	private TextView firstAiredView;
 
@@ -99,35 +98,24 @@ public class ShowDetailsFragment extends SherlockFragment
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		showData = data;
-		refreshViews();
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		showData = null;
-		refreshViews();
-	}
-
-	private void refreshViews() {
-		if (showData != null && showData.moveToFirst()) {
+		if (data != null && data.moveToFirst()) {
 
 			int overviewColumnIndex =
-				showData.getColumnIndexOrThrow(ShowsTable.COLUMN_OVERVIEW);
-			if (showData.isNull(overviewColumnIndex)) {
+				data.getColumnIndexOrThrow(ShowsTable.COLUMN_OVERVIEW);
+			if (data.isNull(overviewColumnIndex)) {
 				overviewView.setVisibility(View.INVISIBLE);
 			} else {
-				overviewView.setText(showData.getString(overviewColumnIndex));
+				overviewView.setText(data.getString(overviewColumnIndex));
 				overviewView.setVisibility(View.VISIBLE);
 			}
 
 			int firstAiredColumnIndex =
-				showData.getColumnIndexOrThrow(ShowsTable.COLUMN_FIRST_AIRED);
-			if (showData.isNull(firstAiredColumnIndex)) {
+				data.getColumnIndexOrThrow(ShowsTable.COLUMN_FIRST_AIRED);
+			if (data.isNull(firstAiredColumnIndex)) {
 				firstAiredView.setVisibility(View.INVISIBLE);
 			} else {
 				Date firstAired =
-					new Date(showData.getLong(firstAiredColumnIndex) * 1000);
+					new Date(data.getLong(firstAiredColumnIndex) * 1000);
 				DateFormat df = DateFormat.getDateInstance();
 				String firstAiredText =
 					String.format(getString(R.string.first_aired),
@@ -140,5 +128,10 @@ public class ShowDetailsFragment extends SherlockFragment
 			overviewView.setVisibility(View.INVISIBLE);
 			firstAiredView.setVisibility(View.INVISIBLE);
 		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		onLoadFinished(loader, null);
 	}
 }

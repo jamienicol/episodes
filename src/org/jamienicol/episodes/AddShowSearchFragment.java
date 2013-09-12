@@ -88,8 +88,7 @@ public class AddShowSearchFragment extends SherlockListFragment
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<Show>> loader,
-	                           List<Show> data) {
+	public void onLoadFinished(Loader<List<Show>> loader, List<Show> data) {
 		AddShowSearchResults results = AddShowSearchResults.getInstance();
 		results.setData(data);
 
