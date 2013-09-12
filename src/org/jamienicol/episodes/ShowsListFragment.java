@@ -227,10 +227,10 @@ public class ShowsListFragment extends SherlockListFragment
 
 			hasStarredShows = false;
 			hasUnstarredShows = false;
-			if (showsCursor != null) {
+			if (showsCursor != null && showsCursor.moveToFirst()) {
 				int starredColumnIndex =
 					showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
-				while (showsCursor.moveToNext() && hasUnstarredShows == false) {
+				do {
 					boolean starred =
 						showsCursor.getInt(starredColumnIndex) > 0 ? true : false;
 					if (starred == true) {
@@ -239,7 +239,8 @@ public class ShowsListFragment extends SherlockListFragment
 						hasUnstarredShows = true;
 						firstUnstarredShowIndex = showsCursor.getPosition();
 					}
-				}
+				} while (showsCursor.moveToNext() &&
+				         hasUnstarredShows == false);
 			}
 
 			notifyDataSetChanged();
@@ -365,10 +366,11 @@ public class ShowsListFragment extends SherlockListFragment
 			TextView sectionHeader =
 				(TextView)convertView.findViewById(R.id.section_header);
 			if (hasUnstarredShows && hasStarredShows) {
-				sectionHeader.setVisibility(View.VISIBLE);
 				if (position == 0) {
+					sectionHeader.setVisibility(View.VISIBLE);
 					sectionHeader.setText(R.string.shows_list_header_starred);
 				} else if (position == firstUnstarredShowIndex) {
+					sectionHeader.setVisibility(View.VISIBLE);
 					sectionHeader.setText(R.string.shows_list_header_unstarred);
 				} else {
 					sectionHeader.setVisibility(View.GONE);
