@@ -23,25 +23,27 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import java.text.DateFormat;
 import java.util.Date;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
-public class EpisodeDetailsFragment extends SherlockFragment
+public class EpisodeDetailsFragment
+	extends Fragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private int episodeId;
@@ -98,7 +100,7 @@ public class EpisodeDetailsFragment extends SherlockFragment
 		inflater.inflate(R.menu.episode_details_fragment, menu);
 
 		watchedCheckBox =
-			(CheckBox)menu.findItem(R.id.menu_watched).getActionView();
+			(CheckBox)MenuItemCompat.getActionView(menu.findItem(R.id.menu_watched));
 
 		final ContentResolver contentResolver =
 			getActivity().getContentResolver();

@@ -32,17 +32,18 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.services.RefreshShowService;
 
-public class ShowActivity extends SherlockFragmentActivity
+public class ShowActivity
+	extends ActionBarActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
 	           SeasonsListFragment.OnSeasonSelectedListener
 {
@@ -97,7 +98,7 @@ public class ShowActivity extends SherlockFragmentActivity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getSupportMenuInflater();
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.show_activity, menu);
 
 		return true;

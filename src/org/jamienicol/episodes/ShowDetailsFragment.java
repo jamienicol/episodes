@@ -20,6 +20,7 @@ package org.jamienicol.episodes;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -27,13 +28,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
 import java.text.DateFormat;
 import java.util.Date;
-import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.db.ShowsProvider;
+import org.jamienicol.episodes.db.ShowsTable;
 
-public class ShowDetailsFragment extends SherlockFragment
+public class ShowDetailsFragment
+	extends Fragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private int showId;

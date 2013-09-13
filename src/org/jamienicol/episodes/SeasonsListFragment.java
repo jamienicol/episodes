@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -32,14 +33,14 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockListFragment;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
-public class SeasonsListFragment extends SherlockListFragment
+public class SeasonsListFragment
+	extends ListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private int showId;

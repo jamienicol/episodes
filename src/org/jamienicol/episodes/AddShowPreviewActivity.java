@@ -20,12 +20,13 @@ package org.jamienicol.episodes;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import java.util.List;
 import org.jamienicol.episodes.tvdb.Show;
 
-public class AddShowPreviewActivity extends SherlockFragmentActivity
+public class AddShowPreviewActivity
+	extends ActionBarActivity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)

@@ -25,12 +25,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
-public class EpisodeActivity extends SherlockFragmentActivity
+public class EpisodeActivity
+	extends ActionBarActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	@Override

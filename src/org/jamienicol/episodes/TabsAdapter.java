@@ -7,8 +7,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.Tab;
 import java.util.ArrayList;
 
 // ViewPager fragment adapter with actionbar tabs.

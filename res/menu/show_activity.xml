@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:episodes="http://schemas.android.com/apk/res-auto" >
   <item
       android:id="@+id/menu_toggle_show_starred"
       android:icon="@drawable/ic_show_unstarred"
       android:title="@string/menu_star_show"
-      android:showAsAction="ifRoom" />
+      episodes:showAsAction="ifRoom" />
   <item
       android:id="@+id/menu_refresh_show"
       android:icon="@drawable/ic_menu_refresh_show"
       android:title="@string/menu_refresh_show"
-      android:showAsAction="ifRoom" />
+      episodes:showAsAction="ifRoom" />
   <item
       android:id="@+id/menu_mark_show_watched"
       android:title="@string/menu_mark_show_watched"
-      android:showAsAction="never" />
+      episodes:showAsAction="never" />
   <item
       android:id="@+id/menu_mark_show_not_watched"
       android:title="@string/menu_mark_show_not_watched"
-      android:showAsAction="never" />
+      episodes:showAsAction="never" />
   <item
       android:id="@+id/menu_delete_show"
       android:icon="@drawable/ic_menu_delete_show"
       android:title="@string/menu_delete_show"
-      android:showAsAction="never" />
+      episodes:showAsAction="never" />
 </menu>

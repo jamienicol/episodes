@@ -18,11 +18,11 @@
 package org.jamienicol.episodes;
 
 import android.os.Bundle;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 
 public class AboutActivity
-	extends SherlockActivity
+	extends ActionBarActivity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

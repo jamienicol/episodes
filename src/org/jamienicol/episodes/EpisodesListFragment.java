@@ -25,6 +25,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -36,11 +37,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockListFragment;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
-public class EpisodesListFragment extends SherlockListFragment
+public class EpisodesListFragment
+	extends ListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private int showId;

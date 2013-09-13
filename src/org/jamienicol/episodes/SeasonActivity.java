@@ -23,14 +23,15 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
-public class SeasonActivity extends SherlockFragmentActivity
+public class SeasonActivity
+	extends ActionBarActivity
 	implements EpisodesListFragment.OnEpisodeSelectedListener
 {
 	private int showId;
@@ -75,7 +76,7 @@ public class SeasonActivity extends SherlockFragmentActivity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getSupportMenuInflater();
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.season_activity, menu);
 
 		return true;

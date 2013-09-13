@@ -20,21 +20,22 @@ package org.jamienicol.episodes;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 import org.jamienicol.episodes.services.AddShowService;
 import org.jamienicol.episodes.tvdb.Show;
 
-public class AddShowPreviewFragment extends SherlockFragment
+public class AddShowPreviewFragment
+	extends Fragment
 {
 	private Show show;
 

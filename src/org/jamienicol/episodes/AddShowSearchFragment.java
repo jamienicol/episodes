@@ -22,6 +22,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -31,14 +32,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockListFragment;
 import java.util.List;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.tvdb.Client;
 import org.jamienicol.episodes.tvdb.Show;
 
-public class AddShowSearchFragment extends SherlockListFragment
+public class AddShowSearchFragment
+	extends ListFragment
 	implements LoaderManager.LoaderCallbacks<List<Show>>
 {
 	public static AddShowSearchFragment newInstance(String query) {
