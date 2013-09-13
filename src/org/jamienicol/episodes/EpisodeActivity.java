@@ -134,6 +134,9 @@ public class EpisodeActivity
 			int initialPosition = getEpisodePositionFromId(episodesData,
 			                                               initialEpisodeId);
 			episodeDetailsPager.setCurrentItem(initialPosition, false);
+			/* this wont automatically be called if the previous
+			   function doesn't change the selected page */
+			onPageSelected(initialPosition);
 		}
 	}
 
