@@ -19,12 +19,14 @@ package org.jamienicol.episodes;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import org.jamienicol.episodes.db.EpisodesTable;
@@ -32,8 +34,14 @@ import org.jamienicol.episodes.db.ShowsProvider;
 
 public class EpisodeActivity
 	extends ActionBarActivity
-	implements LoaderManager.LoaderCallbacks<Cursor>
+	implements LoaderManager.LoaderCallbacks<Cursor>,
+	           ViewPager.OnPageChangeListener
 {
+	int initialEpisodeId;
+	private ViewPager episodeDetailsPager;
+	private Cursor episodesData;
+	private EpisodeDetailsPagerAdapter pagerAdapter;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,52 +50,90 @@ public class EpisodeActivity
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Intent intent = getIntent();
-		int episodeId = intent.getIntExtra("episodeId", -1);
-		if (episodeId == -1) {
-			throw new IllegalArgumentException("must provide valid episodeId");
+		int showId = intent.getIntExtra("showId", -1);
+		if (showId == -1) {
+			throw new IllegalArgumentException("must provide valid showId");
 		}
+		int seasonNumber = intent.getIntExtra("seasonNumber", -1);
+		if (seasonNumber == -1) {
+			throw new IllegalArgumentException("must provide valid seasonNumber");
+		}
+		initialEpisodeId = intent.getIntExtra("initialEpisodeId", -1);
+		if (initialEpisodeId == -1) {
+			throw new IllegalArgumentException("must provide valid initialEpisodeId");
+		}
+
+		episodeDetailsPager =
+			(ViewPager)findViewById(R.id.episode_details_pager);
+		episodesData = null;
+		pagerAdapter =
+			new EpisodeDetailsPagerAdapter(getSupportFragmentManager(),
+			                               episodesData);
+		episodeDetailsPager.setAdapter(pagerAdapter);
+		episodeDetailsPager.setOnPageChangeListener(this);
 
 		Bundle loaderArgs = new Bundle();
-		loaderArgs.putInt("episodeId", episodeId);
+		loaderArgs.putInt("showId", showId);
+		loaderArgs.putInt("seasonNumber", seasonNumber);
 		getSupportLoaderManager().initLoader(0, loaderArgs, this);
-
-		// create and add episode details fragment,
-		// but only on the first time the activity is created
-		if (savedInstanceState == null) {
-			EpisodeDetailsFragment fragment =
-				EpisodeDetailsFragment.newInstance(episodeId);
-			FragmentTransaction transaction =
-				getSupportFragmentManager().beginTransaction();
-			transaction.add(R.id.episode_details_fragment_container, fragment);
-			transaction.commit();
-		}
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		int episodeId = args.getInt("episodeId");
-		Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
-		                               new Integer(episodeId).toString());
+		int showId = args.getInt("showId");
+		int seasonNumber = args.getInt("seasonNumber");
+
 		String[] projection = {
+			EpisodesTable.COLUMN_ID,
 			EpisodesTable.COLUMN_NAME
 		};
+		String selection = String.format("%s=? AND %s=?",
+		                                 EpisodesTable.COLUMN_SHOW_ID,
+		                                 EpisodesTable.COLUMN_SEASON_NUMBER);
+		String[] selectionArgs = {
+			new Integer(showId).toString(),
+			new Integer(seasonNumber).toString()
+		};
+
 		return new CursorLoader(this,
-		                        uri,
+		                        ShowsProvider.CONTENT_URI_EPISODES,
 		                        projection,
-		                        null,
-		                        null,
-		                        null);
+		                        selection,
+		                        selectionArgs,
+		                        EpisodesTable.COLUMN_EPISODE_NUMBER + " ASC");
+	}
+
+	private int getEpisodePositionFromId(Cursor episodesData, int id) {
+		int position;
+
+		episodesData.moveToPosition(-1);
+		while (episodesData.moveToNext()) {
+			int idColumnIndex =
+				episodesData.getColumnIndexOrThrow(EpisodesTable.COLUMN_ID);
+
+			if (id == episodesData.getInt(idColumnIndex)) {
+				return episodesData.getPosition();
+			}
+		}
+
+		return 0;
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		if (data != null && data.moveToFirst()) {
-			int columnIndex =
-				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_NAME);
 
-			setTitle(data.getString(columnIndex));
-		} else {
-			setTitle("");
+		/* we'll need to move the view pager to the initial episode
+		   if this is the first time data has been loaded */
+		boolean moveToInitialPosition =
+			(data != null) && (episodesData == null);
+
+		episodesData = data;
+		pagerAdapter.swapCursor(episodesData);
+
+		if (moveToInitialPosition) {
+			int initialPosition = getEpisodePositionFromId(episodesData,
+			                                               initialEpisodeId);
+			episodeDetailsPager.setCurrentItem(initialPosition, false);
 		}
 	}
 
@@ -105,6 +151,66 @@ public class EpisodeActivity
 
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int state) {
+	}
+
+	@Override
+	public void onPageScrolled(int position,
+	                           float positionOffset,
+	                           int positionOffsetPixels) {
+	}
+
+	@Override
+	public void onPageSelected(int position) {
+		if (episodesData != null &&
+		    episodesData.moveToPosition(position)) {
+			int nameColumnIndex =
+				episodesData.getColumnIndexOrThrow(EpisodesTable.COLUMN_NAME);
+			String episodeName = episodesData.getString(nameColumnIndex);
+			setTitle(episodeName);
+
+		} else {
+			setTitle("");
+		}
+	}
+
+	private static class EpisodeDetailsPagerAdapter
+		extends FragmentStatePagerAdapter
+	{
+		Cursor episodesData;
+
+		public EpisodeDetailsPagerAdapter(FragmentManager fragmentManager,
+		                                  Cursor episodesData) {
+			super(fragmentManager);
+
+			swapCursor(episodesData);
+		}
+
+		public void swapCursor(Cursor episodesData) {
+			this.episodesData = episodesData;
+			this.notifyDataSetChanged();
+		}
+
+		@Override
+		public int getCount() {
+			if (episodesData != null) {
+				return episodesData.getCount();
+			} else {
+				return 0;
+			}
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			int idColumnIndex =
+				episodesData.getColumnIndexOrThrow(EpisodesTable.COLUMN_ID);
+			episodesData.moveToPosition(position);
+			int episodeId = episodesData.getInt(idColumnIndex);
+			return EpisodeDetailsFragment.newInstance(episodeId);
 		}
 	}
 }

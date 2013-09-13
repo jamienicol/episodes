@@ -106,7 +106,9 @@ public class SeasonActivity
 	public void onEpisodeSelected(int episodeId) {
 		Intent intent = new Intent(this,
 		                           EpisodeActivity.class);
-		intent.putExtra("episodeId", episodeId);
+		intent.putExtra("showId", showId);
+		intent.putExtra("seasonNumber", seasonNumber);
+		intent.putExtra("initialEpisodeId", episodeId);
 		startActivity(intent);
 	}
 
