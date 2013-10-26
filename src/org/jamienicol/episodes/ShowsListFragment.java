@@ -146,11 +146,16 @@ public class ShowsListFragment
 				EpisodesTable.COLUMN_SHOW_ID,
 				EpisodesTable.COLUMN_WATCHED
 			};
+			String selection =
+				String.format("%s!=?", EpisodesTable.COLUMN_SEASON_NUMBER);
+			String[] selectionArgs = {
+				"0"
+			};
 			return new CursorLoader(getActivity(),
 			                        ShowsProvider.CONTENT_URI_EPISODES,
 			                        projection,
-			                        null,
-			                        null,
+			                        selection,
+			                        selectionArgs,
 			                        null);
 
 		} else {
