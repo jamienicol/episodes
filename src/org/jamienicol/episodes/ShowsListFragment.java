@@ -18,9 +18,13 @@
 package org.jamienicol.episodes;
 
 import android.app.Activity;
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -33,9 +37,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 import java.util.HashMap;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
@@ -333,16 +339,49 @@ public class ShowsListFragment
 
 			showsCursor.moveToPosition(position);
 
-			int idColumnIndex =
+			final int idColumnIndex =
 				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
-			int id = showsCursor.getInt(idColumnIndex);
+			final int id = showsCursor.getInt(idColumnIndex);
 
-			TextView nameView =
+			final ContentResolver contentResolver =
+				context.getContentResolver();
+
+			final TextView nameView =
 				(TextView)convertView.findViewById(R.id.show_name_view);
-			int nameColumnIndex =
+			final int nameColumnIndex =
 				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
-			String name = showsCursor.getString(nameColumnIndex);
+			final String name = showsCursor.getString(nameColumnIndex);
 			nameView.setText(name);
+
+			final ToggleButton starredToggle
+				= (ToggleButton)convertView.findViewById(R.id.show_starred_toggle);
+			final int starredColumnIndex =
+				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
+			final boolean starred =
+				showsCursor.getInt(starredColumnIndex) > 0 ? true : false;
+
+			starredToggle.setOnCheckedChangeListener(null);
+			starredToggle.setChecked(starred);
+
+			starredToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+					public void onCheckedChanged(CompoundButton buttonView,
+					                             boolean isChecked) {
+						final AsyncQueryHandler handler =
+							new AsyncQueryHandler(contentResolver) {};
+						final ContentValues showValues = new ContentValues();
+						showValues.put(ShowsTable.COLUMN_STARRED, isChecked);
+
+						final Uri showUri =
+							Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
+							                     new Integer(id).toString());
+						handler.startUpdate(0,
+						                    null,
+						                    showUri,
+						                    showValues,
+						                    null,
+						                    null);
+					}
+				});
 
 			int numEpisodes = 0;
 			if (numEpisodesMap.containsKey(id)) {
@@ -353,12 +392,12 @@ public class ShowsListFragment
 				numWatched = numWatchedEpisodesMap.get(id);
 			}
 
-			ProgressBar progressBar =
+			final ProgressBar progressBar =
 				(ProgressBar)convertView.findViewById(R.id.show_progress_bar);
 			progressBar.setMax(numEpisodes);
 			progressBar.setProgress(numWatched);
 
-			TextView watchedCountView =
+			final TextView watchedCountView =
 				(TextView)convertView.findViewById(R.id.watched_count_view);
 			watchedCountView.
 				setText(String.format(context.
@@ -369,7 +408,7 @@ public class ShowsListFragment
 			// Show section headers for the first starred and
 			// first unstarred shows in the list, but only if
 			// there are both starred and unstarred shows.
-			TextView sectionHeader =
+			final TextView sectionHeader =
 				(TextView)convertView.findViewById(R.id.section_header);
 			if (hasUnstarredShows && hasStarredShows) {
 				if (position == 0) {

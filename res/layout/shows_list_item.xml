@@ -26,6 +26,16 @@
         android:layout_alignParentTop="true"
         android:paddingLeft="2dp"
         style="@style/ListItemHeading" />
+    <ToggleButton
+        android:id="@+id/show_starred_toggle"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:textOn=""
+        android:textOff=""
+        android:background="@drawable/starred_toggle"
+        android:focusable="false"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true" />
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
