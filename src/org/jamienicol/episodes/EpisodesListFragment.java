@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2014 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +55,9 @@ public class EpisodesListFragment
 
 	public static EpisodesListFragment newInstance(int showId,
 	                                               int seasonNumber) {
-		EpisodesListFragment instance = new EpisodesListFragment();
+		final EpisodesListFragment instance = new EpisodesListFragment();
 
-		Bundle args = new Bundle();
+		final Bundle args = new Bundle();
 		args.putInt("showId", showId);
 		args.putInt("seasonNumber", seasonNumber);
 
@@ -72,7 +72,7 @@ public class EpisodesListFragment
 		try {
 			onEpisodeSelectedListener = (OnEpisodeSelectedListener)activity;
 		} catch (ClassCastException e) {
-			String message =
+			final String message =
 				String.format("%s must implement OnEpisodeSelectedListener",
 				              activity.toString());
 			throw new ClassCastException(message);
@@ -97,7 +97,7 @@ public class EpisodesListFragment
 		showId = getArguments().getInt("showId");
 		seasonNumber = getArguments().getInt("seasonNumber");
 
-		Bundle loaderArgs = new Bundle();
+		final Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("showId", showId);
 		loaderArgs.putInt("seasonNumber", seasonNumber);
 		getLoaderManager().initLoader(0, loaderArgs, this);
@@ -105,18 +105,19 @@ public class EpisodesListFragment
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		int showId = args.getInt("showId");
-		int seasonNumber = args.getInt("seasonNumber");
+		final int showId = args.getInt("showId");
+		final int seasonNumber = args.getInt("seasonNumber");
 
-		String[] projection = {
+		final String[] projection = {
 			EpisodesTable.COLUMN_ID,
+			EpisodesTable.COLUMN_EPISODE_NUMBER,
 			EpisodesTable.COLUMN_NAME,
 			EpisodesTable.COLUMN_WATCHED
 		};
-		String selection = String.format("%s=? AND %s=?",
+		final String selection = String.format("%s=? AND %s=?",
 		                                 EpisodesTable.COLUMN_SHOW_ID,
 		                                 EpisodesTable.COLUMN_SEASON_NUMBER);
-		String[] selectionArgs = {
+		final String[] selectionArgs = {
 			new Integer(showId).toString(),
 			new Integer(seasonNumber).toString()
 		};
@@ -154,24 +155,29 @@ public class EpisodesListFragment
 
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
-			int idColumnIndex =
+			final int idColumnIndex =
 				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_ID);
 			final int id = cursor.getInt(idColumnIndex);
 
 			final ContentResolver contentResolver =
 				context.getContentResolver();
 
-			int nameColumnIndex =
+			final int nameColumnIndex =
 				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_NAME);
-			String name = cursor.getString(nameColumnIndex);
-			TextView nameView =
-				(TextView)view.findViewById(R.id.episode_name_view);
-			nameView.setText(name);
+			final String name = cursor.getString(nameColumnIndex);
 
-			int watchedColumnIndex =
+			final int episodeNumberColumnIndex =
+				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_EPISODE_NUMBER);
+			final int episodeNumber = cursor.getInt(episodeNumberColumnIndex);
+
+			final TextView nameView =
+				(TextView)view.findViewById(R.id.episode_name_view);
+			nameView.setText(String.format("%d - %s", episodeNumber, name));
+
+			final int watchedColumnIndex =
 				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
-			int watched = cursor.getInt(watchedColumnIndex);
-			CheckBox watchedCheckBox =
+			final int watched = cursor.getInt(watchedColumnIndex);
+			final CheckBox watchedCheckBox =
 				(CheckBox)view.findViewById(R.id.episode_watched_check_box);
 
 			watchedCheckBox.setOnCheckedChangeListener(null);
@@ -181,12 +187,12 @@ public class EpisodesListFragment
 			watchedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 				public void onCheckedChanged(CompoundButton buttonView,
 				                             boolean isChecked) {
-					AsyncQueryHandler handler =
+					final AsyncQueryHandler handler =
 						new AsyncQueryHandler(contentResolver) {};
-					ContentValues epValues = new ContentValues();
+					final ContentValues epValues = new ContentValues();
 					epValues.put(EpisodesTable.COLUMN_WATCHED, isChecked);
 
-					Uri epUri =
+					final Uri epUri =
 						Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
 						                     new Integer(id).toString());
 					handler.startUpdate(0,
@@ -201,7 +207,7 @@ public class EpisodesListFragment
 
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			LayoutInflater inflater = LayoutInflater.from(context);
+			final LayoutInflater inflater = LayoutInflater.from(context);
 			return inflater.inflate(R.layout.episodes_list_item, parent, false);
 		}
 	}
