@@ -239,10 +239,12 @@ public class ShowActivity
 		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
 		ContentValues epValues = new ContentValues();
 		epValues.put(EpisodesTable.COLUMN_WATCHED, watched);
-		String selection = String.format("%s=?",
-		                                 EpisodesTable.COLUMN_SHOW_ID);
+		String selection = String.format("%s=? AND %s!=?",
+		                                 EpisodesTable.COLUMN_SHOW_ID,
+		                                 EpisodesTable.COLUMN_SEASON_NUMBER);
 		String[] selectionArgs = {
-			new Integer(showId).toString()
+			new Integer(showId).toString(),
+			"0"
 		};
 
 		handler.startUpdate(0,
