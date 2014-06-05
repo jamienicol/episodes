@@ -146,7 +146,7 @@ public class EpisodesListFragment
 		onEpisodeSelectedListener.onEpisodeSelected((int)id);
 	}
 
-	private static class EpisodesCursorAdapter
+	private class EpisodesCursorAdapter
 		extends CursorAdapter
 	{
 		public EpisodesCursorAdapter(Context context, Cursor c, int flags) {
@@ -172,7 +172,11 @@ public class EpisodesListFragment
 
 			final TextView nameView =
 				(TextView)view.findViewById(R.id.episode_name_view);
-			nameView.setText(String.format("%d - %s", episodeNumber, name));
+			if (seasonNumber == 0) {
+				nameView.setText(name);
+			} else {
+				nameView.setText(String.format("%d - %s", episodeNumber, name));
+			}
 
 			final int watchedColumnIndex =
 				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
