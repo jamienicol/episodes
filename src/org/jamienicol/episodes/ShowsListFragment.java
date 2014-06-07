@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2014 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-import java.util.HashMap;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
@@ -71,7 +70,7 @@ public class ShowsListFragment
 		try {
 			onShowSelectedListener = (OnShowSelectedListener)activity;
 		} catch (ClassCastException e) {
-			String message =
+			final String message =
 				String.format("%s must implement OnShowSelectedListener",
 				              activity.toString());
 			throw new ClassCastException(message);
@@ -113,7 +112,8 @@ public class ShowsListFragment
 	public void onPrepareOptionsMenu(Menu menu) {
 
 		// hide refresh all option if no shows exist
-		boolean showsExist = (showsData != null && showsData.moveToFirst());
+		final boolean showsExist =
+			(showsData != null && showsData.moveToFirst());
 
 		menu.findItem(R.id.menu_refresh_all_shows).setVisible(showsExist);
 
@@ -134,7 +134,7 @@ public class ShowsListFragment
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		if (id == LOADER_ID_SHOWS) {
-			String[] projection = {
+			final String[] projection = {
 				ShowsTable.COLUMN_ID,
 				ShowsTable.COLUMN_NAME,
 				ShowsTable.COLUMN_STARRED
@@ -148,13 +148,15 @@ public class ShowsListFragment
 			                        ShowsTable.COLUMN_NAME + " ASC");
 
 		} else if (id == LOADER_ID_EPISODES) {
-			String[] projection = {
+			final String[] projection = {
 				EpisodesTable.COLUMN_SHOW_ID,
+				EpisodesTable.COLUMN_SEASON_NUMBER,
+				EpisodesTable.COLUMN_FIRST_AIRED,
 				EpisodesTable.COLUMN_WATCHED
 			};
-			String selection =
+			final String selection =
 				String.format("%s!=?", EpisodesTable.COLUMN_SEASON_NUMBER);
-			String[] selectionArgs = {
+			final String[] selectionArgs = {
 				"0"
 			};
 			return new CursorLoader(getActivity(),
@@ -199,13 +201,13 @@ public class ShowsListFragment
 	private void refreshAllShows() {
 		if (showsData != null && showsData.moveToFirst()) {
 			do {
-				int idColumnIndex =
+				final int idColumnIndex =
 					showsData.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
 
-				int id = showsData.getInt(idColumnIndex);
+				final int id = showsData.getInt(idColumnIndex);
 
-				Intent intent = new Intent(getActivity(),
-				                           RefreshShowService.class);
+				final Intent intent = new Intent(getActivity(),
+				                                 RefreshShowService.class);
 				intent.putExtra("showId", id);
 
 				getActivity().startService(intent);
@@ -218,16 +220,17 @@ public class ShowsListFragment
 		extends BaseAdapter
 	{
 		private Context context;
-		private HashMap<Integer, Integer> numEpisodesMap;
-		private HashMap<Integer, Integer> numWatchedEpisodesMap;
 		private Cursor showsCursor;
+		private EpisodesCounter episodesCounter;
 
 		public ShowsListAdapter(Context context,
 		                        Cursor showsCursor,
 		                        Cursor episodesCursor) {
 			this.context = context;
 
-			countEpisodes(episodesCursor);
+			episodesCounter = new EpisodesCounter(EpisodesTable.COLUMN_SHOW_ID);
+			episodesCounter.swapCursor(episodesCursor);
+
 			swapShowsCursor(showsCursor);
 		}
 
@@ -238,46 +241,10 @@ public class ShowsListFragment
 		}
 
 		public void swapEpisodesCursor(Cursor episodesCursor) {
-			countEpisodes(episodesCursor);
+			episodesCounter.swapCursor(episodesCursor);
 
 			if (showsCursor != null) {
 				notifyDataSetChanged();
-			}
-		}
-
-		private void countEpisodes(Cursor episodesCursor) {
-			numEpisodesMap = new HashMap<Integer, Integer>();
-			numWatchedEpisodesMap = new HashMap<Integer, Integer>();
-
-			/* extract the total number and number of watched episodes
-			 * for each show. */
-			if (episodesCursor != null && episodesCursor.moveToFirst()) {
-				do {
-					int showIdColumnIndex =
-						episodesCursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_SHOW_ID);
-					int showId = episodesCursor.getInt(showIdColumnIndex);
-
-					// ensure entries exist in maps for this show id
-					if (numEpisodesMap.containsKey(showId) == false) {
-						numEpisodesMap.put(showId, 0);
-					}
-					if (numWatchedEpisodesMap.containsKey(showId) == false) {
-						numWatchedEpisodesMap.put(showId, 0);
-					}
-
-					// increment num episodes for this show
-					numEpisodesMap.put(showId, numEpisodesMap.get(showId) + 1);
-
-					// if episode is watched, increment value for this show
-					int watchedColumnIndex =
-						episodesCursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
-					boolean watched =
-						episodesCursor.getInt(watchedColumnIndex) > 0 ? true : false;
-					if (watched) {
-						numWatchedEpisodesMap.put(showId,
-						                          numWatchedEpisodesMap.get(showId) + 1);
-					}
-				} while (episodesCursor.moveToNext());
 			}
 		}
 
@@ -299,7 +266,7 @@ public class ShowsListFragment
 		public long getItemId(int position) {
 			showsCursor.moveToPosition(position);
 
-			int idColumnIndex =
+			final int idColumnIndex =
 				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
 			return showsCursor.getInt(idColumnIndex);
 		}
@@ -309,7 +276,7 @@ public class ShowsListFragment
 		                    View convertView,
 		                    ViewGroup parent) {
 
-			LayoutInflater inflater = LayoutInflater.from(context);
+			final LayoutInflater inflater = LayoutInflater.from(context);
 			if(convertView == null) {
 				convertView = inflater.inflate(R.layout.shows_list_item,
 				                               parent,
@@ -332,8 +299,8 @@ public class ShowsListFragment
 			final String name = showsCursor.getString(nameColumnIndex);
 			nameView.setText(name);
 
-			final ToggleButton starredToggle
-				= (ToggleButton)convertView.findViewById(R.id.show_starred_toggle);
+			final ToggleButton starredToggle =
+				(ToggleButton)convertView.findViewById(R.id.show_starred_toggle);
 			final int starredColumnIndex =
 				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
 			final boolean starred =
@@ -362,27 +329,27 @@ public class ShowsListFragment
 					}
 				});
 
-			int numEpisodes = 0;
-			if (numEpisodesMap.containsKey(id)) {
-				numEpisodes = numEpisodesMap.get(id);
-			}
-			int numWatched = 0;
-			if (numWatchedEpisodesMap.containsKey(id)) {
-				numWatched = numWatchedEpisodesMap.get(id);
-			}
+			final int numAired = episodesCounter.getNumAiredEpisodes(id);
+			final int numWatched = episodesCounter.getNumWatchedEpisodes(id);
+			final int numUpcoming = episodesCounter.getNumUpcomingEpisodes(id);
 
 			final ProgressBar progressBar =
 				(ProgressBar)convertView.findViewById(R.id.show_progress_bar);
-			progressBar.setMax(numEpisodes);
+			progressBar.setMax(numAired);
 			progressBar.setProgress(numWatched);
 
 			final TextView watchedCountView =
 				(TextView)convertView.findViewById(R.id.watched_count_view);
-			watchedCountView.
-				setText(String.format(context.
-				                      getString(R.string.watched_count),
-				                      numWatched,
-				                      numEpisodes));
+			String watchedCountText =
+				String.format(context.getString(R.string.watched_count),
+				              numWatched,
+				              numAired);
+			if (numUpcoming != 0) {
+				watchedCountText += " " +
+					String.format(context.getString(R.string.upcoming_count),
+					              numUpcoming);
+			}
+			watchedCountView.setText(watchedCountText);
 
 			return convertView;
 		}
