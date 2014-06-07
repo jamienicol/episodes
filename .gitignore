@@ -1,4 +1,10 @@
 bin/
 gen/
 local.properties
+
 *~
+
+GPATH
+GRTAGS
+GTAGS
+ID
