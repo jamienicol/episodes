@@ -21,18 +21,26 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
+import org.jamienicol.episodes.db.ShowsTable;
 
 public class SeasonActivity
 	extends ActionBarActivity
-	implements EpisodesListFragment.OnEpisodeSelectedListener
+	implements LoaderManager.LoaderCallbacks<Cursor>,
+	           EpisodesListFragment.OnEpisodeSelectedListener
 {
 	private int showId;
 	private int seasonNumber;
@@ -45,7 +53,7 @@ public class SeasonActivity
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		Intent intent = getIntent();
+		final Intent intent = getIntent();
 		showId = intent.getIntExtra("showId", -1);
 		if (showId == -1) {
 			throw new IllegalArgumentException("must provide valid showId");
@@ -55,19 +63,24 @@ public class SeasonActivity
 			throw new IllegalArgumentException("must provide valid seasonNumber");
 		}
 
+		final Bundle loaderArgs = new Bundle();
+		loaderArgs.putInt("showId", showId);
+		getSupportLoaderManager().initLoader(0, loaderArgs, this);
+
+		final ActionBar actionBar = getSupportActionBar();
 		if (seasonNumber == 0) {
-			setTitle(getString(R.string.season_name_specials));
+			actionBar.setSubtitle(getString(R.string.season_name_specials));
 		} else {
-			setTitle(String.format(getString(R.string.season_name,
-			                                 seasonNumber)));
+			actionBar.setSubtitle(String.format(getString(R.string.season_name,
+			                                              seasonNumber)));
 		}
 
 		// create and add episodes list fragment,
 		// but only on the first time the activity is created
 		if (savedInstanceState == null) {
-			EpisodesListFragment fragment =
+			final EpisodesListFragment fragment =
 				EpisodesListFragment.newInstance(showId, seasonNumber);
-			FragmentTransaction transaction =
+			final FragmentTransaction transaction =
 				getSupportFragmentManager().beginTransaction();
 			transaction.add(R.id.episodes_list_fragment_container, fragment);
 			transaction.commit();
@@ -76,10 +89,43 @@ public class SeasonActivity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
+		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.season_activity, menu);
 
 		return true;
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		final int showId = args.getInt("showId");
+		final Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
+		                                     new Integer(showId).toString());
+		final String[] projection = {
+			ShowsTable.COLUMN_NAME
+		};
+		return new CursorLoader(this,
+		                        uri,
+		                        projection,
+		                        null,
+		                        null,
+		                        null);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		if (data != null && data.moveToFirst()) {
+			// make activity title the show name
+			final int nameColumnIndex =
+				data.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
+			setTitle(data.getString(nameColumnIndex));
+		} else {
+			setTitle("");
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		onLoadFinished(loader, null);
 	}
 
 	@Override
@@ -104,8 +150,8 @@ public class SeasonActivity
 
 	@Override
 	public void onEpisodeSelected(int episodeId) {
-		Intent intent = new Intent(this,
-		                           EpisodeActivity.class);
+		final Intent intent = new Intent(this,
+		                                 EpisodeActivity.class);
 		intent.putExtra("showId", showId);
 		intent.putExtra("seasonNumber", seasonNumber);
 		intent.putExtra("initialEpisodeId", episodeId);
@@ -113,14 +159,16 @@ public class SeasonActivity
 	}
 
 	private void markSeasonWatched(boolean watched) {
-		ContentResolver contentResolver = getContentResolver();
-		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
-		ContentValues epValues = new ContentValues();
+		final ContentResolver contentResolver = getContentResolver();
+		final AsyncQueryHandler handler =
+			new AsyncQueryHandler(contentResolver) {};
+		final ContentValues epValues = new ContentValues();
 		epValues.put(EpisodesTable.COLUMN_WATCHED, watched);
-		String selection = String.format("%s=? AND %s=?",
-		                                 EpisodesTable.COLUMN_SHOW_ID,
-		                                 EpisodesTable.COLUMN_SEASON_NUMBER);
-		String[] selectionArgs = {
+		final String selection =
+			String.format("%s=? AND %s=?",
+			              EpisodesTable.COLUMN_SHOW_ID,
+			              EpisodesTable.COLUMN_SEASON_NUMBER);
+		final String[] selectionArgs = {
 			new Integer(showId).toString(),
 			new Integer(seasonNumber).toString()
 		};
