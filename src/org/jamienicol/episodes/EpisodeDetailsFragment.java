@@ -47,16 +47,16 @@ public class EpisodeDetailsFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private int episodeId;
+	private TextView titleView;
 	private TextView overviewView;
-	private TextView seasonEpisodeView;
 	private TextView firstAiredView;
 	private boolean watched = false;
 	private CheckBox watchedCheckBox;
 
 	public static EpisodeDetailsFragment newInstance(int episodeId) {
-		EpisodeDetailsFragment instance = new EpisodeDetailsFragment();
+		final EpisodeDetailsFragment instance = new EpisodeDetailsFragment();
 
-		Bundle args = new Bundle();
+		final Bundle args = new Bundle();
 		args.putInt("episodeId", episodeId);
 
 		instance.setArguments(args);
@@ -75,12 +75,12 @@ public class EpisodeDetailsFragment
 	public View onCreateView(LayoutInflater inflater,
 	                         ViewGroup container,
 	                         Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.episode_details_fragment,
-		                             container,
-		                             false);
+		final View view = inflater.inflate(R.layout.episode_details_fragment,
+		                                   container,
+		                                   false);
 
+		titleView = (TextView)view.findViewById(R.id.title);
 		overviewView = (TextView)view.findViewById(R.id.overview);
-		seasonEpisodeView = (TextView)view.findViewById(R.id.season_episode);
 		firstAiredView = (TextView)view.findViewById(R.id.first_aired);
 
 		return view;
@@ -90,7 +90,7 @@ public class EpisodeDetailsFragment
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		Bundle loaderArgs = new Bundle();
+		final Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("episodeId", episodeId);
 		getLoaderManager().initLoader(0, loaderArgs, this);
 	}
@@ -107,16 +107,16 @@ public class EpisodeDetailsFragment
 		watchedCheckBox.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				boolean isChecked = ((CheckBox)view).isChecked();
+				final boolean isChecked = ((CheckBox)view).isChecked();
 
-				AsyncQueryHandler handler =
+				final AsyncQueryHandler handler =
 					new AsyncQueryHandler(contentResolver) {};
 
-				Uri episodeUri =
+				final Uri episodeUri =
 					Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
 					                     new Integer(episodeId).toString());
 
-				ContentValues episodeValues = new ContentValues();
+				final ContentValues episodeValues = new ContentValues();
 				episodeValues.put(EpisodesTable.COLUMN_WATCHED, isChecked);
 
 				handler.startUpdate(0,
@@ -135,10 +135,11 @@ public class EpisodeDetailsFragment
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		int episodeId = args.getInt("episodeId");
-		Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
-		                               new Integer(episodeId).toString());
-		String[] projection = {
+		final int episodeId = args.getInt("episodeId");
+		final Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
+		                                     new Integer(episodeId).toString());
+		final String[] projection = {
+			EpisodesTable.COLUMN_NAME,
 			EpisodesTable.COLUMN_OVERVIEW,
 			EpisodesTable.COLUMN_SEASON_NUMBER,
 			EpisodesTable.COLUMN_EPISODE_NUMBER,
@@ -157,7 +158,27 @@ public class EpisodeDetailsFragment
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		if (data != null && data.moveToFirst()) {
 
-			int overviewColumnIndex =
+			final int seasonNumberColumnIndex =
+				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
+			final int seasonNumber = data.getInt(seasonNumberColumnIndex);
+			final int episodeNumberColumnIndex =
+					data.getColumnIndexOrThrow(EpisodesTable.COLUMN_EPISODE_NUMBER);
+			final int episodeNumber = data.getInt(episodeNumberColumnIndex);
+
+			final int titleColumnIndex =
+				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_NAME);
+			final String title = data.getString(titleColumnIndex);
+
+			String titleText = "";
+			if (seasonNumber != 0) {
+				titleText += String.format("%02dx%02d - ",
+				                           seasonNumber,
+				                           episodeNumber);
+			}
+			titleText += title;
+			titleView.setText(titleText);
+
+			final int overviewColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_OVERVIEW);
 			if (data.isNull(overviewColumnIndex)) {
 				overviewView.setVisibility(View.GONE);
@@ -166,31 +187,15 @@ public class EpisodeDetailsFragment
 				overviewView.setVisibility(View.VISIBLE);
 			}
 
-			int seasonNumberColumnIndex =
-				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_SEASON_NUMBER);
-			int seasonNumber = data.getInt(seasonNumberColumnIndex);
-			if (seasonNumber == 0) {
-				seasonEpisodeView.setVisibility(View.GONE);
-			} else {
-				int episodeNumberColumnIndex =
-					data.getColumnIndexOrThrow(EpisodesTable.COLUMN_EPISODE_NUMBER);
-				String seasonEpisodeText =
-					String.format(getActivity().getString(R.string.season_episode),
-					              data.getInt(seasonNumberColumnIndex),
-					              data.getInt(episodeNumberColumnIndex));
-				seasonEpisodeView.setText(seasonEpisodeText);
-				seasonEpisodeView.setVisibility(View.VISIBLE);
-			}
-
-			int firstAiredColumnIndex =
+			final int firstAiredColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_FIRST_AIRED);
 			if (data.isNull(firstAiredColumnIndex)) {
 				firstAiredView.setVisibility(View.GONE);
 			} else {
-				Date firstAired =
+				final Date firstAired =
 					new Date(data.getLong(firstAiredColumnIndex) * 1000);
-				DateFormat df = DateFormat.getDateInstance();
-				String firstAiredText =
+				final DateFormat df = DateFormat.getDateInstance();
+				final String firstAiredText =
 					String.format(getString(R.string.first_aired),
 					              df.format(firstAired));
 				firstAiredView.setText(firstAiredText);
@@ -198,7 +203,7 @@ public class EpisodeDetailsFragment
 			}
 
 			// watchedCheckBox might not be inflated yet
-			int watchedColumnIndex =
+			final int watchedColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
 			watched = data.getInt(watchedColumnIndex) > 0 ? true : false;
 			if (watchedCheckBox != null) {
