@@ -26,6 +26,7 @@ public class Show
 	private String name;
 	private String overview;
 	private Date firstAired;
+	private String bannerPath;
 	private List<Episode> episodes;
 
 	public Show() {
@@ -66,6 +67,14 @@ public class Show
 
 	public void setFirstAired(Date firstAired) {
 		this.firstAired = firstAired;
+	}
+
+	public String getBannerPath() {
+		return bannerPath;
+	}
+
+	public void setBannerPath(String bannerPath) {
+		this.bannerPath = bannerPath;
 	}
 
 	public List<Episode> getEpisodes() {

@@ -103,6 +103,15 @@ class GetShowParser
 				}
 			});
 
+			Element bannerPathElement = seriesElement.getChild("banner");
+			bannerPathElement.setEndTextElementListener(new EndTextElementListener() {
+				public void end(String body) {
+					Log.i(TAG,
+					      String.format("Parsed show banner path: %s", body));
+					show.setBannerPath(body);
+				}
+			});
+
 			Element episodeElement = rootElement.getChild("Episode");
 			episodeElement.setStartElementListener(new StartElementListener() {
 				public void start(Attributes attributes) {
