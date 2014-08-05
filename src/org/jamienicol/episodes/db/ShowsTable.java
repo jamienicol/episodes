@@ -33,7 +33,7 @@ public class ShowsTable
 
 	public static final String COLUMN_TYPE_ID = "INTEGER PRIMARY KEY";
 	public static final String COLUMN_TYPE_TVDB_ID = "INTEGER UNIQUE NOT NULL";
-	public static final String COLUMN_TYPE_NAME = "VARCHAR(200) NOT NULL";
+	public static final String COLUMN_TYPE_NAME = "TEXT NOT NULL";
 	public static final String COLUMN_TYPE_OVERVIEW = "TEXT";
 	public static final String COLUMN_TYPE_FIRST_AIRED = "DATE";
 	public static final String COLUMN_TYPE_STARRED = "BOOLEAN DEFAULT 0";
