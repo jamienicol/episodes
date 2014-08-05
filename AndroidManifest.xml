@@ -32,23 +32,28 @@
     </activity>
 
     <activity
-        android:name=".AddShowSearchActivity" >
+        android:name=".AddShowSearchActivity"
+        android:label="" >
     </activity>
 
     <activity
-        android:name=".AddShowPreviewActivity" >
+        android:name=".AddShowPreviewActivity"
+        android:label="" >
     </activity>
 
     <activity
-        android:name=".ShowActivity" >
+        android:name=".ShowActivity"
+        android:label="" >
     </activity>
 
     <activity
-        android:name=".SeasonActivity" >
+        android:name=".SeasonActivity"
+        android:label="" >
     </activity>
 
     <activity
-        android:name=".EpisodeActivity" >
+        android:name=".EpisodeActivity"
+        android:label="" >
     </activity>
 
     <service
