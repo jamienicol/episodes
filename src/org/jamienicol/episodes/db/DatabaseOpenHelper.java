@@ -20,11 +20,14 @@ package org.jamienicol.episodes.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DatabaseOpenHelper extends SQLiteOpenHelper
 {
 	private static final String name = "episodes.db";
 	private static final int version = 3;
+
+	private static final String TAG = "DatabaseOpenHelper";
 
 	DatabaseOpenHelper(Context context) {
 		super(context, name, null, version);
@@ -32,12 +35,15 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+		Log.d(TAG, "creating database");
 		ShowsTable.onCreate(db);
 		EpisodesTable.onCreate(db);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		Log.d(TAG, String.format("upgrading database from version %d to %d",
+		                         oldVersion, newVersion));
 		ShowsTable.onUpgrade(db, oldVersion, newVersion);
 		EpisodesTable.onUpgrade(db, oldVersion, newVersion);
 	}

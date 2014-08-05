@@ -19,9 +19,12 @@ package org.jamienicol.episodes.db;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 public class ShowsTable
 {
+	private static final String TAG = "ShowsTable";
+
 	public static final String TABLE_NAME = "shows";
 
 	public static final String COLUMN_ID = BaseColumns._ID;
@@ -59,6 +62,9 @@ public class ShowsTable
 			              COLUMN_FIRST_AIRED, COLUMN_TYPE_FIRST_AIRED,
 			              COLUMN_STARRED, COLUMN_TYPE_STARRED,
 			              COLUMN_BANNER_PATH, COLUMN_TYPE_BANNER_PATH);
+
+		Log.d(TAG, String.format("creating shows table: %s", create));
+
 		db.execSQL(create);
 	}
 
@@ -68,6 +74,7 @@ public class ShowsTable
 		switch (oldVersion) {
 		case 1:
 			// Add starred column
+			Log.d(TAG, "upgrading shows table: adding starred column");
 			db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s",
 			                         TABLE_NAME,
 			                         COLUMN_STARRED,
@@ -76,6 +83,7 @@ public class ShowsTable
 			// fall through
 		case 2:
 			// Add banner path column
+			Log.d(TAG, "upgrading shows table: adding banner path column");
 			db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s",
 			                         TABLE_NAME,
 			                         COLUMN_BANNER_PATH,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2014 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,12 @@ package org.jamienicol.episodes.db;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 public class EpisodesTable
 {
+	private static final String TAG = "EpisodesTable";
+
 	public static final String TABLE_NAME = "episodes";
 
 	public static final String COLUMN_ID = BaseColumns._ID;
@@ -57,6 +60,9 @@ public class EpisodesTable
 			              COLUMN_SEASON_NUMBER,
 			              COLUMN_FIRST_AIRED,
 			              COLUMN_WATCHED);
+
+		Log.d(TAG, String.format("creating episodes table: %s", create));
+
 		db.execSQL(create);
 	}
 
