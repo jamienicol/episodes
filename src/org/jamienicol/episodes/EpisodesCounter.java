@@ -48,7 +48,11 @@ public class EpisodesCounter
 		numWatchedEpisodesMap.clear();
 		numUpcomingEpisodesMap.clear();
 
-		while (episodesCursor != null && episodesCursor.moveToNext()) {
+		if (episodesCursor == null || episodesCursor.moveToFirst() == false) {
+			return;
+		}
+
+		do {
 			final int keyColumnIndex =
 				episodesCursor.getColumnIndexOrThrow(keyColumn);
 			final int key = episodesCursor.getInt(keyColumnIndex);
@@ -98,7 +102,7 @@ public class EpisodesCounter
 				numUpcomingEpisodesMap.put(key,
 				                           numUpcomingEpisodesMap.get(key) + 1);
 			}
-		}
+		} while (episodesCursor.moveToNext());
 	}
 
 	public Set<Integer> getKeys() {
