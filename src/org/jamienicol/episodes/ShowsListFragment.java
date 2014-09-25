@@ -38,10 +38,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
@@ -137,7 +140,8 @@ public class ShowsListFragment
 			final String[] projection = {
 				ShowsTable.COLUMN_ID,
 				ShowsTable.COLUMN_NAME,
-				ShowsTable.COLUMN_STARRED
+				ShowsTable.COLUMN_STARRED,
+				ShowsTable.COLUMN_BANNER_PATH
 			};
 			return new CursorLoader(getActivity(),
 			                        ShowsProvider.CONTENT_URI_SHOWS,
@@ -298,6 +302,27 @@ public class ShowsListFragment
 				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
 			final String name = showsCursor.getString(nameColumnIndex);
 			nameView.setText(name);
+
+			final ImageView bannerView =
+				(ImageView)convertView.findViewById(R.id.banner_view);
+			final int bannerPathColumnIndex =
+				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_BANNER_PATH);
+			final String bannerPath = showsCursor.getString(bannerPathColumnIndex);
+
+			bannerView.setImageResource(R.drawable.blank_show_banner);
+			if (bannerPath != null && !bannerPath.equals("")) {
+				final String bannerUrl =
+					String.format("http://thetvdb.com/banners/%s", bannerPath);
+
+				final DisplayImageOptions options =
+					new DisplayImageOptions.Builder()
+					.cacheInMemory(true)
+					.cacheOnDisk(true)
+					.build();
+				ImageLoader.getInstance().displayImage(bannerUrl,
+				                                       bannerView,
+				                                       options);
+			}
 
 			final ToggleButton starredToggle =
 				(ToggleButton)convertView.findViewById(R.id.show_starred_toggle);

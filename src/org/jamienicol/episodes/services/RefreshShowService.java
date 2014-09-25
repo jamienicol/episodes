@@ -87,6 +87,7 @@ public class RefreshShowService extends IntentService
 			showValues.put(ShowsTable.COLUMN_FIRST_AIRED,
 			               show.getFirstAired().getTime() / 1000);
 		}
+		showValues.put(ShowsTable.COLUMN_BANNER_PATH, show.getBannerPath());
 
 		Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
 		                                   new Integer(showId).toString());

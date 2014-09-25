@@ -110,6 +110,7 @@ public class AddShowService extends IntentService
 			showValues.put(ShowsTable.COLUMN_FIRST_AIRED,
 			               show.getFirstAired().getTime() / 1000);
 		}
+		showValues.put(ShowsTable.COLUMN_BANNER_PATH, show.getBannerPath());
 
 		// insert the show into the database
 		Uri showUri =
