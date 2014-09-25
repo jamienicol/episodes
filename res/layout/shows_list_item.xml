@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
-  <RelativeLayout
-      xmlns:android="http://schemas.android.com/apk/res/android"
-      android:orientation="vertical"
+    android:padding="4dp" >
+  <FrameLayout
+      android:id="@+id/name_banner_frame"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingLeft="8dp"
-      android:paddingRight="8dp"
-      android:paddingTop="0dp"
-      android:paddingBottom="4dp"
-      style="@style/ListItem" >
+      android:layout_alignParentTop="true" >
     <TextView
         android:id="@+id/show_name_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:paddingLeft="2dp"
         style="@style/ListItemHeading" />
-    <ToggleButton
-        android:id="@+id/show_starred_toggle"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:textOn=""
-        android:textOff=""
-        android:background="@drawable/starred_toggle"
-        android:focusable="false"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true" />
-    <FrameLayout
+    <ImageView
+        android:id="@+id/banner_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" >
-      <ProgressBar
-          android:id="@+id/show_progress_bar"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          style="@style/WatchedProgressBar" />
-      <TextView
-          android:id="@+id/watched_count_view"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:paddingLeft="2dp"
-          style="@style/WatchedProgressText" />
-    </FrameLayout>
-  </RelativeLayout>
-</LinearLayout>
+        android:adjustViewBounds="true" />
+  </FrameLayout>
+  <ToggleButton
+      android:id="@+id/show_starred_toggle"
+      android:layout_width="32dp"
+      android:layout_height="32dp"
+      android:textOn=""
+      android:textOff=""
+      android:background="@drawable/starred_toggle"
+      android:focusable="false"
+      android:layout_alignParentTop="true"
+      android:layout_alignParentRight="true" />
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/name_banner_frame" >
+    <ProgressBar
+        android:id="@+id/show_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/WatchedProgressBar" />
+    <TextView
+        android:id="@+id/watched_count_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="2dp"
+        style="@style/WatchedProgressText" />
+  </FrameLayout>
+</RelativeLayout>
