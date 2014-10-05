@@ -18,9 +18,8 @@
 package org.jamienicol.episodes;
 
 import android.database.Cursor;
+import android.util.SparseIntArray;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.jamienicol.episodes.db.EpisodesTable;
@@ -29,17 +28,17 @@ public class EpisodesCounter
 {
 	private String keyColumn;
 	private Set<Integer> keys;
-	private Map<Integer, Integer> numAiredEpisodesMap;
-	private Map<Integer, Integer> numWatchedEpisodesMap;
-	private Map<Integer, Integer> numUpcomingEpisodesMap;
+	private SparseIntArray numAiredEpisodesMap;
+	private SparseIntArray numWatchedEpisodesMap;
+	private SparseIntArray numUpcomingEpisodesMap;
 
 	public EpisodesCounter(String keyColumn) {
 		this.keyColumn = keyColumn;
 
 		keys = new TreeSet<Integer>();
-		numAiredEpisodesMap = new HashMap<Integer, Integer>();
-		numWatchedEpisodesMap = new HashMap<Integer, Integer>();
-		numUpcomingEpisodesMap = new HashMap<Integer, Integer>();
+		numAiredEpisodesMap = new SparseIntArray();
+		numWatchedEpisodesMap = new SparseIntArray();
+		numUpcomingEpisodesMap = new SparseIntArray();
 	}
 
 	public void swapCursor(Cursor episodesCursor) {
@@ -80,11 +79,6 @@ public class EpisodesCounter
 
 			if (keys.contains(key) == false) {
 				keys.add(key);
-
-				// initialise the counters to zero so they can be incremented
-				numAiredEpisodesMap.put(key, 0);
-				numWatchedEpisodesMap.put(key, 0);
-				numUpcomingEpisodesMap.put(key, 0);
 			}
 
 			// increment the appropriate counter(s) for this show.
