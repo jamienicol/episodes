@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -88,7 +89,8 @@ class GetShowParser
 			firstAiredElement.setEndTextElementListener(new EndTextElementListener() {
 				public void end(String body) {
 					try {
-						DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+						DateFormat df = new SimpleDateFormat("yyyy-MM-dd",
+						                                     Locale.US);
 						Date firstAired = df.parse(body);
 
 						Log.i(TAG,
@@ -182,7 +184,8 @@ class GetShowParser
 			episodeFirstAiredElement.setEndTextElementListener(new EndTextElementListener() {
 				public void end(String body) {
 					try {
-						DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+						DateFormat df = new SimpleDateFormat("yyyy-MM-dd",
+						                                     Locale.US);
 						Date firstAired = df.parse(body);
 
 						Log.i(TAG,
