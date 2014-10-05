@@ -4,6 +4,7 @@
     xmlns:episodes="http://schemas.android.com/apk/res-auto" >
   <item
       android:id="@+id/menu_watched"
+      android:title="@string/watched_action_check_box"
       episodes:showAsAction="always"
       episodes:actionLayout="@layout/episode_watched_action_check_box" />
 </menu>
