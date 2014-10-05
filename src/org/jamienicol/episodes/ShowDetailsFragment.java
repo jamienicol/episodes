@@ -118,9 +118,8 @@ public class ShowDetailsFragment
 				Date firstAired =
 					new Date(data.getLong(firstAiredColumnIndex) * 1000);
 				DateFormat df = DateFormat.getDateInstance();
-				String firstAiredText =
-					String.format(getString(R.string.first_aired),
-					              df.format(firstAired));
+				String firstAiredText = getString(R.string.first_aired,
+				                                  df.format(firstAired));
 				firstAiredView.setText(firstAiredText);
 				firstAiredView.setVisibility(View.VISIBLE);
 			}

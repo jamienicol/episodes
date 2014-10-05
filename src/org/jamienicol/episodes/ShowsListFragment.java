@@ -365,14 +365,13 @@ public class ShowsListFragment
 
 			final TextView watchedCountView =
 				(TextView)convertView.findViewById(R.id.watched_count_view);
-			String watchedCountText =
-				String.format(context.getString(R.string.watched_count),
-				              numWatched,
-				              numAired);
+			String watchedCountText = context.getString(R.string.watched_count,
+			                                            numWatched,
+			                                            numAired);
 			if (numUpcoming != 0) {
 				watchedCountText += " " +
-					String.format(context.getString(R.string.upcoming_count),
-					              numUpcoming);
+					context.getString(R.string.upcoming_count,
+					                  numUpcoming);
 			}
 			watchedCountView.setText(watchedCountText);
 

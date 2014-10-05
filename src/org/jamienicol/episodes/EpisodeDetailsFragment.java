@@ -195,9 +195,8 @@ public class EpisodeDetailsFragment
 				final Date firstAired =
 					new Date(data.getLong(firstAiredColumnIndex) * 1000);
 				final DateFormat df = DateFormat.getDateInstance();
-				final String firstAiredText =
-					String.format(getString(R.string.first_aired),
-					              df.format(firstAired));
+				final String firstAiredText = getString(R.string.first_aired,
+				                                        df.format(firstAired));
 				firstAiredView.setText(firstAiredText);
 				firstAiredView.setVisibility(View.VISIBLE);
 			}

@@ -81,8 +81,8 @@ public class AddShowPreviewFragment
 			Date firstAired = show.getFirstAired();
 			if (firstAired != null) {
 				DateFormat df = DateFormat.getDateInstance();
-				String text = String.format(getString(R.string.first_aired),
-				                            df.format(show.getFirstAired()));
+				String text = getString(R.string.first_aired,
+				                        df.format(show.getFirstAired()));
 				firstAiredView.setText(text);
 			} else {
 				firstAiredView.setText("");

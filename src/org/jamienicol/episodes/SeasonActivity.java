@@ -71,8 +71,8 @@ public class SeasonActivity
 		if (seasonNumber == 0) {
 			actionBar.setSubtitle(getString(R.string.season_name_specials));
 		} else {
-			actionBar.setSubtitle(String.format(getString(R.string.season_name,
-			                                              seasonNumber)));
+			actionBar.setSubtitle(getString(R.string.season_name,
+			                                seasonNumber));
 		}
 
 		// create and add episodes list fragment,
