@@ -84,7 +84,7 @@ public class ShowDetailsFragment
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		int showId = args.getInt("showId");
 		Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-		                               new Integer(showId).toString());
+		                               String.valueOf(showId));
 		String[] projection = {
 			ShowsTable.COLUMN_OVERVIEW,
 			ShowsTable.COLUMN_FIRST_AIRED

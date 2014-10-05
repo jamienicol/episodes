@@ -118,8 +118,8 @@ public class EpisodesListFragment
 		                                 EpisodesTable.COLUMN_SHOW_ID,
 		                                 EpisodesTable.COLUMN_SEASON_NUMBER);
 		final String[] selectionArgs = {
-			new Integer(showId).toString(),
-			new Integer(seasonNumber).toString()
+			String.valueOf(showId),
+			String.valueOf(seasonNumber)
 		};
 
 		return new CursorLoader(getActivity(),
@@ -198,7 +198,7 @@ public class EpisodesListFragment
 
 					final Uri epUri =
 						Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
-						                     new Integer(id).toString());
+						                     String.valueOf(id));
 					handler.startUpdate(0,
 					                    null,
 					                    epUri,

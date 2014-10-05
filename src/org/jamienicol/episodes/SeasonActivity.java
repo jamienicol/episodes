@@ -99,7 +99,7 @@ public class SeasonActivity
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		final int showId = args.getInt("showId");
 		final Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-		                                     new Integer(showId).toString());
+		                                     String.valueOf(showId));
 		final String[] projection = {
 			ShowsTable.COLUMN_NAME
 		};
@@ -169,8 +169,8 @@ public class SeasonActivity
 			              EpisodesTable.COLUMN_SHOW_ID,
 			              EpisodesTable.COLUMN_SEASON_NUMBER);
 		final String[] selectionArgs = {
-			new Integer(showId).toString(),
-			new Integer(seasonNumber).toString()
+			String.valueOf(showId),
+			String.valueOf(seasonNumber)
 		};
 
 		handler.startUpdate(0,

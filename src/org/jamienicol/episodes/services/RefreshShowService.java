@@ -59,7 +59,7 @@ public class RefreshShowService extends IntentService
 
 	private int getShowTvdbId(int showId) {
 		Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-		                                   new Integer(showId).toString());
+		                                   Integer.valueOf(showId).toString());
 		final String[] projection = {
 			ShowsTable.COLUMN_TVDB_ID
 		};
@@ -90,7 +90,7 @@ public class RefreshShowService extends IntentService
 		showValues.put(ShowsTable.COLUMN_BANNER_PATH, show.getBannerPath());
 
 		Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-		                                   new Integer(showId).toString());
+		                                   Integer.valueOf(showId).toString());
 		getContentResolver().update(showUri, showValues, null, null);
 	}
 
@@ -104,7 +104,7 @@ public class RefreshShowService extends IntentService
 			final int episodeId = episodesCursor.getInt(idColumnIndex);
 			final Uri episodeUri =
 				Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
-				                     new Integer(episodeId).toString());
+				                     Integer.valueOf(episodeId).toString());
 
 			final int tvdbIdColumnIndex =
 				episodesCursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_TVDB_ID);
@@ -153,7 +153,7 @@ public class RefreshShowService extends IntentService
 		final String selection = String.format("%s=?",
 		                                       EpisodesTable.COLUMN_SHOW_ID);
 		final String[] selectionArgs = {
-			new Integer(showId).toString()
+			Integer.valueOf(showId).toString()
 		};
 
 		Cursor cursor =

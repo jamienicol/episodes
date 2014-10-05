@@ -88,7 +88,7 @@ public class AddShowService extends IntentService
 		final String selection = String.format("%s=?",
 		                                       ShowsTable.COLUMN_TVDB_ID);
 		final String[] selectionArgs = {
-			new Integer(tvdbId).toString()
+			Integer.valueOf(tvdbId).toString()
 		};
 		Cursor cursor =
 			getContentResolver().query(ShowsProvider.CONTENT_URI_SHOWS,

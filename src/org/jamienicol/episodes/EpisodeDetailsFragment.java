@@ -114,7 +114,7 @@ public class EpisodeDetailsFragment
 
 				final Uri episodeUri =
 					Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
-					                     new Integer(episodeId).toString());
+					                     String.valueOf(episodeId));
 
 				final ContentValues episodeValues = new ContentValues();
 				episodeValues.put(EpisodesTable.COLUMN_WATCHED, isChecked);
@@ -137,7 +137,7 @@ public class EpisodeDetailsFragment
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		final int episodeId = args.getInt("episodeId");
 		final Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
-		                                     new Integer(episodeId).toString());
+		                                     String.valueOf(episodeId));
 		final String[] projection = {
 			EpisodesTable.COLUMN_NAME,
 			EpisodesTable.COLUMN_OVERVIEW,

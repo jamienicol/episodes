@@ -105,7 +105,7 @@ public class SeasonsListFragment
 		};
 		final String selection = EpisodesTable.COLUMN_SHOW_ID + "=?";
 		final String[] selectionArgs = {
-			new Integer(showId).toString()
+			String.valueOf(showId)
 		};
 
 		return new CursorLoader(getActivity(),

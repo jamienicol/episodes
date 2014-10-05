@@ -124,7 +124,7 @@ public class ShowActivity
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		int showId = args.getInt("showId");
 		Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-		                               new Integer(showId).toString());
+		                               String.valueOf(showId));
 		String[] projection = {
 			ShowsTable.COLUMN_NAME,
 			ShowsTable.COLUMN_STARRED
@@ -216,7 +216,7 @@ public class ShowActivity
 		String selection = String.format("%s=?",
 		                                 ShowsTable.COLUMN_ID);
 		String[] selectionArgs = {
-			new Integer(showId).toString()
+			String.valueOf(showId)
 		};
 
 		handler.startUpdate(0,
@@ -243,7 +243,7 @@ public class ShowActivity
 		                                 EpisodesTable.COLUMN_SHOW_ID,
 		                                 EpisodesTable.COLUMN_SEASON_NUMBER);
 		String[] selectionArgs = {
-			new Integer(showId).toString(),
+			String.valueOf(showId),
 			"0"
 		};
 
@@ -263,7 +263,7 @@ public class ShowActivity
 		String epSelection = String.format("%s=?",
 		                                   EpisodesTable.COLUMN_SHOW_ID);
 		String[] epSelectionArgs = {
-			new Integer(showId).toString()
+			String.valueOf(showId)
 		};
 
 		handler.startDelete(0,
@@ -274,7 +274,7 @@ public class ShowActivity
 
 		/* delete the show itself */
 		Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-		                                   new Integer(showId).toString());
+		                                   String.valueOf(showId));
 		handler.startDelete(0,
 		                    null,
 		                    showUri,

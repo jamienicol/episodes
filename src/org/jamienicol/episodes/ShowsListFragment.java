@@ -344,7 +344,7 @@ public class ShowsListFragment
 
 						final Uri showUri =
 							Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-							                     new Integer(id).toString());
+							                     String.valueOf(id));
 						handler.startUpdate(0,
 						                    null,
 						                    showUri,

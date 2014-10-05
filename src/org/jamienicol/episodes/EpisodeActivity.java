@@ -91,8 +91,8 @@ public class EpisodeActivity
 		                                 EpisodesTable.COLUMN_SHOW_ID,
 		                                 EpisodesTable.COLUMN_SEASON_NUMBER);
 		String[] selectionArgs = {
-			new Integer(showId).toString(),
-			new Integer(seasonNumber).toString()
+			String.valueOf(showId),
+			String.valueOf(seasonNumber)
 		};
 
 		return new CursorLoader(this,
