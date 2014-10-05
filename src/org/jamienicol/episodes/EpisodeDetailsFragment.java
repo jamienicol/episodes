@@ -171,9 +171,10 @@ public class EpisodeDetailsFragment
 
 			String titleText = "";
 			if (seasonNumber != 0) {
-				titleText += String.format("%02dx%02d - ",
-				                           seasonNumber,
-				                           episodeNumber);
+				titleText +=
+					getActivity().getString(R.string.season_episode_prefix,
+					                        seasonNumber,
+					                        episodeNumber);
 			}
 			titleText += title;
 			titleView.setText(titleText);

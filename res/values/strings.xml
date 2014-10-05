@@ -21,7 +21,7 @@
   <string name="menu_refresh_show">Refresh show</string>
   <string name="menu_star_show">Star show</string>
   <string name="menu_unstar_show">Unstar show</string>
-  <string name="season_episode">Season %1$d Episode %2$d</string>
+  <string name="season_episode_prefix">"%1$02dx%2$02d - "</string>
   <string name="season_name">Season %d</string>
   <string name="season_name_specials">Specials</string>
   <string name="show_added">%s added to library</string>
