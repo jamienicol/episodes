@@ -174,10 +174,10 @@ public class EpisodeActivity
 			int nameColumnIndex =
 				episodesData.getColumnIndexOrThrow(EpisodesTable.COLUMN_NAME);
 			String episodeName = episodesData.getString(nameColumnIndex);
-			setTitle(episodeName);
+			getSupportActionBar().setTitle(episodeName);
 
 		} else {
-			setTitle("");
+			getSupportActionBar().setTitle("");
 		}
 	}
 

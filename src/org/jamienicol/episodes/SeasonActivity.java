@@ -117,9 +117,9 @@ public class SeasonActivity
 			// make activity title the show name
 			final int nameColumnIndex =
 				data.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
-			setTitle(data.getString(nameColumnIndex));
+			getSupportActionBar().setTitle(data.getString(nameColumnIndex));
 		} else {
-			setTitle("");
+			getSupportActionBar().setTitle("");
 		}
 	}
 

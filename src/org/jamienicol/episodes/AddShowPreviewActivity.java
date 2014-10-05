@@ -53,7 +53,7 @@ public class AddShowPreviewActivity
 		}
 
 		Show show = resultsData.get(searchResultIndex);
-		setTitle(show.getName());
+		getSupportActionBar().setTitle(show.getName());
 
 		// If this is the first time the activity has been created,
 		// create and add the preview fragment.

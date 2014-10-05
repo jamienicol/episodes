@@ -40,7 +40,7 @@ public class AddShowSearchActivity
 		Intent intent = getIntent();
 		String query = intent.getStringExtra("query");
 
-		setTitle(query);
+		getSupportActionBar().setTitle(query);
 
 		// create and add search fragment,
 		// but only on the first time the activity is created

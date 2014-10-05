@@ -144,7 +144,7 @@ public class ShowActivity
 			// make activity title the show name
 			int nameColumnIndex =
 				data.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
-			setTitle(data.getString(nameColumnIndex));
+			getSupportActionBar().setTitle(data.getString(nameColumnIndex));
 
 			// maybe update the state of the toggle starred menu item
 			int starredColumnIndex =
@@ -157,7 +157,7 @@ public class ShowActivity
 				supportInvalidateOptionsMenu();
 			}
 		} else {
-			setTitle("");
+			getSupportActionBar().setTitle("");
 		}
 	}
 
