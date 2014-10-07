@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <style name="ListItem">
-    <item name="android:paddingStart">?android:attr/listPreferredItemPaddingStart</item>
-    <item name="android:paddingEnd">?android:attr/listPreferredItemPaddingEnd</item>
-  </style>
-</resources>

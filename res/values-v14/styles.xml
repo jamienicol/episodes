@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <style name="ListItem">
+    <item name="android:minHeight">?android:attr/listPreferredItemHeight</item>
+    <item name="android:paddingTop">2dp</item>
+    <item name="android:paddingBottom">2dp</item>
     <item name="android:paddingLeft">?android:attr/listPreferredItemPaddingLeft</item>
     <item name="android:paddingRight">?android:attr/listPreferredItemPaddingRight</item>
   </style>
 
   <style name="ListItemHeading">
     <item name="android:textAppearance">?android:attr/textAppearanceListItem</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:ellipsize">end</item>
   </style>
 </resources>
