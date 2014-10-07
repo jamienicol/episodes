@@ -7,6 +7,7 @@
   <string name="about_website">http://github.com/jamienicol/episodes</string>
   <string name="app_name">Episodes</string>
   <string name="adding_show">Adding %s to library</string>
+  <string name="error_adding_show">Error adding %s to library</string>
   <string name="first_aired">First Aired: %s</string>
   <string name="menu_about">About</string>
   <string name="menu_add_show_search_hint">Search for new show</string>

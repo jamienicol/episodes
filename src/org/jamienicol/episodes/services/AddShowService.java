@@ -54,31 +54,31 @@ public class AddShowService extends IntentService
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		Client tvdbClient = new Client("25B864A8BC56AFAD");
+		final Client tvdbClient = new Client("25B864A8BC56AFAD");
 
-		int tvdbId = intent.getIntExtra("tvdbId", 0);
-		String showName = intent.getStringExtra("showName");
+		final int tvdbId = intent.getIntExtra("tvdbId", 0);
+		final String showName = intent.getStringExtra("showName");
 
 		if (isShowAlreadyAdded(tvdbId) == false) {
 
-			String adding_message = getString(R.string.adding_show);
-			showMessage(String.format(adding_message, showName));
+			showMessage(getString(R.string.adding_show, showName));
 
 			// fetch full show + episode information from tvdb
-			Show show = tvdbClient.getShow(tvdbId);
+			final Show show = tvdbClient.getShow(tvdbId);
 
-			// add show and episodes to database
-			int showId = insertShow(show);
-			for (Episode episode : show.getEpisodes()) {
-				insertEpisode(episode, showId);
+			if (show != null) {
+				// add show and episodes to database
+				final int showId = insertShow(show);
+				for (Episode episode : show.getEpisodes()) {
+					insertEpisode(episode, showId);
+				}
+
+				showMessage(getString(R.string.show_added, showName));
+			} else {
+				showMessage(getString(R.string.error_adding_show, showName));
 			}
-
-			String added_message = getString(R.string.show_added);
-			showMessage(String.format(added_message, showName));
-
 		} else {
-			String already_message = getString(R.string.show_already_added);
-			showMessage(String.format(already_message, showName));
+			showMessage(getString(R.string.show_already_added, showName));
 		}
 	}
 
@@ -90,7 +90,7 @@ public class AddShowService extends IntentService
 		final String[] selectionArgs = {
 			Integer.valueOf(tvdbId).toString()
 		};
-		Cursor cursor =
+		final Cursor cursor =
 			getContentResolver().query(ShowsProvider.CONTENT_URI_SHOWS,
 			                           projection,
 			                           selection,
@@ -102,7 +102,7 @@ public class AddShowService extends IntentService
 
 	private int insertShow(Show show) {
 		// fill in information about the show
-		ContentValues showValues = new ContentValues();
+		final ContentValues showValues = new ContentValues();
 		showValues.put(ShowsTable.COLUMN_TVDB_ID, show.getId());
 		showValues.put(ShowsTable.COLUMN_NAME, show.getName());
 		showValues.put(ShowsTable.COLUMN_OVERVIEW, show.getOverview());
@@ -113,13 +113,13 @@ public class AddShowService extends IntentService
 		showValues.put(ShowsTable.COLUMN_BANNER_PATH, show.getBannerPath());
 
 		// insert the show into the database
-		Uri showUri =
+		final Uri showUri =
 			getContentResolver().insert(ShowsProvider.CONTENT_URI_SHOWS,
 			                            showValues);
 
 		// need to obtain the ID of the inserted show.
 		// the ID is just the final segment of the URI
-		int showId = Integer.parseInt(showUri.getLastPathSegment());
+		final int showId = Integer.parseInt(showUri.getLastPathSegment());
 
 		Log.i(TAG, String.format("show %s successfully added to database as row %d. adding episodes",
 		                         show.getName(),
@@ -129,7 +129,7 @@ public class AddShowService extends IntentService
 	}
 
 	private void insertEpisode(Episode episode, int showId) {
-		ContentValues episodeValues = new ContentValues();
+		final ContentValues episodeValues = new ContentValues();
 		episodeValues.put(EpisodesTable.COLUMN_TVDB_ID, episode.getId());
 		episodeValues.put(EpisodesTable.COLUMN_SHOW_ID, showId);
 		episodeValues.put(EpisodesTable.COLUMN_NAME, episode.getName());
@@ -149,14 +149,14 @@ public class AddShowService extends IntentService
 	}
 
 	private void showMessage(String message) {
-		final Context context = AddShowService.this;
+		final Context context = this;
 		final String text = message;
 		final int duration = Toast.LENGTH_SHORT;
 
 		handler.post(new Runnable() {
 				@Override
 				public void run() {
-					Toast toast = Toast.makeText(context, text, duration);
+					final Toast toast = Toast.makeText(context, text, duration);
 					toast.show();
 				}
 			});

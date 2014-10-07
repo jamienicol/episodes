@@ -34,6 +34,7 @@ public class Show
 		name = "";
 		overview = "";
 		firstAired = null;
+		bannerPath = "";
 		episodes = null;
 	}
 
