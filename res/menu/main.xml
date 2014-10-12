@@ -9,6 +9,11 @@
       episodes:showAsAction="ifRoom|withText|collapseActionView"
       episodes:actionViewClass="android.support.v7.widget.SearchView" />
   <item
+      android:id="@+id/menu_settings"
+      android:title="@string/menu_settings"
+      episodes:showAsAction="never"
+      android:menuCategory="secondary"/>
+  <item
       android:id="@+id/menu_about"
       android:title="@string/menu_about"
       episodes:showAsAction="never"

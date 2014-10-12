@@ -71,6 +71,10 @@ public class MainActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.menu_settings:
+			showSettings();
+			return true;
+
 		case R.id.menu_about:
 			showAbout();
 			return true;
@@ -84,6 +88,11 @@ public class MainActivity
 	public void onShowSelected(int showId) {
 		final Intent intent = new Intent(this, ShowActivity.class);
 		intent.putExtra("showId", showId);
+		startActivity(intent);
+	}
+
+	private void showSettings() {
+		final Intent intent = new Intent(this, SettingsActivity.class);
 		startActivity(intent);
 	}
 

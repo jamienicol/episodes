@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="auto_refresh_period_entries">
+    <item>Daily</item>
+    <item>Twice weekly</item>
+    <item>Weekly</item>
+    <item>Fortnightly</item>
+  </string-array>
+  <string-array name="auto_refresh_period_values">
+    <item>24</item>
+    <item>84</item>
+    <item>168</item>
+    <item>336</item>
+  </string-array>
+</resources>
