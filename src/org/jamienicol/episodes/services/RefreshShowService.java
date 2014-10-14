@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2013-2014 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,9 +52,11 @@ public class RefreshShowService extends IntentService
 		// fetch full show + episode information from tvdb
 		Show show = tvdbClient.getShow(showTvdbId);
 
-		updateShow(showId, show);
-		updateExistingEpisodes(showId, show.getEpisodes());
-		addNewEpisodes(showId, show.getEpisodes());
+		if (show != null) {
+			updateShow(showId, show);
+			updateExistingEpisodes(showId, show.getEpisodes());
+			addNewEpisodes(showId, show.getEpisodes());
+		}
 	}
 
 	private int getShowTvdbId(int showId) {
