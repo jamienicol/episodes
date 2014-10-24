@@ -18,13 +18,21 @@
 package org.jamienicol.episodes;
 
 import android.app.Application;
+import android.util.Log;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.squareup.okhttp.Cache;
+import com.squareup.okhttp.OkHttpClient;
+import java.io.IOException;
 
 public class EpisodesApplication
 	extends Application
 {
+	private static final String TAG = EpisodesApplication.class.getName();
+
 	private static EpisodesApplication instance;
+
+	private OkHttpClient httpClient;
 
 	@Override
 	public void onCreate() {
@@ -32,10 +40,26 @@ public class EpisodesApplication
 
 		instance = this;
 
+		httpClient = new OkHttpClient();
+		try {
+			Cache httpCache = new Cache(getCacheDir(), 1024 * 1024);
+			httpClient.setCache(httpCache);
+		} catch (IOException e) {
+			Log.w(TAG, "Error initialising okhttp cache", e);
+		}
+
 		final ImageLoaderConfiguration imageLoaderConfig =
 			new ImageLoaderConfiguration.Builder(this)
 			.build();
 
 		ImageLoader.getInstance().init(imageLoaderConfig);
+	}
+
+	public static EpisodesApplication getInstance() {
+		return instance;
+	}
+
+	public OkHttpClient getHttpClient() {
+		return httpClient;
 	}
 }

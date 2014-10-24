@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2014 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,66 +18,84 @@
 package org.jamienicol.episodes.tvdb;
 
 import android.util.Log;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Locale;
+import org.jamienicol.episodes.EpisodesApplication;
 
 public class Client
 {
-	private static final String TAG = "Client";
+	private static final String TAG = Client.class.getName();
 	private static final String baseUrl = "http://thetvdb.com/api";
 
 	private final String apiKey;
+	private final OkHttpClient http;
 
 	public Client(String apiKey) {
 		this.apiKey = apiKey;
+		http = EpisodesApplication.getInstance().getHttpClient();
 	}
 
 	public List<Show> searchShows(String query) {
 
 		try {
-			String escapedQuery = URLEncoder.encode(query, "UTF-8");
-			StringBuilder urlBuilder = new StringBuilder();
-			urlBuilder.append(baseUrl);
-			urlBuilder.append("/GetSeries.php?seriesname=");
-			urlBuilder.append(escapedQuery);
+			final String escapedQuery = URLEncoder.encode(query, "UTF-8");
+			final String url = String.format("%s/GetSeries.php?seriesname=%s",
+			                                 baseUrl,
+			                                 escapedQuery);
+			Log.d(TAG, String.format("Sending request to %s", url));
 
-			URL url = new URL(urlBuilder.toString());
-			URLConnection connection = url.openConnection();
-			InputStream inputStream = new BufferedInputStream(connection.getInputStream());
+			final Request request = new Request.Builder().url(url).build();
 
-			SearchShowsParser parser = new SearchShowsParser();
-			return parser.parse(inputStream);
+			final Response response = http.newCall(request).execute();
 
+			Log.d(TAG, String.format("Received response %d: %s",
+			                         response.code(),
+			                         response.message()));
+
+			if (response.isSuccessful()) {
+				final SearchShowsParser parser = new SearchShowsParser();
+
+				return parser.parse(response.body().byteStream());
+			} else {
+				return null;
+			}
 		} catch (IOException e) {
-			Log.w(TAG, "IOException - searchShows: " + e.toString());
+			Log.w(TAG, e);
 			return null;
 		}
 	}
 
 	public Show getShow(int id) {
 		try {
-			StringBuilder urlBuilder = new StringBuilder();
-			urlBuilder.append(baseUrl);
-			urlBuilder.append("/");
-			urlBuilder.append(apiKey);
-			urlBuilder.append("/series/");
-			urlBuilder.append(id);
-			urlBuilder.append("/all/en.xml");
+			final String url = String.format(Locale.US,
+			                                 "%s/%s/series/%d/all/en.xml",
+			                                 baseUrl,
+			                                 apiKey,
+			                                 id);
+			Log.d(TAG, String.format("Sending request to %s", url));
 
-			URL url = new URL(urlBuilder.toString());
-			URLConnection connection = url.openConnection();
-			InputStream inputStream = new BufferedInputStream(connection.getInputStream());
+			final Request request = new Request.Builder().url(url).build();
 
-			GetShowParser parser = new GetShowParser();
-			return parser.parse(inputStream);
+			final Response response = http.newCall(request).execute();
 
+			Log.d(TAG, String.format("Received response %d: %s",
+			                         response.code(),
+			                         response.message()));
+
+			if (response.isSuccessful()) {
+				final GetShowParser parser = new GetShowParser();
+
+				return parser.parse(response.body().byteStream());
+			} else {
+				return null;
+			}
 		} catch (IOException e) {
-			Log.w(TAG, "IOException - getShow: " + e.toString());
+			Log.w(TAG, e);
 			return null;
 		}
 	}
