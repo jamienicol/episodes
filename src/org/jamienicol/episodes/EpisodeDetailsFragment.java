@@ -49,7 +49,7 @@ public class EpisodeDetailsFragment
 	private int episodeId;
 	private TextView titleView;
 	private TextView overviewView;
-	private TextView firstAiredView;
+	private TextView dateView;
 	private boolean watched = false;
 	private CheckBox watchedCheckBox;
 
@@ -81,7 +81,7 @@ public class EpisodeDetailsFragment
 
 		titleView = (TextView)view.findViewById(R.id.title);
 		overviewView = (TextView)view.findViewById(R.id.overview);
-		firstAiredView = (TextView)view.findViewById(R.id.first_aired);
+		dateView = (TextView)view.findViewById(R.id.date);
 
 		return view;
 	}
@@ -191,15 +191,14 @@ public class EpisodeDetailsFragment
 			final int firstAiredColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_FIRST_AIRED);
 			if (data.isNull(firstAiredColumnIndex)) {
-				firstAiredView.setVisibility(View.GONE);
+				dateView.setVisibility(View.GONE);
 			} else {
-				final Date firstAired =
+				final Date date =
 					new Date(data.getLong(firstAiredColumnIndex) * 1000);
-				final DateFormat df = DateFormat.getDateInstance();
-				final String firstAiredText = getString(R.string.first_aired,
-				                                        df.format(firstAired));
-				firstAiredView.setText(firstAiredText);
-				firstAiredView.setVisibility(View.VISIBLE);
+				final String dateText =
+					DateFormat.getDateInstance(DateFormat.LONG).format(date);
+				dateView.setText(dateText);
+				dateView.setVisibility(View.VISIBLE);
 			}
 
 			// watchedCheckBox might not be inflated yet
