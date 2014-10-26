@@ -12,6 +12,15 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       style="@style/ListItemHeading" />
+  <TextView
+      android:id="@+id/episode_date_view"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentBottom="true"
+      android:layout_below="@+id/episode_name_view"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:padding="2dp"
+      android:textAppearance="?android:attr/textAppearanceSmall"/>
   <CheckBox
       android:id="@id/episode_watched_check_box"
       android:focusable="false"

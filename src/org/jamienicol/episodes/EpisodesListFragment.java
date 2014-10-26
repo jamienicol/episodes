@@ -37,6 +37,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import java.text.DateFormat;
+import java.util.Date;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
@@ -112,6 +114,7 @@ public class EpisodesListFragment
 			EpisodesTable.COLUMN_ID,
 			EpisodesTable.COLUMN_EPISODE_NUMBER,
 			EpisodesTable.COLUMN_NAME,
+			EpisodesTable.COLUMN_FIRST_AIRED,
 			EpisodesTable.COLUMN_WATCHED
 		};
 		final String selection = String.format("%s=? AND %s=?",
@@ -176,6 +179,21 @@ public class EpisodesListFragment
 				nameView.setText(name);
 			} else {
 				nameView.setText(String.format("%d - %s", episodeNumber, name));
+			}
+
+			final int firstAiredColumnIndex =
+				cursor.getColumnIndexOrThrow(EpisodesTable.COLUMN_FIRST_AIRED);
+			final TextView dateView =
+				(TextView)view.findViewById(R.id.episode_date_view);
+			if (cursor.isNull(firstAiredColumnIndex)) {
+				dateView.setVisibility(View.GONE);
+			} else {
+				final Date date =
+					new Date(cursor.getLong(firstAiredColumnIndex) * 1000);
+				final String dateText =
+					DateFormat.getDateInstance().format(date);
+				dateView.setText(dateText);
+				dateView.setVisibility(View.VISIBLE);
 			}
 
 			final int watchedColumnIndex =
