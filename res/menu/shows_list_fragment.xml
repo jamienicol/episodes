@@ -3,8 +3,28 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:episodes="http://schemas.android.com/apk/res-auto" >
   <item
+      android:icon="@drawable/ic_menu_filter_shows_list"
+      android:title="@string/menu_filter_shows_list"
+      episodes:showAsAction="always">
+    <menu>
+      <group
+          android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_filter_all"
+            android:title="@string/menu_filter_all"/>
+        <item
+            android:id="@+id/menu_filter_starred"
+            android:title="@string/menu_filter_starred"/>
+        <item
+            android:id="@+id/menu_filter_uncompleted"
+            android:title="@string/menu_filter_uncompleted"/>
+      </group>
+    </menu>
+  </item>
+  <item
       android:id="@+id/menu_refresh_all_shows"
       android:icon="@drawable/ic_menu_refresh_all_shows"
       android:title="@string/menu_refresh_all_shows"
       episodes:showAsAction="never" />
 </menu>
+
