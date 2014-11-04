@@ -23,9 +23,11 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -56,6 +58,12 @@ public class ShowsListFragment
 {
 	private static final int LOADER_ID_SHOWS = 0;
 	private static final int LOADER_ID_EPISODES = 1;
+
+	private static final String KEY_PREF_SHOWS_FILTER = "pref_shows_filter";
+
+	private static final int SHOWS_FILTER_ALL = 0;
+	private static final int SHOWS_FILTER_STARRED = 1;
+	private static final int SHOWS_FILTER_UNCOMPLETED = 2;
 
 	private ShowsListAdapter listAdapter;
 	private Cursor showsData;
@@ -120,6 +128,24 @@ public class ShowsListFragment
 
 		menu.findItem(R.id.menu_refresh_all_shows).setVisible(showsExist);
 
+		/* set the currently selected filter's menu item as checked */
+		final SharedPreferences prefs =
+			PreferenceManager.getDefaultSharedPreferences(getActivity());
+		final int filter =
+			prefs.getInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ALL);
+
+		switch (filter) {
+		case SHOWS_FILTER_ALL:
+			menu.findItem(R.id.menu_filter_all).setChecked(true);
+			break;
+		case SHOWS_FILTER_STARRED:
+			menu.findItem(R.id.menu_filter_starred).setChecked(true);
+			break;
+		case SHOWS_FILTER_UNCOMPLETED:
+			menu.findItem(R.id.menu_filter_uncompleted).setChecked(true);
+			break;
+		}
+
 		super.onPrepareOptionsMenu(menu);
 	}
 
@@ -128,6 +154,28 @@ public class ShowsListFragment
 		switch (item.getItemId()) {
 		case R.id.menu_refresh_all_shows:
 			refreshAllShows();
+			return true;
+
+		case R.id.menu_filter_all:
+		case R.id.menu_filter_starred:
+		case R.id.menu_filter_uncompleted:
+			if (!item.isChecked()) {
+				item.setChecked(true);
+			}
+
+			final SharedPreferences prefs =
+				PreferenceManager.getDefaultSharedPreferences(getActivity());
+			final SharedPreferences.Editor editor = prefs.edit();
+			if (item.getItemId() == R.id.menu_filter_all) {
+				editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ALL);
+			} else if (item.getItemId() == R.id.menu_filter_starred) {
+				editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_STARRED);
+			} else if (item.getItemId() == R.id.menu_filter_uncompleted) {
+				editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_UNCOMPLETED);
+			}
+			editor.commit();
+
+			return true;
 
 		default:
 			return super.onOptionsItemSelected(item);
