@@ -47,6 +47,8 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import java.util.ArrayList;
+import java.util.List;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
@@ -270,10 +272,16 @@ public class ShowsListFragment
 
 	private static class ShowsListAdapter
 		extends BaseAdapter
+		implements SharedPreferences.OnSharedPreferenceChangeListener
 	{
 		private Context context;
 		private Cursor showsCursor;
+		private int filter;
 		private EpisodesCounter episodesCounter;
+
+		// list of shows to be displayed with current filter. maps from
+		// the show's position in the list to its position in the cursor.
+		private List<Integer> filteredShows;
 
 		public ShowsListAdapter(Context context,
 		                        Cursor showsCursor,
@@ -283,12 +291,20 @@ public class ShowsListFragment
 			episodesCounter = new EpisodesCounter(EpisodesTable.COLUMN_SHOW_ID);
 			episodesCounter.swapCursor(episodesCursor);
 
+			final SharedPreferences prefs =
+				PreferenceManager.getDefaultSharedPreferences(context);
+			prefs.registerOnSharedPreferenceChangeListener(this);
+			filter = prefs.getInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ALL);
+
+			filteredShows = new ArrayList<Integer>();
+
 			swapShowsCursor(showsCursor);
 		}
 
 		public void swapShowsCursor(Cursor showsCursor) {
 			this.showsCursor = showsCursor;
 
+			updateFilter();
 			notifyDataSetChanged();
 		}
 
@@ -296,8 +312,58 @@ public class ShowsListFragment
 			episodesCounter.swapCursor(episodesCursor);
 
 			if (showsCursor != null) {
+				updateFilter();
 				notifyDataSetChanged();
 			}
+		}
+
+		@Override
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+		                                      String key) {
+			if (key.equals(KEY_PREF_SHOWS_FILTER)) {
+				filter = sharedPreferences.getInt(KEY_PREF_SHOWS_FILTER,
+				                                  SHOWS_FILTER_ALL);
+
+				if (showsCursor != null) {
+					updateFilter();
+					notifyDataSetChanged();
+				}
+			}
+		}
+
+		private void updateFilter() {
+			filteredShows.clear();
+
+			if (showsCursor == null || !showsCursor.moveToFirst()) {
+				return;
+			}
+
+			do {
+				switch (filter) {
+				case SHOWS_FILTER_STARRED:
+					final int starredColumnIndex =
+						showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
+					if (showsCursor.getInt(starredColumnIndex) > 0) {
+						filteredShows.add(showsCursor.getPosition());
+					}
+					break;
+
+				case SHOWS_FILTER_UNCOMPLETED:
+					final int idColumnIndex =
+						showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
+					final int id = showsCursor.getInt(idColumnIndex);
+
+					if (episodesCounter.getNumWatchedEpisodes(id) <
+					    episodesCounter.getNumAiredEpisodes(id)) {
+						filteredShows.add(showsCursor.getPosition());
+					}
+					break;
+
+				default:
+					filteredShows.add(showsCursor.getPosition());
+					break;
+				}
+			} while (showsCursor.moveToNext());
 		}
 
 		@Override
@@ -305,7 +371,7 @@ public class ShowsListFragment
 			if (showsCursor == null) {
 				return 0;
 			} else {
-				return showsCursor.getCount();
+				return filteredShows.size();
 			}
 		}
 
@@ -316,7 +382,7 @@ public class ShowsListFragment
 
 		@Override
 		public long getItemId(int position) {
-			showsCursor.moveToPosition(position);
+			showsCursor.moveToPosition(filteredShows.get(position));
 
 			final int idColumnIndex =
 				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
@@ -335,7 +401,7 @@ public class ShowsListFragment
 				                               false);
 			}
 
-			showsCursor.moveToPosition(position);
+			showsCursor.moveToPosition(filteredShows.get(position));
 
 			final int idColumnIndex =
 				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
