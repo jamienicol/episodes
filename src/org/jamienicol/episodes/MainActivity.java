@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2014 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ public class MainActivity
 	extends ActionBarActivity
 	implements ShowsListFragment.OnShowSelectedListener
 {
-	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -41,27 +40,30 @@ public class MainActivity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
+		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main, menu);
 
-		SearchView addShow =
-			(SearchView)MenuItemCompat.getActionView(menu.findItem(R.id.menu_add_new_show));
+		final MenuItem menuItem = menu.findItem(R.id.menu_add_new_show);
+		final SearchView addShow =
+			(SearchView)MenuItemCompat.getActionView(menuItem);
 		addShow.setQueryHint(getString(R.string.menu_add_show_search_hint));
 		addShow.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-			@Override
-			public boolean onQueryTextChange(String query) {
-				return true;
-			}
+				@Override
+				public boolean onQueryTextChange(String query) {
+					return true;
+				}
 
-			@Override
-			public boolean onQueryTextSubmit(String query) {
-				Intent intent = new Intent(MainActivity.this,
-				                           AddShowSearchActivity.class);
+				@Override
+				public boolean onQueryTextSubmit(String query) {
+					final Intent intent =
+						new Intent(MainActivity.this,
+						           AddShowSearchActivity.class);
 				intent.putExtra("query", query);
 				startActivity(intent);
+				MenuItemCompat.collapseActionView(menuItem);
 				return true;
-			}
-		});
+				}
+			});
 
 		return true;
 	}
@@ -80,14 +82,13 @@ public class MainActivity
 
 	@Override
 	public void onShowSelected(int showId) {
-		Intent intent = new Intent(this,
-		                           ShowActivity.class);
+		final Intent intent = new Intent(this, ShowActivity.class);
 		intent.putExtra("showId", showId);
 		startActivity(intent);
 	}
 
 	private void showAbout() {
-		Intent intent = new Intent(this, AboutActivity.class);
+		final Intent intent = new Intent(this, AboutActivity.class);
 		startActivity(intent);
 	}
 }
