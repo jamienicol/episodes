@@ -18,6 +18,7 @@
 package org.jamienicol.episodes;
 
 import android.app.Application;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -39,6 +40,11 @@ public class EpisodesApplication
 		super.onCreate();
 
 		instance = this;
+
+		// ensure the default settings are initialised at first launch,
+		// rather than waiting for the settings screen to be opened.
+		// do this before anything that needs these settings is instantiated.
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
 		httpClient = new OkHttpClient();
 		try {
