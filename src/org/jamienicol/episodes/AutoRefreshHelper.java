@@ -20,6 +20,7 @@ package org.jamienicol.episodes;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -174,6 +175,23 @@ public class AutoRefreshHelper
 				                      null);
 
 			return cursor;
+		}
+	}
+
+	public static class BootReceiver
+		extends BroadcastReceiver
+	{
+		private static final String TAG = BootReceiver.class.getName();
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+				Log.i(TAG, "Boot received.");
+
+				// ensure that the auto-refresh alarm is scheduled.
+				AutoRefreshHelper.getInstance(context.getApplicationContext())
+					.rescheduleAlarm();
+			}
 		}
 	}
 }
