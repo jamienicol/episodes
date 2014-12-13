@@ -33,6 +33,7 @@ public class EpisodesApplication
 
 	private static EpisodesApplication instance;
 
+	private AutoRefreshHelper autoRefreshHelper;
 	private OkHttpClient httpClient;
 
 	@Override
@@ -45,6 +46,8 @@ public class EpisodesApplication
 		// rather than waiting for the settings screen to be opened.
 		// do this before anything that needs these settings is instantiated.
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+		autoRefreshHelper = AutoRefreshHelper.getInstance(this);
 
 		httpClient = new OkHttpClient();
 		try {

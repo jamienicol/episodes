@@ -76,6 +76,10 @@
         android:name=".services.RefreshShowService" >
     </service>
 
+    <service
+        android:name=".AutoRefreshHelper$Service" >
+    </service>
+
     <provider
         android:name=".db.ShowsProvider"
         android:authorities="org.jamienicol.episodes.db.ShowsProvider"
