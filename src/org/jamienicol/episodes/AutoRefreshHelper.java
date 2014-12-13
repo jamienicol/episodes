@@ -21,11 +21,15 @@ import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -106,7 +110,18 @@ public class AutoRefreshHelper
 		editor.commit();
 	}
 
+	private boolean checkNetwork() {
+		final ConnectivityManager connManager =
+			(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		final NetworkInfo net = connManager.getActiveNetworkInfo();
+		final boolean isConnected = net != null && net.isConnected();
+
+		return isConnected;
+	}
+
 	public void rescheduleAlarm() {
+		NetworkStateReceiver.disable(context);
+
 		final AlarmManager alarmManager =
 			(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 
@@ -142,24 +157,29 @@ public class AutoRefreshHelper
 
 		@Override
 		protected void onHandleIntent(Intent intent) {
-			Log.i(TAG, "Refreshing all shows.");
-
-			final ContentResolver contentResolver = getContentResolver();
-			final Cursor cursor = getShowsCursor(contentResolver);
-
-			while (cursor.moveToNext()) {
-				final int showIdColumnIndex =
-					cursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
-				final int showId = cursor.getInt(showIdColumnIndex);
-
-				RefreshShowUtil.refreshShow(showId, contentResolver);
-			}
-
 			final AutoRefreshHelper helper =
 				AutoRefreshHelper.getInstance(getApplicationContext());
 
-			helper.setPrevAutoRefreshTime(System.currentTimeMillis());
-			helper.rescheduleAlarm();
+			if (helper.checkNetwork()) {
+				Log.i(TAG, "Refreshing all shows.");
+
+				final ContentResolver contentResolver = getContentResolver();
+				final Cursor cursor = getShowsCursor(contentResolver);
+
+				while (cursor.moveToNext()) {
+					final int showIdColumnIndex =
+						cursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
+					final int showId = cursor.getInt(showIdColumnIndex);
+
+					RefreshShowUtil.refreshShow(showId, contentResolver);
+				}
+
+				helper.setPrevAutoRefreshTime(System.currentTimeMillis());
+				helper.rescheduleAlarm();
+
+			} else {
+				NetworkStateReceiver.enable(this);
+			}
 		}
 
 		private static Cursor getShowsCursor(ContentResolver contentResolver) {
@@ -192,6 +212,61 @@ public class AutoRefreshHelper
 				AutoRefreshHelper.getInstance(context.getApplicationContext())
 					.rescheduleAlarm();
 			}
+		}
+	}
+
+	// This receiver is disabled by default in the manifest.
+	// It should only be enabled when it needed, and should be
+	// disabled again straight afterwards.
+	public static class NetworkStateReceiver
+		extends BroadcastReceiver
+	{
+		private static final String TAG = NetworkStateReceiver.class.getName();
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.i(TAG, "Network state change received.");
+
+			final AutoRefreshHelper helper =
+				AutoRefreshHelper.getInstance(context.getApplicationContext());
+
+			if (helper.checkNetwork()) {
+				helper.rescheduleAlarm();
+			}
+		}
+
+		public static void enable(Context context) {
+			final PackageManager packageManager = context.getPackageManager();
+
+			final ComponentName receiver =
+				new ComponentName(context, NetworkStateReceiver.class);
+
+			if (packageManager.getComponentEnabledSetting(receiver) !=
+			    PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+				Log.i(TAG, "Enabling network state receiver.");
+			}
+
+			packageManager.setComponentEnabledSetting(
+				receiver,
+				PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+				PackageManager.DONT_KILL_APP);
+		}
+
+		public static void disable(Context context) {
+			final PackageManager packageManager = context.getPackageManager();
+
+			final ComponentName receiver =
+				new ComponentName(context, NetworkStateReceiver.class);
+
+			if (packageManager.getComponentEnabledSetting(receiver) !=
+			    PackageManager.COMPONENT_ENABLED_STATE_DISABLED) {
+				Log.i(TAG, "Disabling network state receiver.");
+			}
+
+			packageManager.setComponentEnabledSetting(
+				receiver,
+				PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+				PackageManager.DONT_KILL_APP);
 		}
 	}
 }
