@@ -32,6 +32,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.net.ConnectivityManagerCompat;
 import android.util.Log;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.db.ShowsProvider;
@@ -46,6 +47,8 @@ public class AutoRefreshHelper
 		"pref_auto_refresh_enabled";
 	private static final String KEY_PREF_AUTO_REFRESH_PERIOD =
 		"pref_auto_refresh_period";
+	private static final String KEY_PREF_AUTO_REFRESH_WIFI_ONLY =
+		"pref_auto_refresh_wifi_only";
 
 	private static final String KEY_LAST_AUTO_REFRESH_TIME =
 		"last_auto_refresh_time";
@@ -76,6 +79,8 @@ public class AutoRefreshHelper
 			onAutoRefreshEnabledChanged();
 		} else if (key.equals(KEY_PREF_AUTO_REFRESH_PERIOD)) {
 			onAutoRefreshPeriodChanged();
+		} else if (key.equals(KEY_PREF_AUTO_REFRESH_WIFI_ONLY)) {
+			onAutoRefreshWifiOnlyChanged();
 		}
 	}
 
@@ -84,6 +89,10 @@ public class AutoRefreshHelper
 	}
 
 	private void onAutoRefreshPeriodChanged() {
+		rescheduleAlarm();
+	}
+
+	private void onAutoRefreshWifiOnlyChanged() {
 		rescheduleAlarm();
 	}
 
@@ -97,6 +106,10 @@ public class AutoRefreshHelper
 
 		// convert hours to milliseconds
 		return Long.parseLong(hours) * 60 * 60 * 1000;
+	}
+
+	private boolean getAutoRefreshWifiOnly() {
+		return preferences.getBoolean(KEY_PREF_AUTO_REFRESH_WIFI_ONLY, false);
 	}
 
 	private long getPrevAutoRefreshTime() {
@@ -114,9 +127,20 @@ public class AutoRefreshHelper
 		final ConnectivityManager connManager =
 			(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		final NetworkInfo net = connManager.getActiveNetworkInfo();
-		final boolean isConnected = net != null && net.isConnected();
 
-		return isConnected;
+		final boolean connected = net != null && net.isConnected();
+		final boolean metered =
+			ConnectivityManagerCompat.isActiveNetworkMetered(connManager);
+		final boolean unmeteredOnly = getAutoRefreshWifiOnly();
+
+		final boolean okay = connected && !(metered && unmeteredOnly);
+
+		Log.i(TAG,
+		      String.format("connected=%b, metered=%b, unmeteredOnly=%b, checkNetwork() %s.",
+		                    connected, metered, unmeteredOnly,
+		                    okay ? "passes" : "fails"));
+
+		return okay;
 	}
 
 	public void rescheduleAlarm() {

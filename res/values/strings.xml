@@ -30,6 +30,8 @@
   <string name="pref_auto_refresh_period_title">Refresh frequency</string>
   <string name="pref_auto_refresh_enabled_summary">Keep information about shows up to date</string>
   <string name="pref_auto_refresh_enabled_title">Automatically refresh shows</string>
+  <string name="pref_auto_refresh_wifi_only_summary">Only automatically refresh shows when connected to Wi-Fi</string>
+  <string name="pref_auto_refresh_wifi_only_title">Refresh only via Wi-Fi</string>
   <string name="season_episode_prefix">"%1$02dx%2$02d - "</string>
   <string name="season_name">Season %d</string>
   <string name="season_name_specials">Specials</string>
