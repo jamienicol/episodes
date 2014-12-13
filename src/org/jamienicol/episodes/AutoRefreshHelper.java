@@ -105,7 +105,7 @@ public class AutoRefreshHelper
 		editor.commit();
 	}
 
-	private void rescheduleAlarm() {
+	public void rescheduleAlarm() {
 		final AlarmManager alarmManager =
 			(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 

@@ -36,6 +36,11 @@ public class MainActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_activity);
+
+		// ensure that the auto-refresh alarm is scheduled.
+		// this should mainly be useful the first time the app is ran.
+		AutoRefreshHelper.getInstance(getApplicationContext())
+			.rescheduleAlarm();
 	}
 
 	@Override
