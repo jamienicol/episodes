@@ -47,4 +47,8 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper
 		ShowsTable.onUpgrade(db, oldVersion, newVersion);
 		EpisodesTable.onUpgrade(db, oldVersion, newVersion);
 	}
+
+	public static String getDbName() {
+		return name;
+	}
 }

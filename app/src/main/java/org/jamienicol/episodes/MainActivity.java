@@ -26,6 +26,7 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import org.jamienicol.episodes.db.BackUpRestoreHelper;
 
 public class MainActivity
 	extends ActionBarActivity
@@ -76,6 +77,10 @@ public class MainActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.menu_back_up:
+			back_up();
+			return true;
+
 		case R.id.menu_settings:
 			showSettings();
 			return true;
@@ -94,6 +99,10 @@ public class MainActivity
 		final Intent intent = new Intent(this, ShowActivity.class);
 		intent.putExtra("showId", showId);
 		startActivity(intent);
+	}
+
+	private void back_up() {
+		BackUpRestoreHelper.backUp(getApplicationContext());
 	}
 
 	private void showSettings() {
