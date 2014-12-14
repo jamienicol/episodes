@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.jamienicol.episodes">
+
+  <uses-permission
+      android:name="android.permission.ACCESS_NETWORK_STATE"/>
+  <uses-permission
+      android:name="android.permission.INTERNET"/>
+  <uses-permission
+      android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+  <application
+      android:name=".EpisodesApplication"
+      android:label="@string/app_name"
+      android:icon="@drawable/ic_launcher"
+      android:theme="@style/Theme.AppCompat.Light"
+      android:allowBackup="true" >
+
+    <activity
+        android:name=".MainActivity"
+        android:label="@string/app_name"
+        android:launchMode="singleTop">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+
+    <activity
+        android:name=".SettingsActivity"
+        android:label="@string/settings_title"
+        android:parentActivityName=".MainActivity">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".MainActivity"/>
+    </activity>
+
+    <activity
+        android:name=".AboutActivity"
+        android:label="@string/about_title" >
+    </activity>
+
+    <activity
+        android:name=".AddShowSearchActivity"
+        android:label="" >
+    </activity>
+
+    <activity
+        android:name=".AddShowPreviewActivity"
+        android:label="" >
+    </activity>
+
+    <activity
+        android:name=".ShowActivity"
+        android:label="" >
+    </activity>
+
+    <activity
+        android:name=".SeasonActivity"
+        android:label="" >
+    </activity>
+
+    <activity
+        android:name=".EpisodeActivity"
+        android:label="" >
+    </activity>
+
+    <service
+        android:name=".services.AddShowService" >
+    </service>
+
+    <service
+        android:name=".services.RefreshShowService" >
+    </service>
+
+    <service
+        android:name=".AutoRefreshHelper$Service" >
+    </service>
+
+    <receiver
+        android:name=".AutoRefreshHelper$BootReceiver"
+        android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+      </intent-filter>
+    </receiver>
+
+    <receiver
+        android:name=".AutoRefreshHelper$NetworkStateReceiver"
+        android:exported="true"
+        android:enabled="false">
+      <intent-filter>
+        <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+      </intent-filter>
+    </receiver>
+
+    <provider
+        android:name=".db.ShowsProvider"
+        android:authorities="org.jamienicol.episodes.db.ShowsProvider"
+        android:exported="false" >
+    </provider>
+
+  </application>
+</manifest>
