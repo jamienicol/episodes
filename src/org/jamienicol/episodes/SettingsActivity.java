@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2014 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,22 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jamienicol.episodes.services;
+package org.jamienicol.episodes;
 
-import android.app.IntentService;
-import android.content.Intent;
-import org.jamienicol.episodes.RefreshShowUtil;
+import android.app.Activity;
+import android.os.Bundle;
 
-public class RefreshShowService extends IntentService
+public class SettingsActivity
+	extends Activity
 {
-	public RefreshShowService() {
-		super(RefreshShowService.class.getName());
-	}
-
 	@Override
-	protected void onHandleIntent(Intent intent) {
-		final int showId = intent.getIntExtra("showId", 0);
-
-		RefreshShowUtil.refreshShow(showId, getContentResolver());
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.settings_activity);
 	}
 }

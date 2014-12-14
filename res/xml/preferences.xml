@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+  <CheckBoxPreference
+      android:key="pref_auto_refresh_enabled"
+      android:title="@string/pref_auto_refresh_enabled_title"
+      android:summary="@string/pref_auto_refresh_enabled_summary"
+      android:defaultValue="true"/>
+  <ListPreference
+      android:key="pref_auto_refresh_period"
+      android:dependency="pref_auto_refresh_enabled"
+      android:title="@string/pref_auto_refresh_period_title"
+      android:summary="%s"
+      android:entries="@array/auto_refresh_period_entries"
+      android:entryValues="@array/auto_refresh_period_values"
+      android:defaultValue="168"/>
+  <CheckBoxPreference
+      android:key="pref_auto_refresh_wifi_only"
+      android:dependency="pref_auto_refresh_enabled"
+      android:title="@string/pref_auto_refresh_wifi_only_title"
+      android:summary="@string/pref_auto_refresh_wifi_only_summary"
+      android:defaultValue="true"/>
+</PreferenceScreen>
