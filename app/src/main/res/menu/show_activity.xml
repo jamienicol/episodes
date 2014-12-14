@@ -11,7 +11,7 @@
       android:id="@+id/menu_refresh_show"
       android:icon="@drawable/ic_menu_refresh"
       android:title="@string/menu_refresh_show"
-      episodes:showAsAction="ifRoom" />
+      episodes:showAsAction="never"/>
   <item
       android:id="@+id/menu_mark_show_watched"
       android:title="@string/menu_mark_show_watched"
