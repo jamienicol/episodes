@@ -9,7 +9,7 @@
       episodes:showAsAction="ifRoom" />
   <item
       android:id="@+id/menu_refresh_show"
-      android:icon="@drawable/ic_menu_refresh_show"
+      android:icon="@drawable/ic_menu_refresh"
       android:title="@string/menu_refresh_show"
       episodes:showAsAction="ifRoom" />
   <item

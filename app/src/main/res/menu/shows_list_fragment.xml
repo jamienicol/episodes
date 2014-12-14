@@ -5,7 +5,7 @@
   <item
       android:icon="@drawable/ic_menu_filter_shows_list"
       android:title="@string/menu_filter_shows_list"
-      episodes:showAsAction="always">
+      episodes:showAsAction="ifRoom">
     <menu>
       <group
           android:checkableBehavior="single">
@@ -23,7 +23,7 @@
   </item>
   <item
       android:id="@+id/menu_refresh_all_shows"
-      android:icon="@drawable/ic_menu_refresh_all_shows"
+      android:icon="@drawable/ic_menu_refresh"
       android:title="@string/menu_refresh_all_shows"
       episodes:showAsAction="never" />
 </menu>

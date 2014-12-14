@@ -32,7 +32,7 @@ public class AddShowSearchActivity
 	{
 		super.onCreate(savedInstanceState);
 
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.add_show_search_activity);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);

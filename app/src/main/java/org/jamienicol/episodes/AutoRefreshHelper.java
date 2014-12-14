@@ -120,7 +120,7 @@ public class AutoRefreshHelper
 		final SharedPreferences.Editor editor =
 			preferences.edit();
 		editor.putLong(KEY_LAST_AUTO_REFRESH_TIME, time);
-		editor.commit();
+		editor.apply();
 	}
 
 	private boolean checkNetwork() {

@@ -175,7 +175,7 @@ public class ShowsListFragment
 			} else if (item.getItemId() == R.id.menu_filter_uncompleted) {
 				editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_UNCOMPLETED);
 			}
-			editor.commit();
+			editor.apply();
 
 			return true;
 
