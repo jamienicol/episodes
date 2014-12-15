@@ -106,7 +106,7 @@ public class BackUpRestoreHelper
 				final String message =
 					context.getString(R.string.back_up_success_message,
 					                  destFilePath);
-				Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+				Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 			} else {
 				Toast.makeText(context,
 				               R.string.back_up_error_message,
