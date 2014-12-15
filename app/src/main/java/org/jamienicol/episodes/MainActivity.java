@@ -81,6 +81,10 @@ public class MainActivity
 			back_up();
 			return true;
 
+		case R.id.menu_restore:
+			restore();
+			return true;
+
 		case R.id.menu_settings:
 			showSettings();
 			return true;
@@ -103,6 +107,11 @@ public class MainActivity
 
 	private void back_up() {
 		BackUpRestoreHelper.backUp(getApplicationContext());
+	}
+
+	private void restore() {
+		BackUpRestoreHelper.restore(getApplicationContext(),
+		                            "/storage/emulated/0/episodes/episodes.db");
 	}
 
 	private void showSettings() {

@@ -14,6 +14,11 @@
       episodes:showAsAction="never"
       android:menuCategory="secondary"/>
   <item
+      android:id="@+id/menu_restore"
+      android:title="@string/menu_restore"
+      episodes:showAsAction="never"
+      android:menuCategory="secondary"/>
+  <item
       android:id="@+id/menu_settings"
       android:title="@string/menu_settings"
       episodes:showAsAction="never"

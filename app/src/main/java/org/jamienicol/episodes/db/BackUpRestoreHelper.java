@@ -42,6 +42,11 @@ public class BackUpRestoreHelper
 		task.execute();
 	}
 
+	public static void restore(Context context, String filename) {
+		final RestoreTask task = new RestoreTask(context);
+		task.execute(filename);
+	}
+
 	private static class BackUpTask
 		extends AsyncTask<Void, Void, Boolean>
 	{
@@ -120,6 +125,55 @@ public class BackUpRestoreHelper
 				new SimpleDateFormat("yyyyMMdd_HHmm", Locale.US);
 
 			return "episodes_" + sdf.format(today) + ".db";
+		}
+	}
+
+	private static class RestoreTask
+		extends AsyncTask<String, Void, Boolean>
+	{
+		private final Context context;
+
+		public RestoreTask(Context context) {
+			this.context = context;
+		}
+
+		@Override
+		protected Boolean doInBackground(String... filename) {
+			final File srcFile = new File(filename[0]);
+			final File destFile =
+				context.getDatabasePath(DatabaseOpenHelper.getDbName());
+
+			try {
+				FileChannel src = new FileInputStream(srcFile).getChannel();
+				FileChannel dest = new FileOutputStream(destFile).getChannel();
+
+				dest.transferFrom(src, 0, src.size());
+
+				Log.i(TAG, String.format("Library restored successfully.",
+				                         destFile.getPath()));
+
+				return true;
+
+			} catch (IOException e) {
+				Log.e(TAG, String.format("Error restoring library: %s",
+				                         e.toString()));
+				return false;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(Boolean success) {
+			if (success) {
+				Toast.makeText(context,
+				               R.string.restore_success_message,
+				               Toast.LENGTH_SHORT).show();
+
+				ShowsProvider.reloadDatabase(context);
+			} else {
+				Toast.makeText(context,
+				               R.string.restore_error_message,
+				               Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 }
