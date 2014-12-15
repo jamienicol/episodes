@@ -47,6 +47,10 @@ public class BackUpRestoreHelper
 		task.execute(filename);
 	}
 
+	public static File getBackupDir() {
+		return new File(Environment.getExternalStorageDirectory(), "episodes");
+	}
+
 	private static class BackUpTask
 		extends AsyncTask<Void, Void, Boolean>
 	{
@@ -112,11 +116,6 @@ public class BackUpRestoreHelper
 				               R.string.back_up_error_message,
 				               Toast.LENGTH_SHORT).show();
 			}
-		}
-
-		private static File getBackupDir() {
-			return new File(Environment.getExternalStorageDirectory(),
-			                "episodes");
 		}
 
 		private static String getBackupFilename() {

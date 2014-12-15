@@ -20,6 +20,7 @@ package org.jamienicol.episodes;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -30,7 +31,8 @@ import org.jamienicol.episodes.db.BackUpRestoreHelper;
 
 public class MainActivity
 	extends ActionBarActivity
-	implements ShowsListFragment.OnShowSelectedListener
+	implements ShowsListFragment.OnShowSelectedListener,
+	           SelectBackupDialog.OnBackupSelectedListener
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -110,8 +112,14 @@ public class MainActivity
 	}
 
 	private void restore() {
-		BackUpRestoreHelper.restore(getApplicationContext(),
-		                            "/storage/emulated/0/episodes/episodes.db");
+		final FragmentManager fm = getSupportFragmentManager();
+		final SelectBackupDialog dialog = new SelectBackupDialog();
+		dialog.show(fm, "select_backup_dialog");
+	}
+
+	@Override
+	public void onBackupSelected(String backupFilename) {
+		BackUpRestoreHelper.restore(getApplicationContext(), backupFilename);
 	}
 
 	private void showSettings() {
