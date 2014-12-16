@@ -9,7 +9,6 @@
       episodes:showAsAction="ifRoom" />
   <item
       android:id="@+id/menu_refresh_show"
-      android:icon="@drawable/ic_menu_refresh"
       android:title="@string/menu_refresh_show"
       episodes:showAsAction="never"/>
   <item
@@ -22,7 +21,6 @@
       episodes:showAsAction="never" />
   <item
       android:id="@+id/menu_delete_show"
-      android:icon="@drawable/ic_menu_delete_show"
       android:title="@string/menu_delete_show"
       episodes:showAsAction="never" />
 </menu>
