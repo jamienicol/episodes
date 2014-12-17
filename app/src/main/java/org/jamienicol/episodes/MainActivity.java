@@ -20,16 +20,19 @@ package org.jamienicol.episodes;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import org.jamienicol.episodes.db.BackUpRestoreHelper;
 
 public class MainActivity
 	extends ActionBarActivity
-	implements ShowsListFragment.OnShowSelectedListener
+	implements ShowsListFragment.OnShowSelectedListener,
+	           SelectBackupDialog.OnBackupSelectedListener
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -76,6 +79,14 @@ public class MainActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.menu_back_up:
+			back_up();
+			return true;
+
+		case R.id.menu_restore:
+			restore();
+			return true;
+
 		case R.id.menu_settings:
 			showSettings();
 			return true;
@@ -94,6 +105,21 @@ public class MainActivity
 		final Intent intent = new Intent(this, ShowActivity.class);
 		intent.putExtra("showId", showId);
 		startActivity(intent);
+	}
+
+	private void back_up() {
+		BackUpRestoreHelper.backUp(getApplicationContext());
+	}
+
+	private void restore() {
+		final FragmentManager fm = getSupportFragmentManager();
+		final SelectBackupDialog dialog = new SelectBackupDialog();
+		dialog.show(fm, "select_backup_dialog");
+	}
+
+	@Override
+	public void onBackupSelected(String backupFilename) {
+		BackUpRestoreHelper.restore(getApplicationContext(), backupFilename);
 	}
 
 	private void showSettings() {

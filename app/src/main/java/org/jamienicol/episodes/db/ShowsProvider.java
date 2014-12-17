@@ -18,9 +18,11 @@
 package org.jamienicol.episodes.db;
 
 import android.content.ContentProvider;
+import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -36,6 +38,11 @@ public class ShowsProvider extends ContentProvider
 
 	private static final String URI_AUTHORITY =
 		"org.jamienicol.episodes.db.ShowsProvider";
+
+	private static final Uri CONTENT_URI_BASE =
+		Uri.parse(ContentResolver.SCHEME_CONTENT +
+		          "://" +
+		          ShowsProvider.URI_AUTHORITY);
 
 	public static final Uri CONTENT_URI_SHOWS =
 		Uri.parse(ContentResolver.SCHEME_CONTENT +
@@ -308,5 +315,21 @@ public class ShowsProvider extends ContentProvider
 		databaseOpenHelper = new DatabaseOpenHelper(getContext());
 
 		return true;
+	}
+
+	public static void reloadDatabase(Context context) {
+		final ContentResolver resolver = context.getContentResolver();
+		final ContentProviderClient client =
+			resolver.acquireContentProviderClient(URI_AUTHORITY);
+		final ShowsProvider provider =
+			(ShowsProvider)client.getLocalContentProvider();
+
+		provider.databaseOpenHelper.close();
+		provider.databaseOpenHelper =
+			new DatabaseOpenHelper(provider.getContext());
+
+		resolver.notifyChange(CONTENT_URI_BASE, null);
+
+		client.release();
 	}
 }
