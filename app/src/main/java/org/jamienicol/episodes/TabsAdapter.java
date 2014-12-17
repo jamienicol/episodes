@@ -1,7 +1,9 @@
 package org.jamienicol.episodes;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -74,7 +76,12 @@ public class TabsAdapter
 	@Override
 	public void onPageSelected(int position) {
 		mActionBar.setSelectedNavigationItem(position);
-	}
+		final SharedPreferences prefs =
+				PreferenceManager.getDefaultSharedPreferences(mContext);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putInt("default_tab", position);
+		editor.apply();
+    }
 
 	@Override
 	public void onPageScrollStateChanged(int state) {

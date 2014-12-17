@@ -21,9 +21,11 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -94,6 +96,11 @@ public class ShowActivity
 		                    fragmentArgs);
 
 		pager.setAdapter(pagerAdapter);
+
+		// Get default tab from preferences.
+		final SharedPreferences prefs =
+				PreferenceManager.getDefaultSharedPreferences(this);
+		pager.setCurrentItem(prefs.getInt("default_tab", 0));
 	}
 
 	@Override
