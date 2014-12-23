@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2014 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,6 +111,24 @@ class GetShowParser
 					Log.i(TAG,
 					      String.format("Parsed show banner path: %s", body));
 					show.setBannerPath(body);
+				}
+			});
+
+			final Element fanartPathElement = seriesElement.getChild("fanart");
+			fanartPathElement.setEndTextElementListener(new EndTextElementListener() {
+				public void end(String body) {
+					Log.i(TAG,
+					      String.format("Parsed show fanart path: %s", body));
+					show.setFanartPath(body);
+				}
+			});
+
+			final Element posterPathElement = seriesElement.getChild("poster");
+			posterPathElement.setEndTextElementListener(new EndTextElementListener() {
+				public void end(String body) {
+					Log.i(TAG,
+					      String.format("Parsed show poster path: %s", body));
+					show.setPosterPath(body);
 				}
 			});
 

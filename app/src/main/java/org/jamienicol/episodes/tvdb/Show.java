@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2014 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ public class Show
 	private String overview;
 	private Date firstAired;
 	private String bannerPath;
+	private String fanartPath;
+	private String posterPath;
 	private List<Episode> episodes;
 
 	public Show() {
@@ -35,6 +37,8 @@ public class Show
 		overview = "";
 		firstAired = null;
 		bannerPath = "";
+		fanartPath = "";
+		posterPath = "";
 		episodes = null;
 	}
 
@@ -76,6 +80,22 @@ public class Show
 
 	public void setBannerPath(String bannerPath) {
 		this.bannerPath = bannerPath;
+	}
+
+	public String getFanartPath() {
+		return fanartPath;
+	}
+
+	public void setFanartPath(String fanartPath) {
+		this.fanartPath = fanartPath;
+	}
+
+	public String getPosterPath() {
+		return posterPath;
+	}
+
+	public void setPosterPath(String posterPath) {
+		this.posterPath = posterPath;
 	}
 
 	public List<Episode> getEpisodes() {

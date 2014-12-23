@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2014 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,6 +111,8 @@ public class AddShowService extends IntentService
 			               show.getFirstAired().getTime() / 1000);
 		}
 		showValues.put(ShowsTable.COLUMN_BANNER_PATH, show.getBannerPath());
+		showValues.put(ShowsTable.COLUMN_FANART_PATH, show.getFanartPath());
+		showValues.put(ShowsTable.COLUMN_POSTER_PATH, show.getPosterPath());
 
 		// insert the show into the database
 		final Uri showUri =
