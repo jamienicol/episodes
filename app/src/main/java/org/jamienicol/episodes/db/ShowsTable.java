@@ -34,6 +34,8 @@ public class ShowsTable
 	public static final String COLUMN_FIRST_AIRED = "first_aired";
 	public static final String COLUMN_STARRED = "starred";
 	public static final String COLUMN_BANNER_PATH = "banner_path";
+	public static final String COLUMN_FANART_PATH = "fanart_path";
+	public static final String COLUMN_POSTER_PATH = "poster_path";
 
 	public static final String COLUMN_TYPE_ID = "INTEGER PRIMARY KEY";
 	public static final String COLUMN_TYPE_TVDB_ID = "INTEGER UNIQUE NOT NULL";
@@ -42,10 +44,14 @@ public class ShowsTable
 	public static final String COLUMN_TYPE_FIRST_AIRED = "DATE";
 	public static final String COLUMN_TYPE_STARRED = "BOOLEAN DEFAULT 0";
 	public static final String COLUMN_TYPE_BANNER_PATH = "TEXT";
+	public static final String COLUMN_TYPE_FANART_PATH = "TEXT";
+	public static final String COLUMN_TYPE_POSTER_PATH = "TEXT";
 
 	public static void onCreate(SQLiteDatabase db) {
 		String create =
 			String.format("CREATE TABLE %s ("  +
+			              "    %s %s," +
+			              "    %s %s," +
 			              "    %s %s," +
 			              "    %s %s," +
 			              "    %s %s," +
@@ -61,7 +67,9 @@ public class ShowsTable
 			              COLUMN_OVERVIEW, COLUMN_TYPE_OVERVIEW,
 			              COLUMN_FIRST_AIRED, COLUMN_TYPE_FIRST_AIRED,
 			              COLUMN_STARRED, COLUMN_TYPE_STARRED,
-			              COLUMN_BANNER_PATH, COLUMN_TYPE_BANNER_PATH);
+			              COLUMN_BANNER_PATH, COLUMN_TYPE_BANNER_PATH,
+			              COLUMN_FANART_PATH, COLUMN_TYPE_FANART_PATH,
+			              COLUMN_POSTER_PATH, COLUMN_TYPE_POSTER_PATH);
 
 		Log.d(TAG, String.format("creating shows table: %s", create));
 
@@ -88,6 +96,21 @@ public class ShowsTable
 			                         TABLE_NAME,
 			                         COLUMN_BANNER_PATH,
 			                         COLUMN_TYPE_BANNER_PATH));
+
+			// fall through
+		case 3:
+			// Add fanart path and poster path columns
+			Log.d(TAG, "upgrading shows table: adding fanart path column");
+			db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s",
+			                         TABLE_NAME,
+			                         COLUMN_FANART_PATH,
+			                         COLUMN_TYPE_FANART_PATH));
+
+			Log.d(TAG, "upgrading shows table: adding poster path column");
+			db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s",
+			                         TABLE_NAME,
+			                         COLUMN_POSTER_PATH,
+			                         COLUMN_TYPE_POSTER_PATH));
 
 			// fall through
 		}
