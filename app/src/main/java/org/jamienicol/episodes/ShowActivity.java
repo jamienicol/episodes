@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2015 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ package org.jamienicol.episodes;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -29,16 +30,16 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import com.astuetz.PagerSlidingTabStrip;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
@@ -47,12 +48,18 @@ import org.jamienicol.episodes.services.RefreshShowService;
 public class ShowActivity
 	extends ActionBarActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
+	           ViewPager.OnPageChangeListener,
 	           SeasonsListFragment.OnSeasonSelectedListener
 {
+	private static final String KEY_DEFAULT_TAB = "default_tab";
+
 	private int showId;
-	private TabsAdapter pagerAdapter;
-	private ViewPager pager;
 	private boolean isShowStarred;
+
+	private Toolbar toolbar;
+	private PagerSlidingTabStrip tabStrip;
+	private PagerAdapter pagerAdapter;
+	private ViewPager pager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -60,52 +67,39 @@ public class ShowActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.show_activity);
 
+		toolbar = (Toolbar)findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		Intent intent = getIntent();
+		final Intent intent = getIntent();
 		showId = intent.getIntExtra("showId", -1);
 		if (showId == -1) {
 			throw new IllegalArgumentException("must provide valid showId");
 		}
 
-		Bundle loaderArgs = new Bundle();
+		final Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("showId", showId);
 		getSupportLoaderManager().initLoader(0, loaderArgs, this);
 
-		final ActionBar bar = getSupportActionBar();
-		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		pagerAdapter =
+			new PagerAdapter(this, getSupportFragmentManager(), showId);
 
 		pager = (ViewPager)findViewById(R.id.pager);
-		pagerAdapter = new TabsAdapter(this,
-		                               getSupportFragmentManager(),
-		                               bar,
-		                               pager);
-
-		Bundle fragmentArgs = new Bundle();
-		fragmentArgs.putInt("showId", showId);
-
-		ActionBar.Tab overviewTab = bar.newTab();
-		overviewTab.setText(R.string.show_tab_overview);
-		pagerAdapter.addTab(overviewTab,
-		                    ShowDetailsFragment.class,
-		                    fragmentArgs);
-		ActionBar.Tab episodesTab = bar.newTab();
-		episodesTab.setText(R.string.show_tab_episodes);
-		pagerAdapter.addTab(episodesTab,
-		                    SeasonsListFragment.class,
-		                    fragmentArgs);
-
 		pager.setAdapter(pagerAdapter);
 
-		// Get default tab from preferences.
+		tabStrip = (PagerSlidingTabStrip)findViewById(R.id.tab_strip);
+		tabStrip.setViewPager(pager);
+		tabStrip.setOnPageChangeListener(this);
+
+		// Set the default tab from preferences.
 		final SharedPreferences prefs =
 				PreferenceManager.getDefaultSharedPreferences(this);
-		pager.setCurrentItem(prefs.getInt("default_tab", 0));
+		pager.setCurrentItem(prefs.getInt(KEY_DEFAULT_TAB, 0));
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
+		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.show_activity, menu);
 
 		return true;
@@ -125,52 +119,6 @@ public class ShowActivity
 		}
 
 		return super.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		int showId = args.getInt("showId");
-		Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-		                               String.valueOf(showId));
-		String[] projection = {
-			ShowsTable.COLUMN_NAME,
-			ShowsTable.COLUMN_STARRED
-		};
-		return new CursorLoader(this,
-		                        uri,
-		                        projection,
-		                        null,
-		                        null,
-		                        null);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		if (data != null && data.moveToFirst()) {
-
-			// make activity title the show name
-			int nameColumnIndex =
-				data.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
-			getSupportActionBar().setTitle(data.getString(nameColumnIndex));
-
-			// maybe update the state of the toggle starred menu item
-			int starredColumnIndex =
-				data.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
-			boolean starred =
-				data.getInt(starredColumnIndex) > 0 ? true : false;
-			if (isShowStarred != starred) {
-				isShowStarred = starred;
-				// toggle starred menu item needs updated
-				supportInvalidateOptionsMenu();
-			}
-		} else {
-			getSupportActionBar().setTitle("");
-		}
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		onLoadFinished(loader, null);
 	}
 
 	@Override
@@ -206,23 +154,88 @@ public class ShowActivity
 		}
 	}
 
+	/* LoaderManager.LoaderCallbacks<Cursor> */
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		final int showId = args.getInt("showId");
+		final Uri uri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
+		                                     String.valueOf(showId));
+		final String[] projection = {
+			ShowsTable.COLUMN_NAME,
+			ShowsTable.COLUMN_STARRED
+		};
+		return new CursorLoader(this,
+		                        uri,
+		                        projection,
+		                        null,
+		                        null,
+		                        null);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		if (data != null && data.moveToFirst()) {
+
+			// make activity title the show name
+			final int nameColumnIndex =
+				data.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
+			toolbar.setTitle(data.getString(nameColumnIndex));
+
+			// maybe update the state of the toggle starred menu item
+			final int starredColumnIndex =
+				data.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
+			final boolean starred =
+				data.getInt(starredColumnIndex) > 0 ? true : false;
+			if (isShowStarred != starred) {
+				isShowStarred = starred;
+				// toggle starred menu item needs updated
+				supportInvalidateOptionsMenu();
+			}
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		onLoadFinished(loader, null);
+	}
+
+	/* ViewPager.OnPageChangeListener */
+	@Override
+	public void onPageScrolled(int position,
+	                           float positionOffset,
+	                           int positionOffsetPixels) {
+	}
+
+	@Override
+	public void onPageSelected(int position) {
+		final SharedPreferences prefs =
+			PreferenceManager.getDefaultSharedPreferences(this);
+		final SharedPreferences.Editor editor = prefs.edit();
+		editor.putInt(KEY_DEFAULT_TAB, position);
+		editor.apply();
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int state) {
+	}
+
+	/* SeasonsListFragment.OnSeasonSelectedListener */
 	@Override
 	public void onSeasonSelected(int seasonNumber) {
-		Intent intent = new Intent(this,
-		                           SeasonActivity.class);
+		final Intent intent = new Intent(this, SeasonActivity.class);
 		intent.putExtra("showId", showId);
 		intent.putExtra("seasonNumber", seasonNumber);
 		startActivity(intent);
 	}
 
 	private void toggleShowStarred() {
-		ContentResolver contentResolver = getContentResolver();
-		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
-		ContentValues values = new ContentValues();
+		final ContentResolver contentResolver = getContentResolver();
+		final AsyncQueryHandler handler =
+			new AsyncQueryHandler(contentResolver) {};
+		final ContentValues values = new ContentValues();
 		values.put(ShowsTable.COLUMN_STARRED, !isShowStarred);
-		String selection = String.format("%s=?",
-		                                 ShowsTable.COLUMN_ID);
-		String[] selectionArgs = {
+		final String selection = String.format("%s=?", ShowsTable.COLUMN_ID);
+		final String[] selectionArgs = {
 			String.valueOf(showId)
 		};
 
@@ -235,21 +248,23 @@ public class ShowActivity
 	}
 
 	private void refreshShow() {
-		Intent intent = new Intent(this, RefreshShowService.class);
+		final Intent intent = new Intent(this, RefreshShowService.class);
 		intent.putExtra("showId", showId);
 
 		startService(intent);
 	}
 
 	private void markShowWatched(boolean watched) {
-		ContentResolver contentResolver = getContentResolver();
-		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
-		ContentValues epValues = new ContentValues();
+		final ContentResolver contentResolver = getContentResolver();
+		final AsyncQueryHandler handler =
+			new AsyncQueryHandler(contentResolver) {};
+		final ContentValues epValues = new ContentValues();
 		epValues.put(EpisodesTable.COLUMN_WATCHED, watched);
-		String selection = String.format("%s=? AND %s!=?",
-		                                 EpisodesTable.COLUMN_SHOW_ID,
-		                                 EpisodesTable.COLUMN_SEASON_NUMBER);
-		String[] selectionArgs = {
+		final String selection =
+			String.format("%s=? AND %s!=?",
+			              EpisodesTable.COLUMN_SHOW_ID,
+			              EpisodesTable.COLUMN_SEASON_NUMBER);
+		final String[] selectionArgs = {
 			String.valueOf(showId),
 			"0"
 		};
@@ -263,13 +278,14 @@ public class ShowActivity
 	}
 
 	private void deleteShow() {
-		ContentResolver contentResolver = getContentResolver();
-		AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
+		final ContentResolver contentResolver = getContentResolver();
+		final AsyncQueryHandler handler =
+			new AsyncQueryHandler(contentResolver) {};
 
 		/* delete all the show's episodes */
-		String epSelection = String.format("%s=?",
-		                                   EpisodesTable.COLUMN_SHOW_ID);
-		String[] epSelectionArgs = {
+		final String epSelection =
+			String.format("%s=?", EpisodesTable.COLUMN_SHOW_ID);
+		final String[] epSelectionArgs = {
 			String.valueOf(showId)
 		};
 
@@ -280,12 +296,58 @@ public class ShowActivity
 		                    epSelectionArgs);
 
 		/* delete the show itself */
-		Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-		                                   String.valueOf(showId));
+		final Uri showUri =
+			Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
+			                     String.valueOf(showId));
 		handler.startDelete(0,
 		                    null,
 		                    showUri,
 		                    null,
 		                    null);
+	}
+
+	private static class PagerAdapter
+		extends FragmentPagerAdapter
+	{
+		private final Context context;
+		private final int showId;
+
+		public PagerAdapter(final Context context,
+		                    final FragmentManager fragmentManager,
+		                    final int showId) {
+			super(fragmentManager);
+
+			this.context = context;
+			this.showId = showId;
+		}
+
+		@Override
+		public int getCount() {
+			return 2;
+		}
+
+		@Override
+		public CharSequence getPageTitle(final int position) {
+			switch (position) {
+			case 0:
+				return context.getString(R.string.show_tab_overview);
+			case 1:
+				return context.getString(R.string.show_tab_episodes);
+			default:
+				return null;
+			}
+		}
+
+		@Override
+		public Fragment getItem(final int position) {
+			switch (position) {
+			case 0:
+				return ShowDetailsFragment.newInstance(showId);
+			case 1:
+				return SeasonsListFragment.newInstance(showId);
+			default:
+				return null;
+			}
+		}
 	}
 }

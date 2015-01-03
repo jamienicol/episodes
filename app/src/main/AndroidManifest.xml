@@ -57,7 +57,8 @@
 
     <activity
         android:name=".ShowActivity"
-        android:label="" >
+        android:label=""
+        android:theme="@style/Theme.Episodes.NoActionBar">
     </activity>
 
     <activity
