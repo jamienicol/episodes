@@ -39,7 +39,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import com.astuetz.PagerSlidingTabStrip;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
@@ -57,6 +60,7 @@ public class ShowActivity
 	private boolean isShowStarred;
 
 	private Toolbar toolbar;
+	private ImageView headerImage;
 	private PagerSlidingTabStrip tabStrip;
 	private PagerAdapter pagerAdapter;
 	private ViewPager pager;
@@ -67,10 +71,6 @@ public class ShowActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.show_activity);
 
-		toolbar = (Toolbar)findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 		final Intent intent = getIntent();
 		showId = intent.getIntExtra("showId", -1);
 		if (showId == -1) {
@@ -80,6 +80,12 @@ public class ShowActivity
 		final Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("showId", showId);
 		getSupportLoaderManager().initLoader(0, loaderArgs, this);
+
+		toolbar = (Toolbar)findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+		headerImage = (ImageView)findViewById(R.id.header_image);
 
 		pagerAdapter =
 			new PagerAdapter(this, getSupportFragmentManager(), showId);
@@ -162,7 +168,8 @@ public class ShowActivity
 		                                     String.valueOf(showId));
 		final String[] projection = {
 			ShowsTable.COLUMN_NAME,
-			ShowsTable.COLUMN_STARRED
+			ShowsTable.COLUMN_STARRED,
+			ShowsTable.COLUMN_FANART_PATH
 		};
 		return new CursorLoader(this,
 		                        uri,
@@ -190,6 +197,23 @@ public class ShowActivity
 				isShowStarred = starred;
 				// toggle starred menu item needs updated
 				supportInvalidateOptionsMenu();
+			}
+
+			final int fanartPathColumnIndex =
+				data.getColumnIndexOrThrow(ShowsTable.COLUMN_FANART_PATH);
+			final String fanartPath = data.getString(fanartPathColumnIndex);
+			if (fanartPath != null && !fanartPath.equals("")) {
+				final String fanartUrl =
+					String.format("http://thetvdb.com/banners/%s", fanartPath);
+
+				final DisplayImageOptions options =
+					new DisplayImageOptions.Builder()
+					.cacheInMemory(true)
+					.cacheOnDisk(true)
+					.build();
+				ImageLoader.getInstance().displayImage(fanartUrl,
+				                                       headerImage,
+				                                       options);
 			}
 		}
 	}

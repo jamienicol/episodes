@@ -16,6 +16,12 @@
         android:background="@color/primary"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+    <ImageView
+        android:id="@+id/header_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/show_header_image_height"
+        android:scaleType="centerCrop"
+        android:background="@color/primary"/>
     <com.astuetz.PagerSlidingTabStrip
         android:id="@+id/tab_strip"
         android:layout_width="match_parent"
