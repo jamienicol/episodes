@@ -47,10 +47,12 @@ import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.services.RefreshShowService;
+import org.jamienicol.episodes.widget.ObservableScrollView;
 
 public class ShowActivity
 	extends ActionBarActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
+	           ObservableScrollView.OnScrollChangedListener,
 	           ViewPager.OnPageChangeListener,
 	           SeasonsListFragment.OnSeasonSelectedListener
 {
@@ -59,6 +61,7 @@ public class ShowActivity
 	private int showId;
 	private boolean isShowStarred;
 
+	private ObservableScrollView scrollView;
 	private Toolbar toolbar;
 	private ImageView headerImage;
 	private PagerSlidingTabStrip tabStrip;
@@ -80,6 +83,9 @@ public class ShowActivity
 		final Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("showId", showId);
 		getSupportLoaderManager().initLoader(0, loaderArgs, this);
+
+		scrollView = (ObservableScrollView)findViewById(R.id.scroll_view);
+		scrollView.setOnScrollChangedListener(this);
 
 		toolbar = (Toolbar)findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -221,6 +227,11 @@ public class ShowActivity
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		onLoadFinished(loader, null);
+	}
+
+	/* ObservableScrollView.OnScrollChangedListener */
+	@Override
+	public void onScrollChanged(int l, int t, int oldl, int oldt) {
 	}
 
 	/* ViewPager.OnPageChangeListener */
