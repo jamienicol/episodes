@@ -22,14 +22,26 @@
           android:layout_height="wrap_content"
           android:background="?android:attr/windowBackground"/>
 
-    <android.support.v7.widget.Toolbar
-          android:id="@+id/toolbar"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:minHeight="?attr/actionBarSize"
-          android:background="@android:color/transparent"
-          app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-          app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+    <FrameLayout
+        android:id="@+id/toolbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- so that toolbar buttons are visible over white images -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/gradient"/>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+      </FrameLayout>
 
     <com.astuetz.PagerSlidingTabStrip
           android:id="@+id/tab_strip"

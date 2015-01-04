@@ -39,6 +39,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -65,6 +66,7 @@ public class ShowActivity
 	private boolean isShowStarred;
 
 	private ObservableScrollView scrollView;
+	private View toolbarContainer;
 	private Toolbar toolbar;
 	private ImageView headerImage;
 	private PagerSlidingTabStrip tabStrip;
@@ -89,6 +91,8 @@ public class ShowActivity
 
 		scrollView = (ObservableScrollView)findViewById(R.id.scroll_view);
 		scrollView.setOnScrollChangedListener(this);
+
+		toolbarContainer = findViewById(R.id.toolbar_container);
 
 		toolbar = (Toolbar)findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -317,7 +321,7 @@ public class ShowActivity
 		final int scrollY = scrollView.getScrollY();
 
 		// lock toolbar to top of screen
-		toolbar.setTranslationY(scrollY);
+		toolbarContainer.setTranslationY(scrollY);
 
 		// scroll the header image off of the screen at half the speed
 		// everything else scrolls at, creating a parallax effect.
