@@ -39,6 +39,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import com.astuetz.PagerSlidingTabStrip;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -52,6 +54,7 @@ import org.jamienicol.episodes.widget.ObservableScrollView;
 public class ShowActivity
 	extends ActionBarActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
+	           ViewTreeObserver.OnGlobalLayoutListener,
 	           ObservableScrollView.OnScrollChangedListener,
 	           ViewPager.OnPageChangeListener,
 	           SeasonsListFragment.OnSeasonSelectedListener
@@ -107,6 +110,21 @@ public class ShowActivity
 		final SharedPreferences prefs =
 				PreferenceManager.getDefaultSharedPreferences(this);
 		pager.setCurrentItem(prefs.getInt(KEY_DEFAULT_TAB, 0));
+
+		final ViewTreeObserver vto = scrollView.getViewTreeObserver();
+		if (vto.isAlive()) {
+			vto.addOnGlobalLayoutListener(this);
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		final ViewTreeObserver vto = scrollView.getViewTreeObserver();
+		if (vto.isAlive()) {
+			vto.removeGlobalOnLayoutListener(this);
+		}
 	}
 
 	@Override
@@ -229,9 +247,17 @@ public class ShowActivity
 		onLoadFinished(loader, null);
 	}
 
+	/* ViewTreeObserver.OnGlobalLayoutListener */
+	@Override
+	public void onGlobalLayout() {
+		setDefaultPositions();
+		setScrollTranslations();
+	}
+
 	/* ObservableScrollView.OnScrollChangedListener */
 	@Override
 	public void onScrollChanged(int l, int t, int oldl, int oldt) {
+		setScrollTranslations();
 	}
 
 	/* ViewPager.OnPageChangeListener */
@@ -263,6 +289,45 @@ public class ShowActivity
 		intent.putExtra("showId", showId);
 		intent.putExtra("seasonNumber", seasonNumber);
 		startActivity(intent);
+	}
+
+	private void setDefaultPositions() {
+		// place the tabStrip below the headerImage
+		final ViewGroup.MarginLayoutParams tabStripParams =
+			(ViewGroup.MarginLayoutParams)tabStrip.getLayoutParams();
+		final int tabStripTop = headerImage.getHeight();
+		// only call requestLayout() if it has changed
+		if (tabStripParams.topMargin != tabStripTop) {
+			tabStripParams.topMargin = tabStripTop;
+			tabStrip.requestLayout();
+		}
+
+		// place the pager below the tabStrip
+		final ViewGroup.MarginLayoutParams pagerParams =
+			(ViewGroup.MarginLayoutParams)pager.getLayoutParams();
+		final int pagerTop = headerImage.getHeight() + tabStrip.getHeight();
+		// only call requestLayout() if it has changed
+		if (pagerParams.topMargin != pagerTop) {
+			pagerParams.topMargin = pagerTop;
+			pager.requestLayout();
+		}
+	}
+
+	private void setScrollTranslations() {
+		final int scrollY = scrollView.getScrollY();
+
+		// lock toolbar to top of screen
+		toolbar.setTranslationY(scrollY);
+
+		// scroll the header image off of the screen at half the speed
+		// everything else scrolls at, creating a parallax effect.
+		headerImage.setTranslationY(scrollY / 2);
+
+		// scroll the tab strip until it reaches the toolbar
+		tabStrip.setTranslationY(Math.max(0,
+		                                  scrollY -
+		                                  headerImage.getHeight() +
+		                                  toolbar.getHeight()));
 	}
 
 	private void toggleShowStarred() {
