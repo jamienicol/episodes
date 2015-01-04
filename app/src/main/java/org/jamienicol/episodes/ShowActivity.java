@@ -213,6 +213,8 @@ public class ShowActivity
 		final SharedPreferences.Editor editor = prefs.edit();
 		editor.putInt(KEY_DEFAULT_TAB, position);
 		editor.apply();
+
+		pager.requestLayout();
 	}
 
 	@Override
