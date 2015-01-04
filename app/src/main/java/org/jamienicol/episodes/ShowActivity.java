@@ -328,6 +328,20 @@ public class ShowActivity
 		                                  scrollY -
 		                                  headerImage.getHeight() +
 		                                  toolbar.getHeight()));
+
+		// make toolbar transparent until the tab strip reaches it,
+		// and then opaque from that point onwards
+		if (scrollY >= headerImage.getHeight() - toolbar.getHeight()) {
+			toolbar.setBackgroundColor(getResources().
+			                           getColor(R.color.primary));
+			toolbar.setTitleTextColor(getResources().
+			                          getColor(android.R.color.white));
+		} else {
+			toolbar.setBackgroundColor(getResources().
+			                           getColor(android.R.color.transparent));
+			toolbar.setTitleTextColor(getResources().
+			                          getColor(android.R.color.transparent));
+		}
 	}
 
 	private void toggleShowStarred() {
