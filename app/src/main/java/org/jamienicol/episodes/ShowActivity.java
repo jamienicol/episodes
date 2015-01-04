@@ -315,6 +315,15 @@ public class ShowActivity
 			pagerParams.topMargin = pagerTop;
 			pager.requestLayout();
 		}
+
+		// give the pager a minimum height so that the header image
+		// can be completely scrolled off of the screen even if the
+		// contents of the pager is small.
+		final int minHeight =
+			scrollView.getHeight() - toolbar.getHeight() - tabStrip.getHeight();
+		if (pager.getMinimumHeight() != minHeight) {
+			pager.setMinimumHeight(minHeight);
+		}
 	}
 
 	private void setScrollTranslations() {

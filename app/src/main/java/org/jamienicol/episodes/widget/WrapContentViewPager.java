@@ -43,9 +43,11 @@ public class WrapContentViewPager
 			if (view != null) {
 				view.measure(widthMeasureSpec,
 				             MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+
+				final int height = Math.max(view.getMeasuredHeight(),
+				                            getMinimumHeight());
 				heightMeasureSpec =
-					MeasureSpec.makeMeasureSpec(view.getMeasuredHeight(),
-					                            MeasureSpec.EXACTLY);
+					MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
 			}
 		}
 
