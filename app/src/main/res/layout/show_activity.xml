@@ -43,16 +43,31 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
       </FrameLayout>
 
-    <com.astuetz.PagerSlidingTabStrip
-          android:id="@+id/tab_strip"
+      <LinearLayout
+          android:id="@+id/title_container"
           android:layout_width="match_parent"
-          android:layout_height="@dimen/tab_strip_height"
+          android:layout_height="wrap_content"
           android:background="@color/primary"
-          android:textColor="@android:color/white"
-          app:pstsIndicatorColor="@color/accent"
-          app:pstsDividerColor="@android:color/transparent"
-          app:pstsShouldExpand="true"
-          app:pstsIndicatorHeight="@dimen/tab_indicator_height"/>
+          android:orientation="vertical">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/show_title_margin"
+            android:padding="4dp"
+            android:background="@color/primary"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/show_title_size"/>
+        <com.astuetz.PagerSlidingTabStrip
+            android:id="@+id/tab_strip"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tab_strip_height"
+            android:background="@color/primary"
+            android:textColor="@android:color/white"
+            app:pstsIndicatorColor="@color/accent"
+            app:pstsDividerColor="@android:color/transparent"
+            app:pstsIndicatorHeight="@dimen/tab_indicator_height"/>
+      </LinearLayout>
 
   </FrameLayout>
 </org.jamienicol.episodes.widget.ObservableScrollView>

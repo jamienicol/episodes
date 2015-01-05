@@ -43,6 +43,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.TextView;
 import com.astuetz.PagerSlidingTabStrip;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -69,6 +70,8 @@ public class ShowActivity
 	private View toolbarContainer;
 	private Toolbar toolbar;
 	private ImageView headerImage;
+	private TextView titleView;
+	private View titleContainer;
 	private PagerSlidingTabStrip tabStrip;
 	private PagerAdapter pagerAdapter;
 	private ViewPager pager;
@@ -99,6 +102,9 @@ public class ShowActivity
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		headerImage = (ImageView)findViewById(R.id.header_image);
+
+		titleView = (TextView)findViewById(R.id.title);
+		titleContainer = findViewById(R.id.title_container);
 
 		pagerAdapter =
 			new PagerAdapter(this, getSupportFragmentManager(), showId);
@@ -214,7 +220,7 @@ public class ShowActivity
 			// make activity title the show name
 			final int nameColumnIndex =
 				data.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
-			toolbar.setTitle(data.getString(nameColumnIndex));
+			titleView.setText(data.getString(nameColumnIndex));
 
 			// maybe update the state of the toggle starred menu item
 			final int starredColumnIndex =
@@ -296,20 +302,21 @@ public class ShowActivity
 	}
 
 	private void setDefaultPositions() {
-		// place the tabStrip below the headerImage
-		final ViewGroup.MarginLayoutParams tabStripParams =
-			(ViewGroup.MarginLayoutParams)tabStrip.getLayoutParams();
-		final int tabStripTop = headerImage.getHeight();
+		// place the title and tabs below the header image
+		final ViewGroup.MarginLayoutParams titleContainerParams =
+			(ViewGroup.MarginLayoutParams)titleContainer.getLayoutParams();
+		final int titleContainerTop = headerImage.getHeight();
 		// only call requestLayout() if it has changed
-		if (tabStripParams.topMargin != tabStripTop) {
-			tabStripParams.topMargin = tabStripTop;
-			tabStrip.requestLayout();
+		if (titleContainerParams.topMargin != titleContainerTop) {
+			titleContainerParams.topMargin = titleContainerTop;
+			titleContainer.requestLayout();
 		}
 
-		// place the pager below the tabStrip
+		// place the pager below the title and tabs
 		final ViewGroup.MarginLayoutParams pagerParams =
 			(ViewGroup.MarginLayoutParams)pager.getLayoutParams();
-		final int pagerTop = headerImage.getHeight() + tabStrip.getHeight();
+		final int pagerTop =
+			headerImage.getHeight() + titleContainer.getHeight();
 		// only call requestLayout() if it has changed
 		if (pagerParams.topMargin != pagerTop) {
 			pagerParams.topMargin = pagerTop;
@@ -319,8 +326,9 @@ public class ShowActivity
 		// give the pager a minimum height so that the header image
 		// can be completely scrolled off of the screen even if the
 		// contents of the pager is small.
-		final int minHeight =
-			scrollView.getHeight() - toolbar.getHeight() - tabStrip.getHeight();
+		final int minHeight = scrollView.getHeight() -
+			toolbar.getHeight() -
+			titleContainer.getHeight();
 		if (pager.getMinimumHeight() != minHeight) {
 			pager.setMinimumHeight(minHeight);
 		}
@@ -336,24 +344,20 @@ public class ShowActivity
 		// everything else scrolls at, creating a parallax effect.
 		headerImage.setTranslationY(scrollY / 2);
 
-		// scroll the tab strip until it reaches the toolbar
-		tabStrip.setTranslationY(Math.max(0,
-		                                  scrollY -
-		                                  headerImage.getHeight() +
-		                                  toolbar.getHeight()));
+		// scroll the title and tab strip until they reach the toolbar
+		titleContainer.setTranslationY(Math.max(0,
+		                                        scrollY -
+		                                        headerImage.getHeight() +
+		                                        toolbar.getHeight()));
 
-		// make toolbar transparent until the tab strip reaches it,
+		// make toolbar transparent until the title reaches it,
 		// and then opaque from that point onwards
 		if (scrollY >= headerImage.getHeight() - toolbar.getHeight()) {
 			toolbar.setBackgroundColor(getResources().
 			                           getColor(R.color.primary));
-			toolbar.setTitleTextColor(getResources().
-			                          getColor(android.R.color.white));
 		} else {
 			toolbar.setBackgroundColor(getResources().
 			                           getColor(android.R.color.transparent));
-			toolbar.setTitleTextColor(getResources().
-			                          getColor(android.R.color.transparent));
 		}
 	}
 
