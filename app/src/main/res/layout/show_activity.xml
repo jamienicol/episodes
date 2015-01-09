@@ -1,11 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<org.jamienicol.episodes.widget.ObservableScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-  <android.support.v4.view.ViewPager
-      android:id="@+id/pager"
+    android:layout_height="match_parent"
+    android:background="@color/primary">
+  <FrameLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent" />
-</LinearLayout>
+      android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/header_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/show_header_image_height"
+        android:scaleType="centerCrop"/>
+
+    <org.jamienicol.episodes.widget.WrapContentViewPager
+          android:id="@+id/pager"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="?android:attr/windowBackground"/>
+
+    <FrameLayout
+        android:id="@+id/toolbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- so that toolbar buttons are visible over white images -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/gradient"/>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+      </FrameLayout>
+
+      <LinearLayout
+          android:id="@+id/title_container"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@color/primary"
+          android:orientation="vertical">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/show_title_margin"
+            android:padding="4dp"
+            android:background="@color/primary"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/show_title_size"/>
+        <com.astuetz.PagerSlidingTabStrip
+            android:id="@+id/tab_strip"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tab_strip_height"
+            android:background="@color/primary"
+            android:textColor="@android:color/white"
+            app:pstsIndicatorColor="@color/accent"
+            app:pstsDividerColor="@android:color/transparent"
+            app:pstsIndicatorHeight="@dimen/tab_indicator_height"/>
+      </LinearLayout>
+
+  </FrameLayout>
+</org.jamienicol.episodes.widget.ObservableScrollView>

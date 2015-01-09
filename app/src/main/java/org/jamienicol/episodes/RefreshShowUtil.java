@@ -86,6 +86,8 @@ public class RefreshShowUtil
 			               show.getFirstAired().getTime() / 1000);
 		}
 		showValues.put(ShowsTable.COLUMN_BANNER_PATH, show.getBannerPath());
+		showValues.put(ShowsTable.COLUMN_FANART_PATH, show.getFanartPath());
+		showValues.put(ShowsTable.COLUMN_POSTER_PATH, show.getPosterPath());
 
 		final Uri showUri =
 			Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,

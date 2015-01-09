@@ -25,7 +25,7 @@ import android.util.Log;
 public class DatabaseOpenHelper extends SQLiteOpenHelper
 {
 	private static final String name = "episodes.db";
-	private static final int version = 3;
+	private static final int version = 4;
 
 	private static final String TAG = "DatabaseOpenHelper";
 

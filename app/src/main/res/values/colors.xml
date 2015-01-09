@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="accent">#009688</color>
+  <color name="primary">#212121</color>
+  <color name="primary_dark">#000000</color>
+  <color name="progress_bg">#bdbdbd</color>
+  <color name="progress_fg">@color/accent</color>
+</resources>

@@ -1,18 +1,18 @@
 <layer-list
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+    xmlns:android="http://schemas.android.com/apk/res/android">
   <item
-      android:id="@android:id/background" >
+      android:id="@android:id/background">
     <shape>
       <solid
-          android:color="@color/primary_material_light"/>
+          android:color="@color/progress_bg"/>
     </shape>
   </item>
   <item
-      android:id="@android:id/progress" >
+      android:id="@android:id/progress">
     <clip>
       <shape>
         <solid
-            android:color="@color/accent_material_light"/>
+            android:color="@color/progress_fg"/>
       </shape>
     </clip>
   </item>

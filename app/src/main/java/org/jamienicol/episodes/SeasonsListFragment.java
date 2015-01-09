@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2015 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -37,10 +38,12 @@ import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
 public class SeasonsListFragment
-	extends ListFragment
-	implements LoaderManager.LoaderCallbacks<Cursor>
+	extends Fragment
+	implements LoaderManager.LoaderCallbacks<Cursor>,
+	           ListView.OnItemClickListener
 {
 	private int showId;
+	private ListView listView;
 	private SeasonsListAdapter listAdapter;
 
 	public interface OnSeasonSelectedListener {
@@ -72,6 +75,7 @@ public class SeasonsListFragment
 		}
 	}
 
+	@Override
 	public View onCreateView(LayoutInflater inflater,
 	                         ViewGroup container,
 	                         Bundle savedInstanceState) {
@@ -86,7 +90,9 @@ public class SeasonsListFragment
 
 		listAdapter = new SeasonsListAdapter(getActivity(),
 		                                     null);
-		setListAdapter(listAdapter);
+		listView = (ListView)getView().findViewById(R.id.list_view);
+		listView.setAdapter(listAdapter);
+		listView.setOnItemClickListener(this);
 
 		showId = getArguments().getInt("showId");
 		final Bundle loaderArgs = new Bundle();
@@ -94,6 +100,7 @@ public class SeasonsListFragment
 		getLoaderManager().initLoader(0, loaderArgs, this);
 	}
 
+	/* LoaderManager.LoaderCallbacks<Cursor> */
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		final int showId = args.getInt("showId");
@@ -126,8 +133,12 @@ public class SeasonsListFragment
 		onLoadFinished(loader, null);
 	}
 
+	/* ListView.OnItemClickListener */
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
+	public void onItemClick(AdapterView<?> parent,
+	                        View view,
+	                        int position,
+	                        long id) {
 		// the id has been set to be the season number,
 		// so pass it to the listener.
 		onSeasonSelectedListener.onSeasonSelected((int)id);
