@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="accent">#009688</color>
-  <color name="primary">#212121</color>
-  <color name="primary_dark">#000000</color>
+  <color name="accent">#26A69A</color>
+  <color name="primary">#483173</color>
+  <color name="primary_dark">#322359</color>
   <color name="progress_bg">#bdbdbd</color>
   <color name="progress_fg">@color/accent</color>
+  <color name="tab_strip_indicator">@android:color/white</color>
 </resources>

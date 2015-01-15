@@ -64,7 +64,7 @@
             android:layout_height="@dimen/tab_strip_height"
             android:background="@color/primary"
             android:textColor="@android:color/white"
-            app:pstsIndicatorColor="@color/accent"
+            app:pstsIndicatorColor="@color/tab_strip_indicator"
             app:pstsDividerColor="@android:color/transparent"
             app:pstsIndicatorHeight="@dimen/tab_indicator_height"/>
       </LinearLayout>
