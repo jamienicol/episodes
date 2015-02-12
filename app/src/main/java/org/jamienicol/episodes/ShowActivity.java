@@ -67,11 +67,10 @@ public class ShowActivity
 	private boolean isShowStarred;
 
 	private ObservableScrollView scrollView;
-	private View toolbarContainer;
-	private Toolbar toolbar;
 	private ImageView headerImage;
+	private View headerBox;
+	private Toolbar toolbar;
 	private TextView titleView;
-	private View titleContainer;
 	private PagerSlidingTabStrip tabStrip;
 	private PagerAdapter pagerAdapter;
 	private ViewPager pager;
@@ -95,16 +94,15 @@ public class ShowActivity
 		scrollView = (ObservableScrollView)findViewById(R.id.scroll_view);
 		scrollView.setOnScrollChangedListener(this);
 
-		toolbarContainer = findViewById(R.id.toolbar_container);
+		headerImage = (ImageView)findViewById(R.id.header_image);
+
+		headerBox = findViewById(R.id.header_box);
 
 		toolbar = (Toolbar)findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		headerImage = (ImageView)findViewById(R.id.header_image);
-
 		titleView = (TextView)findViewById(R.id.title);
-		titleContainer = findViewById(R.id.title_container);
 
 		pagerAdapter =
 			new PagerAdapter(this, getSupportFragmentManager(), showId);
@@ -302,21 +300,20 @@ public class ShowActivity
 	}
 
 	private void setDefaultPositions() {
-		// place the title and tabs below the header image
-		final ViewGroup.MarginLayoutParams titleContainerParams =
-			(ViewGroup.MarginLayoutParams)titleContainer.getLayoutParams();
-		final int titleContainerTop = headerImage.getHeight();
+		// place the toolbar, title, and tabs below the header image
+		final ViewGroup.MarginLayoutParams headerBoxParams =
+			(ViewGroup.MarginLayoutParams)headerBox.getLayoutParams();
+		final int headerBoxTop = headerImage.getHeight();
 		// only call requestLayout() if it has changed
-		if (titleContainerParams.topMargin != titleContainerTop) {
-			titleContainerParams.topMargin = titleContainerTop;
-			titleContainer.requestLayout();
+		if (headerBoxParams.topMargin != headerBoxTop) {
+			headerBoxParams.topMargin = headerBoxTop;
+			headerBox.requestLayout();
 		}
 
 		// place the pager below the title and tabs
 		final ViewGroup.MarginLayoutParams pagerParams =
 			(ViewGroup.MarginLayoutParams)pager.getLayoutParams();
-		final int pagerTop =
-			headerImage.getHeight() + titleContainer.getHeight();
+		final int pagerTop = headerImage.getHeight() + headerBox.getHeight();
 		// only call requestLayout() if it has changed
 		if (pagerParams.topMargin != pagerTop) {
 			pagerParams.topMargin = pagerTop;
@@ -326,9 +323,7 @@ public class ShowActivity
 		// give the pager a minimum height so that the header image
 		// can be completely scrolled off of the screen even if the
 		// contents of the pager is small.
-		final int minHeight = scrollView.getHeight() -
-			toolbar.getHeight() -
-			titleContainer.getHeight();
+		final int minHeight = scrollView.getHeight() - headerBox.getHeight();
 		if (pager.getMinimumHeight() != minHeight) {
 			pager.setMinimumHeight(minHeight);
 		}
@@ -337,28 +332,13 @@ public class ShowActivity
 	private void setScrollTranslations() {
 		final int scrollY = scrollView.getScrollY();
 
-		// lock toolbar to top of screen
-		toolbarContainer.setTranslationY(scrollY);
-
 		// scroll the header image off of the screen at half the speed
 		// everything else scrolls at, creating a parallax effect.
 		headerImage.setTranslationY(scrollY / 2);
 
-		// scroll the title and tab strip until they reach the toolbar
-		titleContainer.setTranslationY(Math.max(0,
-		                                        scrollY -
-		                                        headerImage.getHeight() +
-		                                        toolbar.getHeight()));
-
-		// make toolbar transparent until the title reaches it,
-		// and then opaque from that point onwards
-		if (scrollY >= headerImage.getHeight() - toolbar.getHeight()) {
-			toolbar.setBackgroundColor(getResources().
-			                           getColor(R.color.primary));
-		} else {
-			toolbar.setBackgroundColor(getResources().
-			                           getColor(android.R.color.transparent));
-		}
+		// scroll the header box until it reaches the top of the screen
+		headerBox.setTranslationY(Math.max(0,
+		                                   scrollY - headerImage.getHeight()));
 	}
 
 	private void toggleShowStarred() {
