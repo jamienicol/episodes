@@ -19,6 +19,8 @@ package org.jamienicol.episodes.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 public class WrapContentListView
@@ -30,8 +32,27 @@ public class WrapContentListView
 
 	@Override
 	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		int maxHeightSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE,
-		                                                MeasureSpec.AT_MOST);
-		super.onMeasure(widthMeasureSpec, maxHeightSpec);
+		int height = 0;
+
+		final ListAdapter adapter = getAdapter();
+		if (adapter != null) {
+			for (int i = 0; i < adapter.getCount(); i++) {
+				View item = adapter.getView(i, null, this);
+
+				if (item != null) {
+					final int unspecified =
+						MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+					item.measure(widthMeasureSpec, unspecified);
+
+					height += item.getMeasuredHeight();
+					height += getDividerHeight();
+				}
+			}
+		}
+
+		heightMeasureSpec = MeasureSpec.makeMeasureSpec(height,
+		                                                MeasureSpec.EXACTLY);
+
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 }
