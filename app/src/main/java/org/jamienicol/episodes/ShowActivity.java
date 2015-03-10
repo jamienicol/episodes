@@ -52,6 +52,7 @@ import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.services.RefreshShowService;
 import org.jamienicol.episodes.widget.ObservableScrollView;
+import org.jamienicol.episodes.widget.WrapContentViewPager;
 
 public class ShowActivity
 	extends ActionBarActivity
@@ -73,7 +74,7 @@ public class ShowActivity
 	private TextView titleView;
 	private PagerSlidingTabStrip tabStrip;
 	private PagerAdapter pagerAdapter;
-	private ViewPager pager;
+	private WrapContentViewPager pager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -107,7 +108,7 @@ public class ShowActivity
 		pagerAdapter =
 			new PagerAdapter(this, getSupportFragmentManager(), showId);
 
-		pager = (ViewPager)findViewById(R.id.pager);
+		pager = (WrapContentViewPager)findViewById(R.id.pager);
 		pager.setAdapter(pagerAdapter);
 
 		tabStrip = (PagerSlidingTabStrip)findViewById(R.id.tab_strip);
@@ -324,7 +325,7 @@ public class ShowActivity
 		// can be completely scrolled off of the screen even if the
 		// contents of the pager is small.
 		final int minHeight = scrollView.getHeight() - headerBox.getHeight();
-		if (pager.getMinimumHeight() != minHeight) {
+		if (pager.getMinimumHeightPlease() != minHeight) {
 			pager.setMinimumHeight(minHeight);
 		}
 	}

@@ -45,12 +45,18 @@ public class WrapContentViewPager
 				             MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 
 				final int height = Math.max(view.getMeasuredHeight(),
-				                            getMinimumHeight());
+				                            getSuggestedMinimumHeight());
 				heightMeasureSpec =
 					MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
 			}
 		}
 
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+	}
+
+	public int getMinimumHeightPlease() {
+		// getMinimumHeight() is only API level >= 16, and
+		// getSuggestedMinimumHeight() is protected.
+		return getSuggestedMinimumHeight();
 	}
 }
