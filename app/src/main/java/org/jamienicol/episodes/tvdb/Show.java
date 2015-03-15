@@ -24,6 +24,7 @@ public class Show
 {
 	private int id;
 	private String name;
+	private String language;
 	private String overview;
 	private Date firstAired;
 	private String bannerPath;
@@ -56,6 +57,14 @@ public class Show
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	public String getOverview() {
