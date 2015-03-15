@@ -44,7 +44,7 @@ public class Client
 
 		try {
 			final String escapedQuery = URLEncoder.encode(query, "UTF-8");
-			final String url = String.format("%s/GetSeries.php?seriesname=%s",
+			final String url = String.format("%s/GetSeries.php?seriesname=%s&language=all",
 			                                 baseUrl,
 			                                 escapedQuery);
 			Log.d(TAG, String.format("Sending request to %s", url));
