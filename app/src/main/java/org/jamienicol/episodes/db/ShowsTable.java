@@ -36,6 +36,7 @@ public class ShowsTable
 	public static final String COLUMN_BANNER_PATH = "banner_path";
 	public static final String COLUMN_FANART_PATH = "fanart_path";
 	public static final String COLUMN_POSTER_PATH = "poster_path";
+	public static final String COLUMN_NOTES = "notes";
 
 	public static final String COLUMN_TYPE_ID = "INTEGER PRIMARY KEY";
 	public static final String COLUMN_TYPE_TVDB_ID = "INTEGER UNIQUE NOT NULL";
@@ -46,10 +47,12 @@ public class ShowsTable
 	public static final String COLUMN_TYPE_BANNER_PATH = "TEXT";
 	public static final String COLUMN_TYPE_FANART_PATH = "TEXT";
 	public static final String COLUMN_TYPE_POSTER_PATH = "TEXT";
+	public static final String COLUMN_TYPE_NOTES = "TEXT";
 
 	public static void onCreate(SQLiteDatabase db) {
 		String create =
 			String.format("CREATE TABLE %s ("  +
+			              "    %s %s," +
 			              "    %s %s," +
 			              "    %s %s," +
 			              "    %s %s," +
@@ -69,7 +72,8 @@ public class ShowsTable
 			              COLUMN_STARRED, COLUMN_TYPE_STARRED,
 			              COLUMN_BANNER_PATH, COLUMN_TYPE_BANNER_PATH,
 			              COLUMN_FANART_PATH, COLUMN_TYPE_FANART_PATH,
-			              COLUMN_POSTER_PATH, COLUMN_TYPE_POSTER_PATH);
+			              COLUMN_POSTER_PATH, COLUMN_TYPE_POSTER_PATH,
+			              COLUMN_NOTES, COLUMN_TYPE_NOTES);
 
 		Log.d(TAG, String.format("creating shows table: %s", create));
 
@@ -113,6 +117,13 @@ public class ShowsTable
 			                         COLUMN_TYPE_POSTER_PATH));
 
 			// fall through
+		case 4:
+			// Add notes column
+			Log.d(TAG, "upgrading shows table: adding notes column");
+			db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s",
+				TABLE_NAME,
+				COLUMN_NOTES,
+				COLUMN_TYPE_NOTES));
 		}
 	}
 }
