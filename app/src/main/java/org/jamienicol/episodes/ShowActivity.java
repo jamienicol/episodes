@@ -42,6 +42,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.astuetz.PagerSlidingTabStrip;
@@ -283,6 +284,13 @@ public class ShowActivity
 		final SharedPreferences.Editor editor = prefs.edit();
 		editor.putInt(KEY_DEFAULT_TAB, position);
 		editor.apply();
+
+		if (position != 3) {
+			// moving away from notes tab, close input method
+			InputMethodManager imm = (InputMethodManager)
+				getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(pager.getApplicationWindowToken(), 0);
+		}
 
 		pager.requestLayout();
 	}
