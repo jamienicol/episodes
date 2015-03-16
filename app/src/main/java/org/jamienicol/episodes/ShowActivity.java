@@ -42,6 +42,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.astuetz.PagerSlidingTabStrip;
@@ -284,6 +285,13 @@ public class ShowActivity
 		editor.putInt(KEY_DEFAULT_TAB, position);
 		editor.apply();
 
+		if (position != 3) {
+			// moving away from notes tab, close input method
+			InputMethodManager imm = (InputMethodManager)
+				getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(pager.getApplicationWindowToken(), 0);
+		}
+
 		pager.requestLayout();
 	}
 
@@ -437,7 +445,7 @@ public class ShowActivity
 
 		@Override
 		public int getCount() {
-			return 2;
+			return 3;
 		}
 
 		@Override
@@ -447,6 +455,8 @@ public class ShowActivity
 				return context.getString(R.string.show_tab_overview);
 			case 1:
 				return context.getString(R.string.show_tab_episodes);
+			case 2:
+				return context.getString(R.string.show_tab_notes);
 			default:
 				return null;
 			}
@@ -459,6 +469,8 @@ public class ShowActivity
 				return ShowDetailsFragment.newInstance(showId);
 			case 1:
 				return SeasonsListFragment.newInstance(showId);
+			case 2:
+				return ShowNotesFragment.newInstance(showId);
 			default:
 				return null;
 			}

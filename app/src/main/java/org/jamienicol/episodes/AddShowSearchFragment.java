@@ -192,7 +192,8 @@ public class AddShowSearchFragment
 
 			TextView textView =
 				(TextView)convertView.findViewById(R.id.show_name_view);
-			textView.setText(getItem(position).getName());
+			Show show = getItem(position);
+			textView.setText(show.getName() + " (" + show.getLanguage() + ")");
 
 			return convertView;
 		}
