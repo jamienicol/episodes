@@ -194,6 +194,18 @@ public class EpisodesListFragment
 					DateFormat.getDateInstance().format(date);
 				dateView.setText(dateText);
 				dateView.setVisibility(View.VISIBLE);
+
+				// grey out episode name if upcoming episode
+				if (date.after(new Date())) {
+					int color = context.getResources().getColor(android.R.color.tertiary_text_light);
+					nameView.setTextColor(color);
+					dateView.setTextColor(color);
+				}
+				else {
+					int color = context.getResources().getColor(android.R.color.primary_text_light);
+					nameView.setTextColor(color);
+					dateView.setTextColor(color);
+				}
 			}
 
 			final int watchedColumnIndex =
