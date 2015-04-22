@@ -11,6 +11,14 @@ android {
         versionCode 10
         versionName "0.10"
     }
+    productFlavors {
+        fdroid {
+            applicationId = "org.jamienicol.episodes"
+        }
+        playstore {
+            applicationId = "com.vindustries.episodes"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false

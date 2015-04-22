@@ -102,7 +102,7 @@
 
     <provider
         android:name=".db.ShowsProvider"
-        android:authorities="org.jamienicol.episodes.db.ShowsProvider"
+        android:authorities="${applicationId}.db.ShowsProvider"
         android:exported="false" >
     </provider>
 

@@ -31,13 +31,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
+import org.jamienicol.episodes.BuildConfig;
 
 public class ShowsProvider extends ContentProvider
 {
 	private static final String TAG = "ShowsProvider";
 
 	private static final String URI_AUTHORITY =
-		"org.jamienicol.episodes.db.ShowsProvider";
+		BuildConfig.APPLICATION_ID + ".db.ShowsProvider";
 
 	private static final Uri CONTENT_URI_BASE =
 		Uri.parse(ContentResolver.SCHEME_CONTENT +
