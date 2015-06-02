@@ -12,5 +12,6 @@
       name="Theme.Episodes.NoActionBar"
       parent="@style/Theme.Episodes">
     <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
   </style>
 </resources>
