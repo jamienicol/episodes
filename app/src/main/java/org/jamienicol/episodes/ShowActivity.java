@@ -27,6 +27,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -44,7 +45,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.astuetz.PagerSlidingTabStrip;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.jamienicol.episodes.db.EpisodesTable;
@@ -72,7 +72,7 @@ public class ShowActivity
 	private View headerBox;
 	private Toolbar toolbar;
 	private TextView titleView;
-	private PagerSlidingTabStrip tabStrip;
+	private TabLayout tabStrip;
 	private PagerAdapter pagerAdapter;
 	private WrapContentViewPager pager;
 
@@ -110,10 +110,11 @@ public class ShowActivity
 
 		pager = (WrapContentViewPager)findViewById(R.id.pager);
 		pager.setAdapter(pagerAdapter);
+		pager.setOnPageChangeListener(this);
 
-		tabStrip = (PagerSlidingTabStrip)findViewById(R.id.tab_strip);
-		tabStrip.setViewPager(pager);
-		tabStrip.setOnPageChangeListener(this);
+		tabStrip = (TabLayout)findViewById(R.id.tab_strip);
+		tabStrip.setTabTextColors(getResources().getColorStateList(R.color.tab_text));
+		tabStrip.setupWithViewPager(pager);
 
 		// Set the default tab from preferences.
 		final SharedPreferences prefs =
