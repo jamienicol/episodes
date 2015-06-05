@@ -42,7 +42,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -51,14 +50,10 @@ import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.services.RefreshShowService;
-import org.jamienicol.episodes.widget.ObservableScrollView;
-import org.jamienicol.episodes.widget.WrapContentViewPager;
 
 public class ShowActivity
 	extends ActionBarActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
-	           ViewTreeObserver.OnGlobalLayoutListener,
-	           ObservableScrollView.OnScrollChangedListener,
 	           ViewPager.OnPageChangeListener,
 	           SeasonsListFragment.OnSeasonSelectedListener
 {
@@ -67,14 +62,12 @@ public class ShowActivity
 	private int showId;
 	private boolean isShowStarred;
 
-	private ObservableScrollView scrollView;
 	private ImageView headerImage;
-	private View headerBox;
 	private Toolbar toolbar;
 	private TextView titleView;
 	private TabLayout tabStrip;
 	private PagerAdapter pagerAdapter;
-	private WrapContentViewPager pager;
+	private ViewPager pager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -92,12 +85,7 @@ public class ShowActivity
 		loaderArgs.putInt("showId", showId);
 		getSupportLoaderManager().initLoader(0, loaderArgs, this);
 
-		scrollView = (ObservableScrollView)findViewById(R.id.scroll_view);
-		scrollView.setOnScrollChangedListener(this);
-
 		headerImage = (ImageView)findViewById(R.id.header_image);
-
-		headerBox = findViewById(R.id.header_box);
 
 		toolbar = (Toolbar)findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -108,7 +96,7 @@ public class ShowActivity
 		pagerAdapter =
 			new PagerAdapter(this, getSupportFragmentManager(), showId);
 
-		pager = (WrapContentViewPager)findViewById(R.id.pager);
+		pager = (ViewPager)findViewById(R.id.pager);
 		pager.setAdapter(pagerAdapter);
 		pager.setOnPageChangeListener(this);
 
@@ -120,21 +108,6 @@ public class ShowActivity
 		final SharedPreferences prefs =
 				PreferenceManager.getDefaultSharedPreferences(this);
 		pager.setCurrentItem(prefs.getInt(KEY_DEFAULT_TAB, 0));
-
-		final ViewTreeObserver vto = scrollView.getViewTreeObserver();
-		if (vto.isAlive()) {
-			vto.addOnGlobalLayoutListener(this);
-		}
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-
-		final ViewTreeObserver vto = scrollView.getViewTreeObserver();
-		if (vto.isAlive()) {
-			vto.removeGlobalOnLayoutListener(this);
-		}
 	}
 
 	@Override
@@ -257,19 +230,6 @@ public class ShowActivity
 		onLoadFinished(loader, null);
 	}
 
-	/* ViewTreeObserver.OnGlobalLayoutListener */
-	@Override
-	public void onGlobalLayout() {
-		setDefaultPositions();
-		setScrollTranslations();
-	}
-
-	/* ObservableScrollView.OnScrollChangedListener */
-	@Override
-	public void onScrollChanged(int l, int t, int oldl, int oldt) {
-		setScrollTranslations();
-	}
-
 	/* ViewPager.OnPageChangeListener */
 	@Override
 	public void onPageScrolled(int position,
@@ -284,8 +244,6 @@ public class ShowActivity
 		final SharedPreferences.Editor editor = prefs.edit();
 		editor.putInt(KEY_DEFAULT_TAB, position);
 		editor.apply();
-
-		pager.requestLayout();
 	}
 
 	@Override
@@ -299,48 +257,6 @@ public class ShowActivity
 		intent.putExtra("showId", showId);
 		intent.putExtra("seasonNumber", seasonNumber);
 		startActivity(intent);
-	}
-
-	private void setDefaultPositions() {
-		// place the toolbar, title, and tabs below the header image
-		final ViewGroup.MarginLayoutParams headerBoxParams =
-			(ViewGroup.MarginLayoutParams)headerBox.getLayoutParams();
-		final int headerBoxTop = headerImage.getHeight();
-		// only call requestLayout() if it has changed
-		if (headerBoxParams.topMargin != headerBoxTop) {
-			headerBoxParams.topMargin = headerBoxTop;
-			headerBox.requestLayout();
-		}
-
-		// place the pager below the title and tabs
-		final ViewGroup.MarginLayoutParams pagerParams =
-			(ViewGroup.MarginLayoutParams)pager.getLayoutParams();
-		final int pagerTop = headerImage.getHeight() + headerBox.getHeight();
-		// only call requestLayout() if it has changed
-		if (pagerParams.topMargin != pagerTop) {
-			pagerParams.topMargin = pagerTop;
-			pager.requestLayout();
-		}
-
-		// give the pager a minimum height so that the header image
-		// can be completely scrolled off of the screen even if the
-		// contents of the pager is small.
-		final int minHeight = scrollView.getHeight() - headerBox.getHeight();
-		if (pager.getMinimumHeightPlease() != minHeight) {
-			pager.setMinimumHeight(minHeight);
-		}
-	}
-
-	private void setScrollTranslations() {
-		final int scrollY = scrollView.getScrollY();
-
-		// scroll the header image off of the screen at half the speed
-		// everything else scrolls at, creating a parallax effect.
-		headerImage.setTranslationY(scrollY / 2);
-
-		// scroll the header box until it reaches the top of the screen
-		headerBox.setTranslationY(Math.max(0,
-		                                   scrollY - headerImage.getHeight()));
 	}
 
 	private void toggleShowStarred() {
