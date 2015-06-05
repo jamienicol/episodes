@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_container"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="4dp"
     android:paddingRight="4dp"
-    android:paddingTop="0dp"
-    android:paddingBottom="4dp"
-    style="@style/ListItem" >
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?android:attr/selectableItemBackground"
+    style="@style/ListItem">
   <TextView
-      android:id="@+id/season_number_view"
+      android:id="@+id/season_name_view"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentTop="true"
       android:paddingLeft="2dp"
-      style="@style/ListItemHeading" />
+      style="@style/ListItemHeading"/>
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true" >
+      android:layout_alignParentBottom="true">
     <ProgressBar
         android:id="@+id/season_progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/WatchedProgressBar" />
+        style="@style/WatchedProgressBar"/>
     <TextView
         android:id="@+id/watched_count_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="2dp"
-        style="@style/WatchedProgressText" />
+        style="@style/WatchedProgressText"/>
   </FrameLayout>
 </RelativeLayout>

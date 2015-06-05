@@ -25,13 +25,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import org.jamienicol.episodes.db.EpisodesTable;
@@ -39,17 +37,24 @@ import org.jamienicol.episodes.db.ShowsProvider;
 
 public class SeasonsListFragment
 	extends Fragment
-	implements LoaderManager.LoaderCallbacks<Cursor>,
-	           ListView.OnItemClickListener
+	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private int showId;
-	private ListView listView;
+	private RecyclerView listView;
 	private SeasonsListAdapter listAdapter;
 
 	public interface OnSeasonSelectedListener {
 		public void onSeasonSelected(int seasonNumber);
 	}
 	private OnSeasonSelectedListener onSeasonSelectedListener;
+
+	private final SeasonsListAdapter.OnItemClickListener onItemClickListener =
+		new SeasonsListAdapter.OnItemClickListener() {
+			@Override
+			public void onItemClick(int seasonNumber) {
+				onSeasonSelectedListener.onSeasonSelected(seasonNumber);
+			}
+		};
 
 	public static SeasonsListFragment newInstance(int showId) {
 		final SeasonsListFragment instance = new SeasonsListFragment();
@@ -79,9 +84,13 @@ public class SeasonsListFragment
 	public View onCreateView(LayoutInflater inflater,
 	                         ViewGroup container,
 	                         Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.seasons_list_fragment,
-		                        container,
-		                        false);
+		final View v = inflater.inflate(R.layout.seasons_list_fragment,
+		                                container,
+		                                false);
+
+		listView = (RecyclerView)v.findViewById(R.id.list_view);
+
+		return v;
 	}
 
 	@Override
@@ -89,10 +98,9 @@ public class SeasonsListFragment
 		super.onActivityCreated(savedInstanceState);
 
 		listAdapter = new SeasonsListAdapter(getActivity(),
-		                                     null);
-		listView = (ListView)getView().findViewById(R.id.list_view);
+		                                     onItemClickListener);
 		listView.setAdapter(listAdapter);
-		listView.setOnItemClickListener(this);
+		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 		showId = getArguments().getInt("showId");
 		final Bundle loaderArgs = new Bundle();
@@ -133,31 +141,58 @@ public class SeasonsListFragment
 		onLoadFinished(loader, null);
 	}
 
-	/* ListView.OnItemClickListener */
-	@Override
-	public void onItemClick(AdapterView<?> parent,
-	                        View view,
-	                        int position,
-	                        long id) {
-		// the id has been set to be the season number,
-		// so pass it to the listener.
-		onSeasonSelectedListener.onSeasonSelected((int)id);
+	private static class ViewHolder
+		extends RecyclerView.ViewHolder
+	{
+		private final View itemContainer;
+		private final TextView nameView;
+		private final ProgressBar progressBar;
+		private final TextView watchedCountView;
+
+		public ViewHolder(View v) {
+			super(v);
+
+			itemContainer = v.findViewById(R.id.item_container);
+			nameView = (TextView)v.findViewById(R.id.season_name_view);
+			progressBar = (ProgressBar)v.findViewById(R.id.season_progress_bar);
+			watchedCountView = (TextView)v.findViewById(R.id.watched_count_view);
+		}
+
+		public View getItemContainer() {
+			return itemContainer;
+		}
+
+		public TextView getNameView() {
+			return nameView;
+		}
+
+		public ProgressBar getProgressBar() {
+			return progressBar;
+		}
+
+		public TextView getWatchedCountView() {
+			return watchedCountView;
+		}
 	}
 
 	private static class SeasonsListAdapter
-		extends BaseAdapter
+		extends RecyclerView.Adapter<ViewHolder>
 	{
-		private Context context;
+		private interface OnItemClickListener {
+			public void onItemClick(int position);
+		}
+
+		private final Context context;
+		private final OnItemClickListener onItemClickListener;
 		private EpisodesCounter episodesCounter;
 
-		public SeasonsListAdapter(Context context, Cursor episodesCursor) {
+		public SeasonsListAdapter(Context context,
+		                          OnItemClickListener onItemClickListener) {
 			this.context = context;
+			this.onItemClickListener = onItemClickListener;
 
 			episodesCounter =
 				new EpisodesCounter(EpisodesTable.COLUMN_SEASON_NUMBER);
-
-
-			swapEpisodesCursor(episodesCursor);
 		}
 
 		public void swapEpisodesCursor(Cursor episodesCursor) {
@@ -166,57 +201,30 @@ public class SeasonsListFragment
 			notifyDataSetChanged();
 		}
 
+		/* RecyclerView.Adapter<ViewHolder> */
 		@Override
-		public int getCount() {
-			if (episodesCounter != null) {
-				final Integer[] array =
-					episodesCounter.getKeys().toArray(new Integer[] {});
-				return array.length;
-			} else {
-				return 0;
-			}
+		public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+			final View v = LayoutInflater.from(context)
+				.inflate(R.layout.seasons_list_item, viewGroup, false);
+
+			return new ViewHolder(v);
 		}
 
 		@Override
-		public Object getItem(int position) {
-			return null;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			// use season number as id
-			final Integer[] array =
-				episodesCounter.getKeys().toArray(new Integer[] {});
-			return array[position];
-		}
-
-		@Override
-		public View getView(int position,
-		                    View convertView,
-		                    ViewGroup parent) {
-
-			final LayoutInflater inflater = LayoutInflater.from(context);
-			if(convertView == null) {
-				convertView = inflater.inflate(R.layout.seasons_list_item,
-				                               parent,
-				                               false);
-			}
+		public void onBindViewHolder(ViewHolder viewHolder,
+		                             final int position) {
 
 			final Integer[] array =
 				episodesCounter.getKeys().toArray(new Integer[] {});
 			final int seasonNumber = array[position];
 
-			final TextView numberView =
-				(TextView)convertView.findViewById(R.id.season_number_view);
-			String numberText;
+			final String nameText;
 			if (seasonNumber == 0) {
-				numberText =
-					context.getString(R.string.season_name_specials);
+				nameText = context.getString(R.string.season_name_specials);
 			} else {
-				numberText = context.getString(R.string.season_name,
-				                               seasonNumber);
+				nameText = context.getString(R.string.season_name, seasonNumber);
 			}
-			numberView.setText(numberText);
+			viewHolder.getNameView().setText(nameText);
 
 			final int numAired =
 				episodesCounter.getNumAiredEpisodes(seasonNumber);
@@ -225,24 +233,37 @@ public class SeasonsListFragment
 			final int numUpcoming =
 				episodesCounter.getNumUpcomingEpisodes(seasonNumber);
 
-			final ProgressBar progressBar =
-				(ProgressBar)convertView.findViewById(R.id.season_progress_bar);
-			progressBar.setMax(numAired);
-			progressBar.setProgress(numWatched);
+			viewHolder.getProgressBar().setMax(numAired);
+			viewHolder.getProgressBar().setProgress(numWatched);
 
-			final TextView watchedCountView =
-				(TextView)convertView.findViewById(R.id.watched_count_view);
 			String watchedCountText = context.getString(R.string.watched_count,
 			                                            numWatched,
 			                                            numAired);
 			if (numUpcoming != 0) {
 				watchedCountText += " " +
-					context.getString(R.string.upcoming_count,
-					                  numUpcoming);
+					context.getString(R.string.upcoming_count, numUpcoming);
 			}
-			watchedCountView.setText(watchedCountText);
+			viewHolder.getWatchedCountView().setText(watchedCountText);
 
-			return convertView;
+			// Send clicks back to the fragment via the supplied listener.
+			viewHolder.getItemContainer().setOnClickListener(
+				new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						onItemClickListener.onItemClick(seasonNumber);
+					}
+				});
+		}
+
+		@Override
+		public int getItemCount() {
+			if (episodesCounter != null) {
+				final Integer[] array =
+					episodesCounter.getKeys().toArray(new Integer[] {});
+				return array.length;
+			} else {
+				return 0;
+			}
 		}
 	}
 }
