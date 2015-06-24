@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+  <TextView
+    android:id="@+id/notes"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:textAppearance="?android:attr/textAppearance"
+    android:autoLink="all"
+    android:gravity="top"
+    android:padding="4dp"/>
+</android.support.v4.widget.NestedScrollView>
