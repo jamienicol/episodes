@@ -437,7 +437,7 @@ public class ShowActivity
 
 		@Override
 		public int getCount() {
-			return 2;
+			return 3;
 		}
 
 		@Override
@@ -447,6 +447,8 @@ public class ShowActivity
 				return context.getString(R.string.show_tab_overview);
 			case 1:
 				return context.getString(R.string.show_tab_episodes);
+			case 2:
+				return context.getString(R.string.show_tab_notes);
 			default:
 				return null;
 			}
@@ -459,6 +461,8 @@ public class ShowActivity
 				return ShowDetailsFragment.newInstance(showId);
 			case 1:
 				return SeasonsListFragment.newInstance(showId);
+			case 2:
+				return ShowNotesFragment.newInstance(showId);
 			default:
 				return null;
 			}
