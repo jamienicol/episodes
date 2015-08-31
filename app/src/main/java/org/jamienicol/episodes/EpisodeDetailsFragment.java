@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2015 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -68,8 +64,6 @@ public class EpisodeDetailsFragment
 		super.onCreate(savedInstanceState);
 
 		episodeId = getArguments().getInt("episodeId");
-
-		setHasOptionsMenu(true);
 	}
 
 	public View onCreateView(LayoutInflater inflater,
@@ -82,6 +76,31 @@ public class EpisodeDetailsFragment
 		titleView = (TextView)view.findViewById(R.id.title);
 		overviewView = (TextView)view.findViewById(R.id.overview);
 		dateView = (TextView)view.findViewById(R.id.date);
+		watchedCheckBox = (CheckBox)view.findViewById(R.id.watched);
+		watchedCheckBox.setOnCheckedChangeListener(
+			new CompoundButton.OnCheckedChangeListener() {
+				public void onCheckedChanged(CompoundButton buttonView,
+				                             boolean isChecked) {
+					final ContentResolver contentResolver =
+						getActivity().getContentResolver();
+					final AsyncQueryHandler handler =
+						new AsyncQueryHandler(contentResolver) {};
+
+					final Uri episodeUri =
+						Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
+						                     String.valueOf(episodeId));
+
+					final ContentValues episodeValues = new ContentValues();
+					episodeValues.put(EpisodesTable.COLUMN_WATCHED, isChecked);
+
+					handler.startUpdate(0,
+					                    null,
+					                    episodeUri,
+					                    episodeValues,
+					                    null,
+					                    null);
+				}
+			});
 
 		return view;
 	}
@@ -93,44 +112,6 @@ public class EpisodeDetailsFragment
 		final Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("episodeId", episodeId);
 		getLoaderManager().initLoader(0, loaderArgs, this);
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.episode_details_fragment, menu);
-
-		watchedCheckBox =
-			(CheckBox)MenuItemCompat.getActionView(menu.findItem(R.id.menu_watched));
-
-		final ContentResolver contentResolver =
-			getActivity().getContentResolver();
-		watchedCheckBox.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				final boolean isChecked = ((CheckBox)view).isChecked();
-
-				final AsyncQueryHandler handler =
-					new AsyncQueryHandler(contentResolver) {};
-
-				final Uri episodeUri =
-					Uri.withAppendedPath(ShowsProvider.CONTENT_URI_EPISODES,
-					                     String.valueOf(episodeId));
-
-				final ContentValues episodeValues = new ContentValues();
-				episodeValues.put(EpisodesTable.COLUMN_WATCHED, isChecked);
-
-				handler.startUpdate(0,
-				                    null,
-				                    episodeUri,
-				                    episodeValues,
-				                    null,
-				                    null);
-			}});
-	}
-
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		watchedCheckBox.setChecked(watched);
 	}
 
 	@Override
@@ -182,33 +163,28 @@ public class EpisodeDetailsFragment
 			final int overviewColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_OVERVIEW);
 			if (data.isNull(overviewColumnIndex)) {
-				overviewView.setVisibility(View.GONE);
+				overviewView.setText("");
 			} else {
 				overviewView.setText(data.getString(overviewColumnIndex));
-				overviewView.setVisibility(View.VISIBLE);
 			}
 
 			final int firstAiredColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_FIRST_AIRED);
 			if (data.isNull(firstAiredColumnIndex)) {
-				dateView.setVisibility(View.GONE);
+				dateView.setText("");
 			} else {
 				final Date date =
 					new Date(data.getLong(firstAiredColumnIndex) * 1000);
 				final String dateText =
 					DateFormat.getDateInstance(DateFormat.LONG).format(date);
 				dateView.setText(dateText);
-				dateView.setVisibility(View.VISIBLE);
 			}
 
-			// watchedCheckBox might not be inflated yet
 			final int watchedColumnIndex =
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
 			watched = data.getInt(watchedColumnIndex) > 0 ? true : false;
-			if (watchedCheckBox != null) {
-				watchedCheckBox.setChecked(watched);
-			}
-
+			watchedCheckBox.setChecked(watched);
+			watchedCheckBox.setVisibility(View.VISIBLE);
 		}
 	}
 

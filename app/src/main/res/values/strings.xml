@@ -48,6 +48,6 @@
   <string name="show_tab_notes">Notes</string>
   <string name="show_tab_overview">Overview</string>
   <string name="upcoming_count">(+ %d upcoming)</string>
-  <string name="watched_action_check_box">Watched</string>
+  <string name="watched_check_box">Watched</string>
   <string name="watched_count">Watched %1$d of %2$d episodes</string>
 </resources>
