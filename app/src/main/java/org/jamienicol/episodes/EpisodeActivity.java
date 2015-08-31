@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Jamie Nicol <jamie@thenicols.net>
+ * Copyright (C) 2012-2015 Jamie Nicol <jamie@thenicols.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,7 @@ import org.jamienicol.episodes.db.ShowsProvider;
 
 public class EpisodeActivity
 	extends ActionBarActivity
-	implements LoaderManager.LoaderCallbacks<Cursor>,
-	           ViewPager.OnPageChangeListener
+	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	int initialEpisodeId;
 	private ViewPager episodeDetailsPager;
@@ -70,7 +69,6 @@ public class EpisodeActivity
 			new EpisodeDetailsPagerAdapter(getSupportFragmentManager(),
 			                               episodesData);
 		episodeDetailsPager.setAdapter(pagerAdapter);
-		episodeDetailsPager.setOnPageChangeListener(this);
 
 		Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("showId", showId);
@@ -84,8 +82,7 @@ public class EpisodeActivity
 		int seasonNumber = args.getInt("seasonNumber");
 
 		String[] projection = {
-			EpisodesTable.COLUMN_ID,
-			EpisodesTable.COLUMN_NAME
+			EpisodesTable.COLUMN_ID
 		};
 		String selection = String.format("%s=? AND %s=?",
 		                                 EpisodesTable.COLUMN_SHOW_ID,
@@ -124,7 +121,7 @@ public class EpisodeActivity
 
 		/* we'll need to move the view pager to the initial episode
 		   if this is the first time data has been loaded */
-		boolean moveToInitialPosition =
+		final boolean moveToInitialPosition =
 			(data != null) && (episodesData == null);
 
 		episodesData = data;
@@ -134,9 +131,6 @@ public class EpisodeActivity
 			int initialPosition = getEpisodePositionFromId(episodesData,
 			                                               initialEpisodeId);
 			episodeDetailsPager.setCurrentItem(initialPosition, false);
-			/* this wont automatically be called if the previous
-			   function doesn't change the selected page */
-			onPageSelected(initialPosition);
 		}
 	}
 
@@ -154,30 +148,6 @@ public class EpisodeActivity
 
 		default:
 			return super.onOptionsItemSelected(item);
-		}
-	}
-
-	@Override
-	public void onPageScrollStateChanged(int state) {
-	}
-
-	@Override
-	public void onPageScrolled(int position,
-	                           float positionOffset,
-	                           int positionOffsetPixels) {
-	}
-
-	@Override
-	public void onPageSelected(int position) {
-		if (episodesData != null &&
-		    episodesData.moveToPosition(position)) {
-			int nameColumnIndex =
-				episodesData.getColumnIndexOrThrow(EpisodesTable.COLUMN_NAME);
-			String episodeName = episodesData.getString(nameColumnIndex);
-			getSupportActionBar().setTitle(episodeName);
-
-		} else {
-			getSupportActionBar().setTitle("");
 		}
 	}
 
