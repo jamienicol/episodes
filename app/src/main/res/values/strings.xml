@@ -50,4 +50,7 @@
   <string name="upcoming_count">(+ %d upcoming)</string>
   <string name="watched_action_check_box">Watched</string>
   <string name="watched_count">Watched %1$d of %2$d episodes</string>
+  <string name="edit_notes">Edit notes</string>
+  <string name="menu_save_notes">Save</string>
+  <string name="error_saving_notes">Error saving notes.</string>
 </resources>

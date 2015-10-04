@@ -62,6 +62,12 @@
     </activity>
 
     <activity
+        android:name=".EditNotesActivity"
+        android:label=""
+        android:theme="@style/Theme.Episodes.NoActionBar">
+    </activity>
+
+    <activity
         android:name=".SeasonActivity"
         android:label="" >
     </activity>
