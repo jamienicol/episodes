@@ -57,7 +57,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/tab_strip_height"
         android:background="@color/primary"
-        app:layout_scrollFlags="scroll"/>
+        app:tabMode="scrollable"
+        app:layout_scrollFlags="scroll" />
 
   </android.support.design.widget.AppBarLayout>
 
