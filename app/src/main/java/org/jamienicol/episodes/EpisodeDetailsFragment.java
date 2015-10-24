@@ -165,7 +165,7 @@ public class EpisodeDetailsFragment
 			if (data.isNull(overviewColumnIndex)) {
 				overviewView.setText("");
 			} else {
-				overviewView.setText(data.getString(overviewColumnIndex));
+				overviewView.setText(data.getString(overviewColumnIndex).trim());
 			}
 
 			final int firstAiredColumnIndex =

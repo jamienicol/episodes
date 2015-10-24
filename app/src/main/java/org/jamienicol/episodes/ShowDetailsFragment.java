@@ -106,7 +106,7 @@ public class ShowDetailsFragment
 			if (data.isNull(overviewColumnIndex)) {
 				overviewView.setVisibility(View.GONE);
 			} else {
-				overviewView.setText(data.getString(overviewColumnIndex));
+				overviewView.setText(data.getString(overviewColumnIndex).trim());
 				overviewView.setVisibility(View.VISIBLE);
 			}
 
