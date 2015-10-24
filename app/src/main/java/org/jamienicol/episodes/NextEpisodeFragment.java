@@ -74,14 +74,15 @@ public class NextEpisodeFragment
 	public View onCreateView(LayoutInflater inflater,
 	                         ViewGroup container,
 	                         Bundle savedInstanceState) {
-		rootView = inflater.inflate(R.layout.episode_details_fragment,
-		                            container,
-		                            false);
+		final View view = inflater.inflate(R.layout.episode_details_fragment,
+                                           container,
+                                           false);
 
-		titleView = (TextView)rootView.findViewById(R.id.title);
-		overviewView = (TextView)rootView.findViewById(R.id.overview);
-		dateView = (TextView)rootView.findViewById(R.id.date);
-		watchedCheckBox = (CheckBox)rootView.findViewById(R.id.watched);
+		rootView = view.findViewById(R.id.root);
+		titleView = (TextView)view.findViewById(R.id.title);
+		overviewView = (TextView)view.findViewById(R.id.overview);
+		dateView = (TextView)view.findViewById(R.id.date);
+		watchedCheckBox = (CheckBox)view.findViewById(R.id.watched);
 		watchedCheckBox.setOnCheckedChangeListener(
 			new CompoundButton.OnCheckedChangeListener() {
 				public void onCheckedChanged(CompoundButton buttonView,
@@ -113,7 +114,7 @@ public class NextEpisodeFragment
 				}
 			});
 
-		return rootView;
+		return view;
 	}
 
 	@Override
@@ -212,7 +213,6 @@ public class NextEpisodeFragment
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
 			watched = data.getInt(watchedColumnIndex) > 0 ? true : false;
 			watchedCheckBox.setChecked(watched);
-			watchedCheckBox.setVisibility(View.VISIBLE);
 
 			rootView.setVisibility(View.VISIBLE);
 		} else {

@@ -43,6 +43,7 @@ public class EpisodeDetailsFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private int episodeId;
+	private View rootView;
 	private TextView titleView;
 	private TextView overviewView;
 	private TextView dateView;
@@ -73,6 +74,7 @@ public class EpisodeDetailsFragment
 		                                   container,
 		                                   false);
 
+		rootView = view.findViewById(R.id.root);
 		titleView = (TextView)view.findViewById(R.id.title);
 		overviewView = (TextView)view.findViewById(R.id.overview);
 		dateView = (TextView)view.findViewById(R.id.date);
@@ -184,7 +186,10 @@ public class EpisodeDetailsFragment
 				data.getColumnIndexOrThrow(EpisodesTable.COLUMN_WATCHED);
 			watched = data.getInt(watchedColumnIndex) > 0 ? true : false;
 			watchedCheckBox.setChecked(watched);
-			watchedCheckBox.setVisibility(View.VISIBLE);
+
+			rootView.setVisibility(View.VISIBLE);
+		} else {
+			rootView.setVisibility(View.INVISIBLE);
 		}
 	}
 
