@@ -27,7 +27,7 @@
       android:defaultValue="en"/>
   <CheckBoxPreference
       android:key="reverse_sort_order"
-      android:title="Reverse sort order"
-      android:summary="Display newest season first"
+      android:title="@string/pref_reverse_sort_order"
+      android:summary="@string/pref_reverse_sort_order_summary"
       android:defaultValue="false"/>
 </PreferenceScreen>
