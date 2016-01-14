@@ -25,4 +25,9 @@
       android:entries="@array/language_entries"
       android:entryValues="@array/language_values"
       android:defaultValue="en"/>
+  <CheckBoxPreference
+      android:key="reverse_sort_order"
+      android:title="Reverse sort order"
+      android:summary="Display newest season first"
+      android:defaultValue="false"/>
 </PreferenceScreen>
