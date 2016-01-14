@@ -17,11 +17,15 @@
 
 package org.jamienicol.episodes;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.database.Cursor;
 import android.util.SparseIntArray;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
+import org.jamienicol.episodes.Preferences;
 import org.jamienicol.episodes.db.EpisodesTable;
 
 public class EpisodesCounter
@@ -35,7 +39,15 @@ public class EpisodesCounter
 	public EpisodesCounter(String keyColumn) {
 		this.keyColumn = keyColumn;
 
-		keys = new TreeSet<Integer>();
+		SharedPreferences preferences = Preferences.getSharedPreferences();
+
+		if (preferences.getBoolean("reverse_sort_order", false)) {
+			keys = new TreeSet<Integer>(Collections.reverseOrder());
+		} else {
+			keys = new TreeSet<Integer>();
+		}
+
+		// keys = new TreeSet<Integer>();
 		numAiredEpisodesMap = new SparseIntArray();
 		numWatchedEpisodesMap = new SparseIntArray();
 		numUpcomingEpisodesMap = new SparseIntArray();

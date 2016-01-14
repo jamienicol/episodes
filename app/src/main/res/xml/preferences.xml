@@ -18,4 +18,9 @@
       android:dependency="pref_auto_refresh_enabled"
       android:title="@string/pref_auto_refresh_wifi_only_title"
       android:defaultValue="true"/>
+  <CheckBoxPreference
+      android:key="reverse_sort_order"
+      android:title="Reverse sort order"
+      android:summary="Display newest season first"
+      android:defaultValue="false"/>
 </PreferenceScreen>

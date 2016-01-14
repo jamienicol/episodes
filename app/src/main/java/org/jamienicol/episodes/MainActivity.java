@@ -34,16 +34,24 @@ public class MainActivity
 	implements ShowsListFragment.OnShowSelectedListener,
 	           SelectBackupDialog.OnBackupSelectedListener
 {
+	private static Context context;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_activity);
 
+		MainActivity.context = getApplicationContext();
+
 		// ensure that the auto-refresh alarm is scheduled.
 		// this should mainly be useful the first time the app is ran.
 		AutoRefreshHelper.getInstance(getApplicationContext())
 			.rescheduleAlarm();
+	}
+
+	public static Context getAppContext() {
+		return MainActivity.context;
 	}
 
 	@Override
