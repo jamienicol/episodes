@@ -128,7 +128,10 @@ public class AddShowSearchFragment
 		public List<Show> loadInBackground() {
 			Client tvdbClient = new Client("25B864A8BC56AFAD");
 
-			List<Show> results = tvdbClient.searchShows(query);
+			List<Show> results = tvdbClient.searchShows(query, "en");
+			if(results.size() == 0) {
+				results =  tvdbClient.searchShows(query, "all");
+			}
 
 			return results;
 		}

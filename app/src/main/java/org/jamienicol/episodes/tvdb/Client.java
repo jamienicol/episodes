@@ -40,13 +40,14 @@ public class Client
 		http = EpisodesApplication.getInstance().getHttpClient();
 	}
 
-	public List<Show> searchShows(String query) {
+	public List<Show> searchShows(String query, String language) {
 
 		try {
 			final String escapedQuery = URLEncoder.encode(query, "UTF-8");
-			final String url = String.format("%s/GetSeries.php?seriesname=%s",
+			final String url = String.format("%s/GetSeries.php?seriesname=%s&language=%s",
 			                                 baseUrl,
-			                                 escapedQuery);
+			                                 escapedQuery,
+                                                         language);
 			Log.d(TAG, String.format("Sending request to %s", url));
 
 			final Request request = new Request.Builder().url(url).build();
