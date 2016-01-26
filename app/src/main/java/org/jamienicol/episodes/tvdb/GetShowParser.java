@@ -76,6 +76,14 @@ class GetShowParser
 				}
 			});
 
+			Element languageElement = seriesElement.getChild("Language");
+			languageElement.setEndTextElementListener(new EndTextElementListener() {
+				public void end(String body) {
+					Log.i(TAG, String.format("Parsed show language: %s", body));
+					show.setLanguage(body);
+				}
+			});
+
 			Element overviewElement = seriesElement.getChild("Overview");
 			overviewElement.setEndTextElementListener(new EndTextElementListener() {
 				public void end(String body) {

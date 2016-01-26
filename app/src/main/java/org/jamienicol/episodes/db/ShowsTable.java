@@ -30,6 +30,7 @@ public class ShowsTable
 	public static final String COLUMN_ID = BaseColumns._ID;
 	public static final String COLUMN_TVDB_ID = "tvdb_id";
 	public static final String COLUMN_NAME = "name";
+	public static final String COLUMN_LANGUAGE = "language";
 	public static final String COLUMN_OVERVIEW = "overview";
 	public static final String COLUMN_FIRST_AIRED = "first_aired";
 	public static final String COLUMN_STARRED = "starred";
@@ -41,6 +42,7 @@ public class ShowsTable
 	public static final String COLUMN_TYPE_ID = "INTEGER PRIMARY KEY";
 	public static final String COLUMN_TYPE_TVDB_ID = "INTEGER UNIQUE NOT NULL";
 	public static final String COLUMN_TYPE_NAME = "TEXT NOT NULL";
+	public static final String COLUMN_TYPE_LANGUAGE = "TEXT";
 	public static final String COLUMN_TYPE_OVERVIEW = "TEXT";
 	public static final String COLUMN_TYPE_FIRST_AIRED = "DATE";
 	public static final String COLUMN_TYPE_STARRED = "BOOLEAN DEFAULT 0";
@@ -56,6 +58,7 @@ public class ShowsTable
 			              "    %s %s," +
 			              "    %s %s," +
 			              "    %s %s," +
+						  "    %s %s," +
 			              "    %s %s," +
 			              "    %s %s," +
 			              "    %s %s," +
@@ -67,6 +70,7 @@ public class ShowsTable
 			              COLUMN_ID, COLUMN_TYPE_ID,
 			              COLUMN_TVDB_ID, COLUMN_TYPE_TVDB_ID,
 			              COLUMN_NAME, COLUMN_TYPE_NAME,
+						  COLUMN_LANGUAGE, COLUMN_TYPE_LANGUAGE,
 			              COLUMN_OVERVIEW, COLUMN_TYPE_OVERVIEW,
 			              COLUMN_FIRST_AIRED, COLUMN_TYPE_FIRST_AIRED,
 			              COLUMN_STARRED, COLUMN_TYPE_STARRED,
@@ -125,6 +129,14 @@ public class ShowsTable
 				COLUMN_NOTES,
 				COLUMN_TYPE_NOTES));
 			// fall through
+		case 5:
+			// Add language column
+			Log.d(TAG, "upgrading shows table: adding language column");
+			db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s",
+				TABLE_NAME,
+				COLUMN_LANGUAGE,
+				COLUMN_TYPE_LANGUAGE));
+			//fall through
 		}
 	}
 }

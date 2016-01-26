@@ -23,6 +23,7 @@ public class Episode
 {
 	private int id;
 	private String name;
+	private String language;
 	private String overview;
 	private int episodeNumber;
 	private int seasonNumber;
@@ -31,6 +32,7 @@ public class Episode
 	public Episode() {
 		id = 0;
 		name = "";
+		language = "";
 		overview = "";
 		episodeNumber = 0;
 		seasonNumber = 0;
@@ -51,6 +53,14 @@ public class Episode
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	public String getOverview() {

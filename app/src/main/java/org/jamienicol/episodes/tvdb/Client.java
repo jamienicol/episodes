@@ -30,7 +30,7 @@ import org.jamienicol.episodes.EpisodesApplication;
 public class Client
 {
 	private static final String TAG = Client.class.getName();
-	private static final String baseUrl = "http://thetvdb.com/api";
+	private static final String baseUrl = "https://thetvdb.com/api";
 
 	private final String apiKey;
 	private final OkHttpClient http;
@@ -78,6 +78,37 @@ public class Client
 			                                 baseUrl,
 			                                 apiKey,
 			                                 id);
+			Log.d(TAG, String.format("Sending request to %s", url));
+
+			final Request request = new Request.Builder().url(url).build();
+
+			final Response response = http.newCall(request).execute();
+
+			Log.d(TAG, String.format("Received response %d: %s",
+			                         response.code(),
+			                         response.message()));
+
+			if (response.isSuccessful()) {
+				final GetShowParser parser = new GetShowParser();
+
+				return parser.parse(response.body().byteStream());
+			} else {
+				return null;
+			}
+		} catch (IOException e) {
+			Log.w(TAG, e);
+			return null;
+		}
+	}
+
+	public Show getShow(int id, String language) {
+		try {
+			final String url = String.format(Locale.US,
+											 "%s/%s/series/%d/all/%s.xml",
+											 baseUrl,
+											 apiKey,
+											 id,
+											 language);
 			Log.d(TAG, String.format("Sending request to %s", url));
 
 			final Request request = new Request.Builder().url(url).build();

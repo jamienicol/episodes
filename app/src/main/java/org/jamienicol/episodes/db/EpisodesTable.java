@@ -31,6 +31,7 @@ public class EpisodesTable
 	public static final String COLUMN_TVDB_ID = "tvdb_id";
 	public static final String COLUMN_SHOW_ID = "show_id";
 	public static final String COLUMN_NAME = "name";
+	public static final String COLUMN_LANGUAGE = "language";
 	public static final String COLUMN_OVERVIEW = "overview";
 	public static final String COLUMN_EPISODE_NUMBER = "episode_number";
 	public static final String COLUMN_SEASON_NUMBER = "season_number";
@@ -45,6 +46,7 @@ public class EpisodesTable
 			              "    %s INTEGER NOT NULL," +
 			              "    %s VARCHAR(200) NOT NULL," +
 			              "    %s TEXT," +
+						  "    %s TEXT," +
 			              "    %s INTEGER," +
 			              "    %s INTEGER," +
 			              "    %s DATE," +
@@ -55,6 +57,7 @@ public class EpisodesTable
 			              COLUMN_TVDB_ID,
 			              COLUMN_SHOW_ID,
 			              COLUMN_NAME,
+						  COLUMN_LANGUAGE,
 			              COLUMN_OVERVIEW,
 			              COLUMN_EPISODE_NUMBER,
 			              COLUMN_SEASON_NUMBER,
@@ -69,5 +72,14 @@ public class EpisodesTable
 	public static void onUpgrade(SQLiteDatabase db,
 	                             int oldVersion,
 	                             int newVersion) {
+		switch (oldVersion) {
+			case 5:
+				// Add language column
+				Log.d(TAG, "upgrading episodes table: adding language column");
+				db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s TEXT",
+					TABLE_NAME,
+					COLUMN_LANGUAGE));
+				// fall through
+		}
 	}
 }

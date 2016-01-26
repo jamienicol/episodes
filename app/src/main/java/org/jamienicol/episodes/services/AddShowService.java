@@ -58,13 +58,14 @@ public class AddShowService extends IntentService
 
 		final int tvdbId = intent.getIntExtra("tvdbId", 0);
 		final String showName = intent.getStringExtra("showName");
+		final String showLanguage = intent.getStringExtra("showLanguage");
 
 		if (isShowAlreadyAdded(tvdbId) == false) {
 
 			showMessage(getString(R.string.adding_show, showName));
 
 			// fetch full show + episode information from tvdb
-			final Show show = tvdbClient.getShow(tvdbId);
+			final Show show = tvdbClient.getShow(tvdbId, showLanguage);
 
 			if (show != null) {
 				// add show and episodes to database
@@ -105,6 +106,7 @@ public class AddShowService extends IntentService
 		final ContentValues showValues = new ContentValues();
 		showValues.put(ShowsTable.COLUMN_TVDB_ID, show.getId());
 		showValues.put(ShowsTable.COLUMN_NAME, show.getName());
+		showValues.put(ShowsTable.COLUMN_LANGUAGE, show.getLanguage());
 		showValues.put(ShowsTable.COLUMN_OVERVIEW, show.getOverview());
 		if (show.getFirstAired() != null) {
 			showValues.put(ShowsTable.COLUMN_FIRST_AIRED,
@@ -135,6 +137,7 @@ public class AddShowService extends IntentService
 		episodeValues.put(EpisodesTable.COLUMN_TVDB_ID, episode.getId());
 		episodeValues.put(EpisodesTable.COLUMN_SHOW_ID, showId);
 		episodeValues.put(EpisodesTable.COLUMN_NAME, episode.getName());
+		episodeValues.put(EpisodesTable.COLUMN_LANGUAGE, episode.getLanguage());
 		episodeValues.put(EpisodesTable.COLUMN_OVERVIEW,
 		             episode.getOverview());
 		episodeValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER,

@@ -88,6 +88,14 @@ class SearchShowsParser
 				}
 			});
 
+			Element languageElement = seriesElement.getChild("language");
+			languageElement.setEndTextElementListener(new EndTextElementListener() {
+				public void end(String body) {
+					Log.i(TAG, String.format("Parsed language: %s", body));
+					current.setLanguage(body);
+				}
+			});
+
 			Element overviewElement = seriesElement.getChild("Overview");
 			overviewElement.setEndTextElementListener(new EndTextElementListener() {
 				public void end(String body) {

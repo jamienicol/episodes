@@ -41,8 +41,9 @@ public class RefreshShowUtil
 		Log.i(TAG, String.format("Refreshing show %d", showId));
 
 		final int showTvdbId = getShowTvdbId(showId, contentResolver);
+		final String showLanguage = getShowLanguage(showId, contentResolver);
 		// fetch full show + episode information from tvdb
-		final Show show = tvdbClient.getShow(showTvdbId);
+		final Show show = tvdbClient.getShow(showTvdbId, showLanguage);
 
 		if (show != null) {
 			updateShow(showId, show, contentResolver);
@@ -73,6 +74,16 @@ public class RefreshShowUtil
 		return showCursor.getInt(tvdbIdColumnIndex);
 	}
 
+	private static String getShowLanguage(int showId, ContentResolver contentResolver) {
+		final Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
+												 String.valueOf(showId));
+		final String[] projection = { ShowsTable.COLUMN_LANGUAGE };
+		final Cursor showCursor = contentResolver.query(showUri, projection, null, null, null);
+		final int columnIndex = showCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_LANGUAGE);
+		showCursor.moveToFirst();
+		return showCursor.getString(columnIndex);
+	}
+
 	private static void updateShow(int showId,
 	                               Show show,
 	                               ContentResolver contentResolver) {
@@ -80,6 +91,7 @@ public class RefreshShowUtil
 		final ContentValues showValues = new ContentValues();
 		showValues.put(ShowsTable.COLUMN_TVDB_ID, show.getId());
 		showValues.put(ShowsTable.COLUMN_NAME, show.getName());
+		showValues.put(ShowsTable.COLUMN_LANGUAGE, show.getLanguage());
 		showValues.put(ShowsTable.COLUMN_OVERVIEW, show.getOverview());
 		if (show.getFirstAired() != null) {
 			showValues.put(ShowsTable.COLUMN_FIRST_AIRED,
@@ -127,6 +139,7 @@ public class RefreshShowUtil
 				epValues.put(EpisodesTable.COLUMN_TVDB_ID, episode.getId());
 				epValues.put(EpisodesTable.COLUMN_SHOW_ID, showId);
 				epValues.put(EpisodesTable.COLUMN_NAME, episode.getName());
+				epValues.put(EpisodesTable.COLUMN_LANGUAGE, episode.getLanguage());
 				epValues.put(EpisodesTable.COLUMN_OVERVIEW,
 				             episode.getOverview());
 				epValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER,
@@ -191,6 +204,7 @@ public class RefreshShowUtil
 			epValues.put(EpisodesTable.COLUMN_TVDB_ID, episode.getId());
 			epValues.put(EpisodesTable.COLUMN_SHOW_ID, showId);
 			epValues.put(EpisodesTable.COLUMN_NAME, episode.getName());
+			epValues.put(EpisodesTable.COLUMN_LANGUAGE, episode.getLanguage());
 			epValues.put(EpisodesTable.COLUMN_OVERVIEW,
 			             episode.getOverview());
 			epValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER,
