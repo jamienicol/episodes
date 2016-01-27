@@ -34,6 +34,7 @@
   <string name="pref_auto_refresh_period_title">Refresh frequency</string>
   <string name="pref_auto_refresh_enabled_title">Auto-refresh library</string>
   <string name="pref_auto_refresh_wifi_only_title">Refresh only via Wi-Fi</string>
+  <string name="pref_language_title">Language</string>
   <string name="restore_dialog_no_backups_message">No backups found in folder \'%s\'.</string>
   <string name="restore_dialog_title">Restore from backup</string>
   <string name="restore_error_message">Error restoring library</string>

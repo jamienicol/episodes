@@ -21,6 +21,8 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -37,6 +39,7 @@ import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.tvdb.Client;
 import org.jamienicol.episodes.tvdb.Show;
+import org.jamienicol.episodes.Preferences;
 
 public class AddShowSearchFragment
 	extends ListFragment
@@ -116,6 +119,7 @@ public class AddShowSearchFragment
 	{
 		private final String query;
 		private List<Show> cachedResult;
+		private SharedPreferences preferences = Preferences.getSharedPreferences();
 
 		public SearchLoader(Context context, String query) {
 			super(context);
@@ -127,8 +131,9 @@ public class AddShowSearchFragment
 		@Override
 		public List<Show> loadInBackground() {
 			Client tvdbClient = new Client("25B864A8BC56AFAD");
+			String language = preferences.getString("pref_language", "en");
 
-			List<Show> results = tvdbClient.searchShows(query, "en");
+			List<Show> results = tvdbClient.searchShows(query, language);
 			if(results.size() == 0) {
 				results =  tvdbClient.searchShows(query, "all");
 			}

@@ -18,4 +18,11 @@
       android:dependency="pref_auto_refresh_enabled"
       android:title="@string/pref_auto_refresh_wifi_only_title"
       android:defaultValue="true"/>
+  <ListPreference
+      android:key="pref_language"
+      android:title="@string/pref_language_title"
+      android:summary="%s"
+      android:entries="@array/language_entries"
+      android:entryValues="@array/language_values"
+      android:defaultValue="en"/>
 </PreferenceScreen>
