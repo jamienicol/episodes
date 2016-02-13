@@ -61,6 +61,7 @@ public class ShowActivity
 
 	private int showId;
 	private boolean isShowStarred;
+	private boolean isShowArchived;
 
 	private ImageView headerImage;
 	private Toolbar toolbar;
@@ -131,6 +132,15 @@ public class ShowActivity
 			toggleStarred.setTitle(R.string.menu_star_show);
 		}
 
+		final MenuItem toggleArchived = menu.findItem(R.id.menu_toggle_show_archived);
+		if (isShowArchived) {
+			toggleArchived.setIcon(R.drawable.ic_shows_list_archived);
+			toggleArchived.setTitle(R.string.menu_unarchive_show);
+		} else {
+			toggleArchived.setIcon(R.drawable.ic_shows_list_unarchived);
+			toggleArchived.setTitle(R.string.menu_archive_show);
+		}
+
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -143,6 +153,10 @@ public class ShowActivity
 
 		case R.id.menu_toggle_show_starred:
 			toggleShowStarred();
+			return true;
+
+		case R.id.menu_toggle_show_archived:
+			toggleShowArchived();
 			return true;
 
 		case R.id.menu_refresh_show:
@@ -176,6 +190,7 @@ public class ShowActivity
 		final String[] projection = {
 			ShowsTable.COLUMN_NAME,
 			ShowsTable.COLUMN_STARRED,
+			ShowsTable.COLUMN_ARCHIVED,
 			ShowsTable.COLUMN_FANART_PATH
 		};
 		return new CursorLoader(this,
@@ -203,6 +218,15 @@ public class ShowActivity
 			if (isShowStarred != starred) {
 				isShowStarred = starred;
 				// toggle starred menu item needs updated
+				supportInvalidateOptionsMenu();
+			}
+
+			// maybe update the state of the toggle archived menu item
+			final int archivedColumnIndex = data.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED);
+			final boolean archived = data.getInt(archivedColumnIndex) > 0 ? true: false;
+			if (isShowArchived != archived) {
+				isShowArchived = archived;
+				// toggle archived menu item needs updated
 				supportInvalidateOptionsMenu();
 			}
 
@@ -277,6 +301,25 @@ public class ShowActivity
 		                    selection,
 		                    selectionArgs);
 	}
+
+	private void toggleShowArchived() {
+		final ContentResolver contentResolver = getContentResolver();
+                final AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
+                final ContentValues values = new ContentValues();
+                values.put(ShowsTable.COLUMN_ARCHIVED, !isShowArchived);
+                final String selection = String.format("%s=?", ShowsTable.COLUMN_ID);
+                final String[] selectionArgs = {
+                        String.valueOf(showId)
+                };
+
+                handler.startUpdate(0,
+                                    null,
+                                    ShowsProvider.CONTENT_URI_SHOWS,
+                                    values,
+                                    selection,
+                                    selectionArgs);
+        }
+
 
 	private void refreshShow() {
 		final Intent intent = new Intent(this, RefreshShowService.class);

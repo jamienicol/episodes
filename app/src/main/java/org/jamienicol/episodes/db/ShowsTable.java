@@ -34,6 +34,7 @@ public class ShowsTable
 	public static final String COLUMN_OVERVIEW = "overview";
 	public static final String COLUMN_FIRST_AIRED = "first_aired";
 	public static final String COLUMN_STARRED = "starred";
+	public static final String COLUMN_ARCHIVED = "archived";
 	public static final String COLUMN_BANNER_PATH = "banner_path";
 	public static final String COLUMN_FANART_PATH = "fanart_path";
 	public static final String COLUMN_POSTER_PATH = "poster_path";
@@ -46,6 +47,7 @@ public class ShowsTable
 	public static final String COLUMN_TYPE_OVERVIEW = "TEXT";
 	public static final String COLUMN_TYPE_FIRST_AIRED = "DATE";
 	public static final String COLUMN_TYPE_STARRED = "BOOLEAN DEFAULT 0";
+	public static final String COLUMN_TYPE_ARCHIVED = "BOOLEAN DEFAULT 0";
 	public static final String COLUMN_TYPE_BANNER_PATH = "TEXT";
 	public static final String COLUMN_TYPE_FANART_PATH = "TEXT";
 	public static final String COLUMN_TYPE_POSTER_PATH = "TEXT";
@@ -58,7 +60,8 @@ public class ShowsTable
 			              "    %s %s," +
 			              "    %s %s," +
 			              "    %s %s," +
-						  "    %s %s," +
+			              "    %s %s," +
+			              "    %s %s," +
 			              "    %s %s," +
 			              "    %s %s," +
 			              "    %s %s," +
@@ -70,10 +73,11 @@ public class ShowsTable
 			              COLUMN_ID, COLUMN_TYPE_ID,
 			              COLUMN_TVDB_ID, COLUMN_TYPE_TVDB_ID,
 			              COLUMN_NAME, COLUMN_TYPE_NAME,
-						  COLUMN_LANGUAGE, COLUMN_TYPE_LANGUAGE,
+                                      COLUMN_LANGUAGE, COLUMN_TYPE_LANGUAGE,
 			              COLUMN_OVERVIEW, COLUMN_TYPE_OVERVIEW,
 			              COLUMN_FIRST_AIRED, COLUMN_TYPE_FIRST_AIRED,
 			              COLUMN_STARRED, COLUMN_TYPE_STARRED,
+                                      COLUMN_ARCHIVED, COLUMN_TYPE_ARCHIVED,
 			              COLUMN_BANNER_PATH, COLUMN_TYPE_BANNER_PATH,
 			              COLUMN_FANART_PATH, COLUMN_TYPE_FANART_PATH,
 			              COLUMN_POSTER_PATH, COLUMN_TYPE_POSTER_PATH,
@@ -137,6 +141,14 @@ public class ShowsTable
 				COLUMN_LANGUAGE,
 				COLUMN_TYPE_LANGUAGE));
 			//fall through
+		case 6:
+			// Add archived column
+			Log.d(TAG, "upgrading shows table: adding archived column");
+			db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s",
+                                TABLE_NAME,
+                                COLUMN_ARCHIVED,
+                                COLUMN_TYPE_ARCHIVED));
+                        //fall through
 		}
 	}
 }

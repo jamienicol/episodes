@@ -53,7 +53,7 @@ public class EpisodesApplication
 		try {
 			Cache httpCache = new Cache(getCacheDir(), 1024 * 1024);
 			httpClient.setCache(httpCache);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			Log.w(TAG, "Error initialising okhttp cache", e);
 		}
 

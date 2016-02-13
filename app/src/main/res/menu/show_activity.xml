@@ -8,6 +8,11 @@
       android:title="@string/menu_star_show"
       episodes:showAsAction="ifRoom" />
   <item
+      android:id="@+id/menu_toggle_show_archived"
+      android:icon="@drawable/ic_shows_list_unarchived"
+      android:title="@string/menu_archive_show"
+      episodes:showAsAction="ifRoom" />
+  <item
       android:id="@+id/menu_refresh_show"
       android:title="@string/menu_refresh_show"
       episodes:showAsAction="never"/>

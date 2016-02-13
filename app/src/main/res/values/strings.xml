@@ -20,6 +20,7 @@
   <string name="menu_filter_all">All shows</string>
   <string name="menu_filter_shows_list">Filter shows</string>
   <string name="menu_filter_starred">Starred shows</string>
+  <string name="menu_filter_archived">Archived shows</string>
   <string name="menu_filter_uncompleted">Uncompleted shows</string>
   <string name="menu_mark_season_not_watched">Mark season as not watched</string>
   <string name="menu_mark_season_watched">Mark season as watched</string>
@@ -31,6 +32,8 @@
   <string name="menu_settings">Settings</string>
   <string name="menu_star_show">Star show</string>
   <string name="menu_unstar_show">Unstar show</string>
+  <string name="menu_archive_show">Archive show</string>
+  <string name="menu_unarchive_show">Unarchive show</string>
   <string name="pref_auto_refresh_period_title">Refresh frequency</string>
   <string name="pref_auto_refresh_enabled_title">Auto-refresh library</string>
   <string name="pref_auto_refresh_wifi_only_title">Refresh only via Wi-Fi</string>

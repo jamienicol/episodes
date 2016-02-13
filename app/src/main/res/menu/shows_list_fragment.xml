@@ -16,6 +16,9 @@
             android:id="@+id/menu_filter_starred"
             android:title="@string/menu_filter_starred"/>
         <item
+            android:id="@+id/menu_filter_archived"
+            android:title="@string/menu_filter_archived"/>
+        <item
             android:id="@+id/menu_filter_uncompleted"
             android:title="@string/menu_filter_uncompleted"/>
       </group>

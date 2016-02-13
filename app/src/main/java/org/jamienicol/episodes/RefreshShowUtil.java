@@ -41,7 +41,11 @@ public class RefreshShowUtil
 		Log.i(TAG, String.format("Refreshing show %d", showId));
 
 		final int showTvdbId = getShowTvdbId(showId, contentResolver);
-		final String showLanguage = getShowLanguage(showId, contentResolver);
+		String showLanguage = getShowLanguage(showId, contentResolver);
+		if (showLanguage == null) {
+			// TODO: Fetch from preferences instead
+			showLanguage = "en";
+		}
 		// fetch full show + episode information from tvdb
 		final Show show = tvdbClient.getShow(showTvdbId, showLanguage);
 

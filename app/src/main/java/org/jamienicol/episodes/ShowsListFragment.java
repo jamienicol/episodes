@@ -66,6 +66,7 @@ public class ShowsListFragment
 	private static final int SHOWS_FILTER_ALL = 0;
 	private static final int SHOWS_FILTER_STARRED = 1;
 	private static final int SHOWS_FILTER_UNCOMPLETED = 2;
+	private static final int SHOWS_FILTER_ARCHIVED = 3;
 
 	private ShowsListAdapter listAdapter;
 	private Cursor showsData;
@@ -146,6 +147,9 @@ public class ShowsListFragment
 		case SHOWS_FILTER_UNCOMPLETED:
 			menu.findItem(R.id.menu_filter_uncompleted).setChecked(true);
 			break;
+		case SHOWS_FILTER_ARCHIVED:
+			menu.findItem(R.id.menu_filter_archived).setChecked(true);
+			break;
 		}
 
 		super.onPrepareOptionsMenu(menu);
@@ -161,6 +165,7 @@ public class ShowsListFragment
 		case R.id.menu_filter_all:
 		case R.id.menu_filter_starred:
 		case R.id.menu_filter_uncompleted:
+		case R.id.menu_filter_archived:
 			if (!item.isChecked()) {
 				item.setChecked(true);
 			}
@@ -174,6 +179,8 @@ public class ShowsListFragment
 				editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_STARRED);
 			} else if (item.getItemId() == R.id.menu_filter_uncompleted) {
 				editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_UNCOMPLETED);
+			} else if (item.getItemId() == R.id.menu_filter_archived) {
+				editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ARCHIVED);
 			}
 			editor.apply();
 
@@ -191,6 +198,7 @@ public class ShowsListFragment
 				ShowsTable.COLUMN_ID,
 				ShowsTable.COLUMN_NAME,
 				ShowsTable.COLUMN_STARRED,
+				ShowsTable.COLUMN_ARCHIVED,
 				ShowsTable.COLUMN_BANNER_PATH
 			};
 			return new CursorLoader(getActivity(),
@@ -348,19 +356,29 @@ public class ShowsListFragment
 					}
 					break;
 
+				case SHOWS_FILTER_ARCHIVED:
+					final int archivedColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED);
+					if (showsCursor.getInt(archivedColumnIndex) > 0) {
+						filteredShows.add(showsCursor.getPosition());
+					}
+					break;
+
 				case SHOWS_FILTER_UNCOMPLETED:
-					final int idColumnIndex =
-						showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
+					final int idColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
 					final int id = showsCursor.getInt(idColumnIndex);
 
-					if (episodesCounter.getNumWatchedEpisodes(id) <
-					    episodesCounter.getNumAiredEpisodes(id)) {
+					if ((episodesCounter.getNumWatchedEpisodes(id) < episodesCounter.getNumAiredEpisodes(id)) &&
+					    showsCursor.getInt(showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED)) == 0)
+					{
 						filteredShows.add(showsCursor.getPosition());
 					}
 					break;
 
 				default:
-					filteredShows.add(showsCursor.getPosition());
+					final int columnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED);
+					if (showsCursor.getInt(columnIndex) == 0) {
+						filteredShows.add(showsCursor.getPosition());
+					}
 					break;
 				}
 			} while (showsCursor.moveToNext());
@@ -465,6 +483,23 @@ public class ShowsListFragment
 						                    showValues,
 						                    null,
 						                    null);
+					}
+				});
+
+			final ToggleButton archivedToggle = (ToggleButton)convertView.findViewById(R.id.show_archived_toggle);
+			final int archivedColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED);
+			final boolean archived = showsCursor.getInt(archivedColumnIndex) > 0 ? true : false;
+
+			archivedToggle.setOnCheckedChangeListener(null);
+			archivedToggle.setChecked(archived);
+
+			archivedToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						final AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
+						final ContentValues showValues = new ContentValues();
+						showValues.put(ShowsTable.COLUMN_ARCHIVED, isChecked);
+						final Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS, String.valueOf(id));
+						handler.startUpdate(0, null, showUri, showValues, null, null);
 					}
 				});
 
