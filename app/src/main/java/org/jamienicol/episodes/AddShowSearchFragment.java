@@ -32,7 +32,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.tvdb.Client;
@@ -90,16 +93,27 @@ public class AddShowSearchFragment
 
 	@Override
 	public void onLoadFinished(Loader<List<Show>> loader, List<Show> data) {
-		AddShowSearchResults results = AddShowSearchResults.getInstance();
-		results.setData(data);
-
 		Activity activity = getActivity();
 		activity.setProgressBarIndeterminateVisibility(false);
 
+		List<Show> filteredData = null;
 		SearchResultsAdapter adapter = null;
+
 		if (data != null) {
-			adapter = new SearchResultsAdapter(activity, data);
+			// Only keep the first language result for each show
+			filteredData = new ArrayList<Show>();
+			Set<Integer> ids = new HashSet<Integer>();
+			for (Show show: data) {
+				if (!ids.contains(show.getId())) {
+					ids.add(show.getId());
+					filteredData.add(show);
+				}
+			}
+
+			adapter = new SearchResultsAdapter(activity, filteredData);
 		}
+
+		AddShowSearchResults.getInstance().setData(filteredData);
 		setListAdapter(adapter);
 	}
 

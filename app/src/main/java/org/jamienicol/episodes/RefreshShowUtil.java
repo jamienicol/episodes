@@ -34,15 +34,23 @@ public class RefreshShowUtil
 {
 	private static final String TAG = RefreshShowUtil.class.getName();
 
+	// Data needed in order to make show refresh request
+	private static class RefreshRequestData {
+		public int tvdbId;
+		public String language;
+	}
+
 	public static void refreshShow(int showId,
 	                               ContentResolver contentResolver) {
 		final Client tvdbClient = new Client("25B864A8BC56AFAD");
 
 		Log.i(TAG, String.format("Refreshing show %d", showId));
 
-		final int showTvdbId = getShowTvdbId(showId, contentResolver);
+		final RefreshRequestData data =
+			getRefreshRequestData(showId, contentResolver);
+
 		// fetch full show + episode information from tvdb
-		final Show show = tvdbClient.getShow(showTvdbId);
+		final Show show = tvdbClient.getShow(data.tvdbId, data.language);
 
 		if (show != null) {
 			updateShow(showId, show, contentResolver);
@@ -51,13 +59,15 @@ public class RefreshShowUtil
 		}
 	}
 
-	private static int getShowTvdbId(int showId,
-	                                 ContentResolver contentResolver) {
+	private static RefreshRequestData getRefreshRequestData(
+		int showId, ContentResolver contentResolver) {
+
 		final Uri showUri =
 			Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
 			                     String.valueOf(showId));
 		final String[] projection = {
-			ShowsTable.COLUMN_TVDB_ID
+			ShowsTable.COLUMN_TVDB_ID,
+			ShowsTable.COLUMN_LANGUAGE,
 		};
 
 		final Cursor showCursor = contentResolver.query(showUri,
@@ -68,9 +78,15 @@ public class RefreshShowUtil
 
 		final int tvdbIdColumnIndex =
 			showCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_TVDB_ID);
+		final int languageColumnIndex =
+			showCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_LANGUAGE);
+
 		showCursor.moveToFirst();
 
-		return showCursor.getInt(tvdbIdColumnIndex);
+		RefreshRequestData data = new RefreshRequestData();
+		data.tvdbId = showCursor.getInt(tvdbIdColumnIndex);
+		data.language = showCursor.getString(languageColumnIndex);
+		return data;
 	}
 
 	private static void updateShow(int showId,
@@ -80,6 +96,7 @@ public class RefreshShowUtil
 		final ContentValues showValues = new ContentValues();
 		showValues.put(ShowsTable.COLUMN_TVDB_ID, show.getId());
 		showValues.put(ShowsTable.COLUMN_NAME, show.getName());
+		showValues.put(ShowsTable.COLUMN_LANGUAGE, show.getLanguage());
 		showValues.put(ShowsTable.COLUMN_OVERVIEW, show.getOverview());
 		if (show.getFirstAired() != null) {
 			showValues.put(ShowsTable.COLUMN_FIRST_AIRED,
