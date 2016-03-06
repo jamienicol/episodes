@@ -80,6 +80,7 @@ public class RefreshShowUtil
 		final ContentValues showValues = new ContentValues();
 		showValues.put(ShowsTable.COLUMN_TVDB_ID, show.getId());
 		showValues.put(ShowsTable.COLUMN_NAME, show.getName());
+		showValues.put(ShowsTable.COLUMN_LANGUAGE, show.getLanguage());
 		showValues.put(ShowsTable.COLUMN_OVERVIEW, show.getOverview());
 		if (show.getFirstAired() != null) {
 			showValues.put(ShowsTable.COLUMN_FIRST_AIRED,
