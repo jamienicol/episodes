@@ -112,6 +112,7 @@ public class AddShowPreviewFragment
 	private void addShow() {
 		Intent intent = new Intent(getActivity(), AddShowService.class);
 		intent.putExtra("tvdbId", show.getId());
+		intent.putExtra("language", show.getLanguage());
 		intent.putExtra("showName", show.getName());
 
 		getActivity().startService(intent);

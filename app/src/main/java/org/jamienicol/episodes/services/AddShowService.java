@@ -57,6 +57,7 @@ public class AddShowService extends IntentService
 		final Client tvdbClient = new Client("25B864A8BC56AFAD");
 
 		final int tvdbId = intent.getIntExtra("tvdbId", 0);
+		final String language = intent.getStringExtra("language");
 		final String showName = intent.getStringExtra("showName");
 
 		if (isShowAlreadyAdded(tvdbId) == false) {
@@ -64,7 +65,7 @@ public class AddShowService extends IntentService
 			showMessage(getString(R.string.adding_show, showName));
 
 			// fetch full show + episode information from tvdb
-			final Show show = tvdbClient.getShow(tvdbId);
+			final Show show = tvdbClient.getShow(tvdbId, language);
 
 			if (show != null) {
 				// add show and episodes to database

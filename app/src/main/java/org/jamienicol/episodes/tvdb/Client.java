@@ -70,13 +70,19 @@ public class Client
 		}
 	}
 
-	public Show getShow(int id) {
+	public Show getShow(int id, String language) {
 		try {
+			// fall back to english if no language specified
+			if (language == null) {
+				language = "en";
+			}
+
 			final String url = String.format(Locale.US,
-			                                 "%s/%s/series/%d/all/en.xml",
+			                                 "%s/%s/series/%d/all/%s.xml",
 			                                 baseUrl,
 			                                 apiKey,
-			                                 id);
+			                                 id,
+			                                 language);
 			Log.d(TAG, String.format("Sending request to %s", url));
 
 			final Request request = new Request.Builder().url(url).build();
