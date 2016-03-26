@@ -4,4 +4,5 @@
   <dimen name="show_title_margin">16dp</dimen>
   <dimen name="show_title_size">24sp</dimen>
   <dimen name="tab_strip_height">48dp</dimen>
+  <dimen name="action_button_margin">0dp</dimen>
 </resources>

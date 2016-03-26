@@ -17,26 +17,18 @@
 
 package org.jamienicol.episodes;
 
-import android.content.AsyncQueryHandler;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.text.Spanned;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import org.jamienicol.episodes.db.ShowsProvider;
@@ -74,6 +66,16 @@ public class ShowNotesFragment
 		                             false);
 
 		notesView = (TextView)view.findViewById(R.id.notes);
+
+		final FloatingActionButton editNotes =
+			(FloatingActionButton) view.findViewById(R.id.edit_notes);
+
+		editNotes.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startEdit();
+			}
+		});
 
 		return view;
 	}
@@ -121,5 +123,12 @@ public class ShowNotesFragment
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		onLoadFinished(loader, null);
+	}
+
+	private void startEdit() {
+		final Intent intent = new Intent(getActivity(), EditNotesActivity.class);
+		intent.putExtra("showId", showId);
+		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.slide_in_up, 0);
 	}
 }
