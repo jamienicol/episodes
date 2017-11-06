@@ -134,6 +134,11 @@ public class AddShowSearchFragment
 			String language = preferences.getString("pref_language", "en");
 
 			List<Show> results = tvdbClient.searchShows(query, language);
+
+			// If there are no results, try searching all languages or substituting &
+			if(results.size() == 0 && query.contains(" and ")) {
+				results = tvdbClient.searchShows(query.replace(" and ", " & "), "all");
+			}
 			if(results.size() == 0) {
 				results =  tvdbClient.searchShows(query, "all");
 			}
