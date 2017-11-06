@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "org.jamienicol.episodes"
-        minSdkVersion 11
-        targetSdkVersion 21
-        versionCode 11
-        versionName "0.11"
+        minSdkVersion 12
+        targetSdkVersion 25
+        versionCode 12
+        versionName "0.12"
     }
     productFlavors {
         fdroid {
@@ -55,10 +55,10 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:design:22.2.0'
-    compile 'com.android.support:recyclerview-v7:22.2.0'
-    compile 'com.squareup.okhttp:okhttp:2.1.0'
-    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
+    compile 'com.android.support:support-v4:25.3.0'
+    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:design:25.3.0'
+    compile 'com.android.support:recyclerview-v7:25.3.0'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 }
