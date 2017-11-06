@@ -6,7 +6,7 @@
       android:id="@+id/menu_add_new_show"
       android:icon="@drawable/ic_menu_add_show"
       android:title="@string/menu_add_new_show"
-      episodes:showAsAction="ifRoom|withText|collapseActionView"
+      episodes:showAsAction="ifRoom|collapseActionView"
       episodes:actionViewClass="android.support.v7.widget.SearchView" />
   <item
       android:id="@+id/menu_back_up"
