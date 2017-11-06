@@ -22,8 +22,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.OkHttpClient;
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 import java.io.IOException;
 
 public class EpisodesApplication
@@ -49,10 +49,10 @@ public class EpisodesApplication
 
 		autoRefreshHelper = AutoRefreshHelper.getInstance(this);
 
-		httpClient = new OkHttpClient();
 		try {
-			Cache httpCache = new Cache(getCacheDir(), 1024 * 1024);
-			httpClient.setCache(httpCache);
+			int cacheSize = 10 * 1024 * 1024; // 10 MiB
+			Cache cache = new Cache(getCacheDir(), cacheSize);
+			httpClient = new OkHttpClient.Builder().cache(cache).build();
 		} catch (Exception e) {
 			Log.w(TAG, "Error initialising okhttp cache", e);
 		}
