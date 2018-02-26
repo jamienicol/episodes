@@ -30,6 +30,7 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import org.jamienicol.episodes.BuildConfig;
 
@@ -93,7 +94,7 @@ public class ShowsProvider extends ContentProvider
 	private DatabaseOpenHelper databaseOpenHelper;
 
 	@Override
-	public Cursor query(Uri uri,
+	public Cursor query(@NonNull Uri uri,
 	                    String[] projection,
 	                    String selection,
 	                    String[] selectionArgs,
@@ -152,7 +153,7 @@ public class ShowsProvider extends ContentProvider
 	}
 
 	@Override
-	public Uri insert(Uri uri, ContentValues values) {
+	public Uri insert(@NonNull Uri uri, ContentValues values) {
 
 		String table;
 		Uri contentUri;
@@ -184,7 +185,7 @@ public class ShowsProvider extends ContentProvider
 	}
 
 	@Override
-	public int delete(Uri uri,
+	public int delete(@NonNull Uri uri,
 	                  String selection,
 	                  String[] selectionArgs) {
 		String table;
@@ -238,7 +239,7 @@ public class ShowsProvider extends ContentProvider
 	}
 
 	@Override
-	public int update(Uri uri,
+	public int update(@NonNull Uri uri,
 	                  ContentValues values,
 	                  String selection,
 	                  String[] selectionArgs) {
@@ -292,7 +293,7 @@ public class ShowsProvider extends ContentProvider
 	}
 
 	@Override
-	public String getType(Uri uri) {
+	public String getType(@NonNull Uri uri) {
 		switch (uriMatcher.match(uri)) {
 		case URI_TYPE_SHOWS:
 			return CONTENT_TYPE_SHOW_DIR;

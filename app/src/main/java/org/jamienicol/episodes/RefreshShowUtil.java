@@ -36,7 +36,7 @@ public class RefreshShowUtil
 
 	public static void refreshShow(int showId,
 	                               ContentResolver contentResolver) {
-		final Client tvdbClient = new Client("25B864A8BC56AFAD");
+		final Client tvdbClient = new Client();
 
 		Log.i(TAG, String.format("Refreshing show %d", showId));
 
@@ -178,14 +178,11 @@ public class RefreshShowUtil
 			String.valueOf(showId)
 		};
 
-		final Cursor cursor =
-			contentResolver.query(ShowsProvider.CONTENT_URI_EPISODES,
-			                      projection,
-			                      selection,
-			                      selectionArgs,
-			                      null);
-
-		return cursor;
+		return contentResolver.query(ShowsProvider.CONTENT_URI_EPISODES,
+                              projection,
+                              selection,
+                              selectionArgs,
+                              null);
 	}
 
 	private static Episode findEpisodeWithTvdbId(List<Episode> episodes,

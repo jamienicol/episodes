@@ -444,7 +444,7 @@ public class ShowsListFragment
 			bannerView.setImageResource(R.drawable.blank_show_banner);
 			if (bannerPath != null && !bannerPath.equals("")) {
 				final String bannerUrl =
-					String.format("http://thetvdb.com/banners/%s", bannerPath);
+					String.format("https://thetvdb.com/banners/%s", bannerPath);
 
 				final DisplayImageOptions options =
 					new DisplayImageOptions.Builder()

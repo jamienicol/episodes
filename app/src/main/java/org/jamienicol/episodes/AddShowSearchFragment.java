@@ -18,12 +18,11 @@
 package org.jamienicol.episodes;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -34,12 +33,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import java.util.List;
-import org.jamienicol.episodes.db.ShowsProvider;
-import org.jamienicol.episodes.db.ShowsTable;
+
 import org.jamienicol.episodes.tvdb.Client;
 import org.jamienicol.episodes.tvdb.Show;
-import org.jamienicol.episodes.Preferences;
+
+import java.util.List;
 
 public class AddShowSearchFragment
 	extends ListFragment
@@ -71,7 +69,7 @@ public class AddShowSearchFragment
 		// if the loader exists and it's busy loading
 		// then spin the progress bar.
 		Loader loader = getLoaderManager().getLoader(0);
-		if (loader != null) {
+		if (loader != null && getActivity() != null) {
 			getActivity().setProgressBarIndeterminateVisibility(loader.isStarted());
 		}
 
@@ -86,9 +84,7 @@ public class AddShowSearchFragment
 	public Loader<List<Show>> onCreateLoader(int id, Bundle args) {
 		getActivity().setProgressBarIndeterminateVisibility(true);
 
-		SearchLoader loader = new SearchLoader(getActivity(),
-		                                       args.getString("query"));
-		return loader;
+        return new SearchLoader(getActivity(), args.getString("query"));
 	}
 
 	@Override
@@ -121,7 +117,7 @@ public class AddShowSearchFragment
 		private List<Show> cachedResult;
 		private SharedPreferences preferences = Preferences.getSharedPreferences();
 
-		public SearchLoader(Context context, String query) {
+		SearchLoader(Context context, String query) {
 			super(context);
 
 			this.query = query;
@@ -130,7 +126,7 @@ public class AddShowSearchFragment
 
 		@Override
 		public List<Show> loadInBackground() {
-			Client tvdbClient = new Client("25B864A8BC56AFAD");
+			Client tvdbClient = new Client();
 			String language = preferences.getString("pref_language", "en");
 
 			List<Show> results = tvdbClient.searchShows(query, language);
@@ -188,14 +184,15 @@ public class AddShowSearchFragment
 	{
 		private LayoutInflater inflater;
 
-		public SearchResultsAdapter(Context context, List<Show> objects) {
+		SearchResultsAdapter(Context context, List<Show> objects) {
 			super(context, 0, 0, objects);
 
 			inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		@NonNull
+        @Override
+		public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 			if (convertView == null) {
 				convertView =
 					inflater.inflate(R.layout.add_show_search_results_list_item,
@@ -203,8 +200,7 @@ public class AddShowSearchFragment
 					                 false);
 			}
 
-			TextView textView =
-				(TextView)convertView.findViewById(R.id.show_name_view);
+			TextView textView = convertView.findViewById(R.id.show_name_view);
 			textView.setText(getItem(position).getName());
 
 			return convertView;

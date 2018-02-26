@@ -29,7 +29,7 @@ public class Episode
 	private int seasonNumber;
 	private Date firstAired;
 
-	public Episode() {
+	Episode() {
 		id = 0;
 		name = "";
 		language = "";
@@ -75,7 +75,7 @@ public class Episode
 		return episodeNumber;
 	}
 
-	public void setEpisodeNumber(int episodeNumber) {
+	void setEpisodeNumber(int episodeNumber) {
 		this.episodeNumber = episodeNumber;
 	}
 
@@ -83,7 +83,7 @@ public class Episode
 		return seasonNumber;
 	}
 
-	public void setSeasonNumber(int seasonNumber) {
+	void setSeasonNumber(int seasonNumber) {
 		this.seasonNumber = seasonNumber;
 	}
 
@@ -91,7 +91,7 @@ public class Episode
 		return firstAired;
 	}
 
-	public void setFirstAired(Date firstAired) {
+	void setFirstAired(Date firstAired) {
 		this.firstAired = firstAired;
 	}
 }

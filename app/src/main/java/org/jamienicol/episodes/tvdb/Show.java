@@ -64,7 +64,7 @@ public class Show
 		return language;
 	}
 
-	public void setLanguage(String language) {
+	void setLanguage(String language) {
 		this.language = language;
 	}
 
@@ -80,7 +80,7 @@ public class Show
 		return firstAired;
 	}
 
-	public void setFirstAired(Date firstAired) {
+	void setFirstAired(Date firstAired) {
 		this.firstAired = firstAired;
 	}
 
@@ -88,7 +88,7 @@ public class Show
 		return bannerPath;
 	}
 
-	public void setBannerPath(String bannerPath) {
+	void setBannerPath(String bannerPath) {
 		this.bannerPath = bannerPath;
 	}
 
@@ -96,7 +96,7 @@ public class Show
 		return fanartPath;
 	}
 
-	public void setFanartPath(String fanartPath) {
+	void setFanartPath(String fanartPath) {
 		this.fanartPath = fanartPath;
 	}
 

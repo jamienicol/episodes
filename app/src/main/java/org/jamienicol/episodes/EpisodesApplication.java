@@ -20,11 +20,10 @@ package org.jamienicol.episodes;
 import android.app.Application;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
-import java.io.IOException;
+import com.uwetrottmann.thetvdb.TheTvdb;
 
 public class EpisodesApplication
 	extends Application
@@ -33,8 +32,7 @@ public class EpisodesApplication
 
 	private static EpisodesApplication instance;
 
-	private AutoRefreshHelper autoRefreshHelper;
-	private OkHttpClient httpClient;
+    private TheTvdb tvdbClient;
 
 	@Override
 	public void onCreate() {
@@ -47,14 +45,10 @@ public class EpisodesApplication
 		// do this before anything that needs these settings is instantiated.
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
-		autoRefreshHelper = AutoRefreshHelper.getInstance(this);
-
-		try {
-			int cacheSize = 10 * 1024 * 1024; // 10 MiB
-			Cache cache = new Cache(getCacheDir(), cacheSize);
-			httpClient = new OkHttpClient.Builder().cache(cache).build();
+        try {
+			tvdbClient = new TheTvdb(BuildConfig.TVDB_KEY);
 		} catch (Exception e) {
-			Log.w(TAG, "Error initialising okhttp cache", e);
+			Log.d(TAG, "Error initialising TvdbClient", e);
 		}
 
 		final ImageLoaderConfiguration imageLoaderConfig =
@@ -68,7 +62,7 @@ public class EpisodesApplication
 		return instance;
 	}
 
-	public OkHttpClient getHttpClient() {
-		return httpClient;
+	public TheTvdb getTvdbClient() {
+		return tvdbClient;
 	}
 }

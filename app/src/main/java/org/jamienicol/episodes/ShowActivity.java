@@ -35,7 +35,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,7 +52,7 @@ import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.services.RefreshShowService;
 
 public class ShowActivity
-	extends ActionBarActivity
+	extends AppCompatActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
 	           ViewPager.OnPageChangeListener,
 	           SeasonsListFragment.OnSeasonSelectedListener
@@ -214,7 +214,7 @@ public class ShowActivity
 			final int starredColumnIndex =
 				data.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
 			final boolean starred =
-				data.getInt(starredColumnIndex) > 0 ? true : false;
+					data.getInt(starredColumnIndex) > 0;
 			if (isShowStarred != starred) {
 				isShowStarred = starred;
 				// toggle starred menu item needs updated
@@ -223,7 +223,7 @@ public class ShowActivity
 
 			// maybe update the state of the toggle archived menu item
 			final int archivedColumnIndex = data.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED);
-			final boolean archived = data.getInt(archivedColumnIndex) > 0 ? true: false;
+			final boolean archived = data.getInt(archivedColumnIndex) > 0;
 			if (isShowArchived != archived) {
 				isShowArchived = archived;
 				// toggle archived menu item needs updated
@@ -235,7 +235,7 @@ public class ShowActivity
 			final String fanartPath = data.getString(fanartPathColumnIndex);
 			if (fanartPath != null && !fanartPath.equals("")) {
 				final String fanartUrl =
-					String.format("http://thetvdb.com/banners/%s", fanartPath);
+					String.format("https://thetvdb.com/banners/%s", fanartPath);
 
 				final DisplayImageOptions options =
 					new DisplayImageOptions.Builder()
@@ -397,7 +397,7 @@ public class ShowActivity
 
 		@Override
 		public int getCount() {
-			return 4;
+			return 3;
 		}
 
 		@Override
@@ -409,8 +409,6 @@ public class ShowActivity
 				return context.getString(R.string.show_tab_episodes);
 			case 2:
 				return context.getString(R.string.show_tab_next);
-			case 3:
-				return context.getString(R.string.show_tab_notes);
 			default:
 				return null;
 			}
@@ -425,8 +423,6 @@ public class ShowActivity
 				return SeasonsListFragment.newInstance(showId);
 			case 2:
 				return NextEpisodeFragment.newInstance(showId);
-			case 3:
-				return ShowNotesFragment.newInstance(showId);
 			default:
 				return null;
 			}

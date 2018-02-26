@@ -18,11 +18,11 @@
 package org.jamienicol.episodes;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 public class AboutActivity
-	extends ActionBarActivity
+	extends AppCompatActivity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

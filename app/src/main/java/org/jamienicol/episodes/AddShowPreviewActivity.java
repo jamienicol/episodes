@@ -20,13 +20,13 @@ package org.jamienicol.episodes;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import java.util.List;
 import org.jamienicol.episodes.tvdb.Show;
 
 public class AddShowPreviewActivity
-	extends ActionBarActivity
+	extends AppCompatActivity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)

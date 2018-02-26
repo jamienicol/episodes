@@ -22,7 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,7 +30,7 @@ import android.view.MenuItem;
 import org.jamienicol.episodes.db.BackUpRestoreHelper;
 
 public class MainActivity
-	extends ActionBarActivity
+	extends AppCompatActivity
 	implements ShowsListFragment.OnShowSelectedListener,
 	           SelectBackupDialog.OnBackupSelectedListener
 {

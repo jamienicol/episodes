@@ -25,7 +25,7 @@ public class EpisodesTable
 {
 	private static final String TAG = "EpisodesTable";
 
-	public static final String TABLE_NAME = "episodes";
+	static final String TABLE_NAME = "episodes";
 
 	public static final String COLUMN_ID = BaseColumns._ID;
 	public static final String COLUMN_TVDB_ID = "tvdb_id";
@@ -69,9 +69,9 @@ public class EpisodesTable
 		db.execSQL(create);
 	}
 
-	public static void onUpgrade(SQLiteDatabase db,
-	                             int oldVersion,
-	                             int newVersion) {
+	static void onUpgrade(SQLiteDatabase db,
+						  int oldVersion,
+						  int newVersion) {
 		switch (oldVersion) {
 			case 5:
 				// Add language column

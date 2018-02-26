@@ -54,13 +54,13 @@ public class AddShowService extends IntentService
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		final Client tvdbClient = new Client("25B864A8BC56AFAD");
+		final Client tvdbClient = new Client();
 
 		final int tvdbId = intent.getIntExtra("tvdbId", 0);
 		final String showName = intent.getStringExtra("showName");
 		final String showLanguage = intent.getStringExtra("showLanguage");
 
-		if (isShowAlreadyAdded(tvdbId) == false) {
+		if (!isShowAlreadyAdded(tvdbId)) {
 
 			showMessage(getString(R.string.adding_show, showName));
 

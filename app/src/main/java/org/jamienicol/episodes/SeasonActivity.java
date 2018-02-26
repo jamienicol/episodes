@@ -29,7 +29,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,7 +38,7 @@ import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
 
 public class SeasonActivity
-	extends ActionBarActivity
+	extends AppCompatActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
 	           EpisodesListFragment.OnEpisodeSelectedListener
 {

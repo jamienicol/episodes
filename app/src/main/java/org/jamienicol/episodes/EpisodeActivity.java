@@ -27,13 +27,13 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 
 public class EpisodeActivity
-	extends ActionBarActivity
+	extends AppCompatActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	int initialEpisodeId;

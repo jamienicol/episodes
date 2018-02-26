@@ -18,80 +18,39 @@
 package org.jamienicol.episodes.tvdb;
 
 import android.util.Log;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+
+import com.uwetrottmann.thetvdb.TheTvdb;
+import com.uwetrottmann.thetvdb.entities.EpisodesResponse;
+import com.uwetrottmann.thetvdb.entities.SeriesImageQueryResultResponse;
+import com.uwetrottmann.thetvdb.entities.SeriesResponse;
+import com.uwetrottmann.thetvdb.entities.SeriesResultsResponse;
+
+import org.jamienicol.episodes.EpisodesApplication;
+
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import org.jamienicol.episodes.EpisodesApplication;
 
 public class Client
 {
 	private static final String TAG = Client.class.getName();
-	private static final String baseUrl = "https://thetvdb.com/api";
 
-	private final String apiKey;
-	private final OkHttpClient http;
+    private final TheTvdb tvdb;
 
-	public Client(String apiKey) {
-		this.apiKey = apiKey;
-		http = EpisodesApplication.getInstance().getHttpClient();
+	public Client() {
+        tvdb = EpisodesApplication.getInstance().getTvdbClient();
 	}
 
 	public List<Show> searchShows(String query, String language) {
 
 		try {
 			final String escapedQuery = URLEncoder.encode(query, "UTF-8");
-			final String url = String.format("%s/GetSeries.php?seriesname=%s&language=%s",
-			                                 baseUrl,
-			                                 escapedQuery,
-                                                         language);
-			Log.d(TAG, String.format("Sending request to %s", url));
-
-			final Request request = new Request.Builder().url(url).build();
-
-			final Response response = http.newCall(request).execute();
-
-			Log.d(TAG, String.format("Received response %d: %s",
-			                         response.code(),
-			                         response.message()));
-
+			final retrofit2.Response<SeriesResultsResponse> response =
+					tvdb.search().series(escapedQuery, null, null, language).execute();
 			if (response.isSuccessful()) {
 				final SearchShowsParser parser = new SearchShowsParser();
-
-				return parser.parse(response.body().byteStream());
-			} else {
-				return null;
-			}
-		} catch (IOException e) {
-			Log.w(TAG, e);
-			return null;
-		}
-	}
-
-	public Show getShow(int id) {
-		try {
-			final String url = String.format(Locale.US,
-			                                 "%s/%s/series/%d/all/en.xml",
-			                                 baseUrl,
-			                                 apiKey,
-			                                 id);
-			Log.d(TAG, String.format("Sending request to %s", url));
-
-			final Request request = new Request.Builder().url(url).build();
-
-			final Response response = http.newCall(request).execute();
-
-			Log.d(TAG, String.format("Received response %d: %s",
-			                         response.code(),
-			                         response.message()));
-
-			if (response.isSuccessful()) {
-				final GetShowParser parser = new GetShowParser();
-
-				return parser.parse(response.body().byteStream());
+				return parser.parse(response);
 			} else {
 				return null;
 			}
@@ -103,26 +62,47 @@ public class Client
 
 	public Show getShow(int id, String language) {
 		try {
-			final String url = String.format(Locale.US,
-											 "%s/%s/series/%d/all/%s.xml",
-											 baseUrl,
-											 apiKey,
-											 id,
-											 language);
-			Log.d(TAG, String.format("Sending request to %s", url));
-
-			final Request request = new Request.Builder().url(url).build();
-
-			final Response response = http.newCall(request).execute();
-
-			Log.d(TAG, String.format("Received response %d: %s",
-			                         response.code(),
-			                         response.message()));
-
-			if (response.isSuccessful()) {
+			final retrofit2.Response<SeriesResponse> seriesResponse = tvdb.series().series(id, language).execute();
+			Log.d(TAG, String.format("Received response %d: %s", seriesResponse.code(), seriesResponse.message()));
+			if (seriesResponse.isSuccessful()) {
 				final GetShowParser parser = new GetShowParser();
+				Show show = parser.parse(seriesResponse.body().data);
 
-				return parser.parse(response.body().byteStream());
+				if (show != null) {
+				    // Parse episodes
+                    ArrayList<Episode> episodes = new ArrayList<>();
+				    final GetEpisodesParser episodesParser = new GetEpisodesParser();
+
+				    // There are occasions where a series has no episodes yet.
+                    // TODO: Cleanup here?
+                    retrofit2.Response<EpisodesResponse> episodesResponse = tvdb.series().episodes(show.getId(), 1, "en").execute();
+                    if (episodesResponse.isSuccessful()) {
+                        int pages = episodesResponse.body().links.last;
+                        int current_page = 1;
+                        while (current_page < pages) {
+                            episodes.addAll(episodesParser.parse(episodesResponse.body()));
+                            current_page += 1;
+                            episodesResponse = tvdb.series().episodes(show.getId(), current_page, "en").execute();
+                        }
+                        // Parse the last page.
+                        episodes.addAll(episodesParser.parse(episodesResponse.body()));
+                        show.setEpisodes(episodes);
+                    }
+
+                    // Parse fanart
+                    retrofit2.Response<SeriesImageQueryResultResponse> fanartResponse =
+                            tvdb.series().imagesQuery(
+                                    show.getId(),
+                                    "fanart",
+                                    null,
+                                    "graphical",
+                                    null)
+                             .execute();
+                    if (fanartResponse.isSuccessful() && fanartResponse.body().data.size() > 0) {
+                        show.setFanartPath(fanartResponse.body().data.get(0).fileName);
+                    }
+                }
+                return show;
 			} else {
 				return null;
 			}
