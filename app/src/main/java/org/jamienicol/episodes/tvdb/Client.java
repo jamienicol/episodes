@@ -30,6 +30,7 @@ import org.jamienicol.episodes.EpisodesApplication;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Client
@@ -52,7 +53,7 @@ public class Client
 				final SearchShowsParser parser = new SearchShowsParser();
 				return parser.parse(response);
 			} else {
-				return null;
+				return new LinkedList<>();
 			}
 		} catch (IOException e) {
 			Log.w(TAG, e);

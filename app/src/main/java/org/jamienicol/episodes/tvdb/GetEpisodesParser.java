@@ -40,7 +40,7 @@ class GetEpisodesParser
             for (com.uwetrottmann.thetvdb.entities.Episode episode : episodesResponse.data) {
                 Episode e = new Episode();
                 e.setId(episode.id);
-                e.setName(episode.episodeName);
+                e.setName((episode.episodeName) != null ? episode.episodeName : "");
                 e.setOverview(episode.overview);
                 e.setEpisodeNumber(episode.airedEpisodeNumber);
                 e.setSeasonNumber(episode.airedSeason);

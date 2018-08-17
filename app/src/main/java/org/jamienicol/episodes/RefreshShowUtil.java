@@ -21,6 +21,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import java.util.List;
 import org.jamienicol.episodes.db.EpisodesTable;
@@ -49,7 +50,7 @@ public class RefreshShowUtil
 		// fetch full show + episode information from tvdb
 		final Show show = tvdbClient.getShow(showTvdbId, showLanguage);
 
-		if (show != null) {
+		if (show != null && show.getEpisodes() != null) {
 			updateShow(showId, show, contentResolver);
 			updateExistingEpisodes(showId, show.getEpisodes(), contentResolver);
 			addNewEpisodes(showId, show.getEpisodes(), contentResolver);
@@ -197,7 +198,7 @@ public class RefreshShowUtil
 	}
 
 	private static void addNewEpisodes(int showId,
-	                                   List<Episode> episodes,
+	                                   @NonNull List<Episode> episodes,
 	                                   ContentResolver contentResolver) {
 
 		for (Episode episode : episodes) {
