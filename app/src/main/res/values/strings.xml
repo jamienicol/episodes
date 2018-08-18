@@ -57,4 +57,6 @@
   <string name="upcoming_count">(+ %d upcoming)</string>
   <string name="watched_check_box">Watched</string>
   <string name="watched_count">Watched %1$d of %2$d episodes</string>
+  <string name="channel_name">Show Sync</string>
+  <string name="channel_description">Notification when syncing shows</string>
 </resources>

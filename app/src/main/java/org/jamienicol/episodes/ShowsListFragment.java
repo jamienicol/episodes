@@ -18,6 +18,7 @@
 package org.jamienicol.episodes;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -30,6 +31,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
@@ -262,19 +265,31 @@ public class ShowsListFragment
 
 	private void refreshAllShows() {
 		if (showsData != null && showsData.moveToFirst()) {
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getContext(), "episodes_channel_id");
+            notificationBuilder
+                    .setContentTitle("Syncing Shows")
+                    .setContentText("Sync in progress...")
+                    .setSmallIcon(R.drawable.ic_show_starred)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            int PROGRESS_MAX = showsData.getCount();
+            int PROGRESS_CURRENT = 0;
+            notificationBuilder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
+            notificationManager.notify(0, notificationBuilder.build());
+
 			do {
-				final int idColumnIndex =
-					showsData.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
-
+				final int idColumnIndex = showsData.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
 				final int id = showsData.getInt(idColumnIndex);
-
-				final Intent intent = new Intent(getActivity(),
-				                                 RefreshShowService.class);
+				final Intent intent = new Intent(getActivity(), RefreshShowService.class);
 				intent.putExtra("showId", id);
-
 				getActivity().startService(intent);
-
+				PROGRESS_CURRENT += 1;
+				notificationBuilder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
+                notificationManager.notify(0, notificationBuilder.build());
 			} while (showsData.moveToNext());
+
+			notificationBuilder.setContentText("Sync complete").setProgress(0, 0, false);
+			notificationManager.notify(0, notificationBuilder.build());
 		}
 	}
 

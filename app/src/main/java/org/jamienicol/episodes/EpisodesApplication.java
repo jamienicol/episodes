@@ -18,6 +18,9 @@
 package org.jamienicol.episodes;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -56,6 +59,8 @@ public class EpisodesApplication
 			.build();
 
 		ImageLoader.getInstance().init(imageLoaderConfig);
+
+		createNotificationChannel();
 	}
 
 	public static EpisodesApplication getInstance() {
@@ -64,5 +69,17 @@ public class EpisodesApplication
 
 	public TheTvdb getTvdbClient() {
 		return tvdbClient;
+	}
+
+	private void createNotificationChannel(){
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			CharSequence name = getString(R.string.channel_name);
+			String description = getString(R.string.channel_description);
+			int importance = NotificationManager.IMPORTANCE_LOW;
+			NotificationChannel channel = new NotificationChannel("episodes_channel_id", name, importance);
+			channel.setDescription(description);
+			NotificationManager notificationManager = getSystemService(NotificationManager.class);
+			notificationManager.createNotificationChannel(channel);
+		}
 	}
 }
