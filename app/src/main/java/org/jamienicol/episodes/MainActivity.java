@@ -17,24 +17,33 @@
 
 package org.jamienicol.episodes;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 import org.jamienicol.episodes.db.BackUpRestoreHelper;
 
 public class MainActivity
-	extends AppCompatActivity
-	implements ShowsListFragment.OnShowSelectedListener,
-	           SelectBackupDialog.OnBackupSelectedListener
+    extends AppCompatActivity
+    implements ShowsListFragment.OnShowSelectedListener,
+               SelectBackupDialog.OnBackupSelectedListener,
+               ActivityCompat.OnRequestPermissionsResultCallback
 {
 	private static Context context;
+	private static final int PERMISSION_REQUEST_CODE = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -115,15 +124,41 @@ public class MainActivity
 		startActivity(intent);
 	}
 
-	private void back_up() {
-		BackUpRestoreHelper.backUp(getApplicationContext());
-	}
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+	    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
-	private void restore() {
-		final FragmentManager fm = getSupportFragmentManager();
-		final SelectBackupDialog dialog = new SelectBackupDialog();
-		dialog.show(fm, "select_backup_dialog");
-	}
+    private boolean checkStoragePermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestStoragePermission() {
+	    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+	    ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+    }
+
+    private void back_up() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkStoragePermission()) {
+                requestStoragePermission();
+            }
+        }
+
+        BackUpRestoreHelper.backUp(getApplicationContext());
+    }
+
+    private void restore() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkStoragePermission()) {
+                requestStoragePermission();
+            }
+        }
+
+        final FragmentManager fm = getSupportFragmentManager();
+        final SelectBackupDialog dialog = new SelectBackupDialog();
+        dialog.show(fm, "select_backup_dialog");
+    }
 
 	@Override
 	public void onBackupSelected(String backupFilename) {
