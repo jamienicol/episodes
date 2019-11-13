@@ -30,13 +30,11 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.v4.net.ConnectivityManagerCompat;
+import androidx.core.net.ConnectivityManagerCompat;
 import android.util.Log;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.db.ShowsProvider;
-import org.jamienicol.episodes.RefreshShowUtil;
 
 public class AutoRefreshHelper
 	implements SharedPreferences.OnSharedPreferenceChangeListener

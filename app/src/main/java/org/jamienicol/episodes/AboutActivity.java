@@ -18,7 +18,7 @@
 package org.jamienicol.episodes;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 
 public class AboutActivity

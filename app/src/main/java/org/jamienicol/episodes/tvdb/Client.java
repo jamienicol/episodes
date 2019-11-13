@@ -48,7 +48,7 @@ public class Client
 		try {
 			final String escapedQuery = URLEncoder.encode(query, "UTF-8");
 			final retrofit2.Response<SeriesResultsResponse> response =
-					tvdb.search().series(escapedQuery, null, null, language).execute();
+					tvdb.search().series(escapedQuery, null, null, null, language).execute();
 			if (response.isSuccessful()) {
 				final SearchShowsParser parser = new SearchShowsParser();
 				return parser.parse(response);

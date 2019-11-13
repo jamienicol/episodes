@@ -18,23 +18,15 @@
 package org.jamienicol.episodes;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,18 +40,26 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import java.util.ArrayList;
-import java.util.List;
+
+import androidx.fragment.app.ListFragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
-import org.jamienicol.episodes.services.RefreshShowService;
+import org.jamienicol.episodes.services.RefreshAllShowsTask;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ShowsListFragment
-	extends ListFragment
-	implements LoaderManager.LoaderCallbacks<Cursor>
+		extends ListFragment
+		implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	private static final int LOADER_ID_SHOWS = 0;
 	private static final int LOADER_ID_EPISODES = 1;
@@ -88,8 +88,8 @@ public class ShowsListFragment
 			onShowSelectedListener = (OnShowSelectedListener)activity;
 		} catch (ClassCastException e) {
 			final String message =
-				String.format("%s must implement OnShowSelectedListener",
-				              activity.toString());
+					String.format("%s must implement OnShowSelectedListener",
+							activity.toString());
 			throw new ClassCastException(message);
 		}
 	}
@@ -99,11 +99,11 @@ public class ShowsListFragment
 		super.onCreate(savedInstanceState);
 
 		setHasOptionsMenu(true);
-    }
+	}
 
 	public View onCreateView(LayoutInflater inflater,
-	                         ViewGroup container,
-	                         Bundle savedInstanceState) {
+							 ViewGroup container,
+							 Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.shows_list_fragment, container, false);
 	}
 
@@ -112,8 +112,8 @@ public class ShowsListFragment
 		super.onActivityCreated(savedInstanceState);
 
 		listAdapter = new ShowsListAdapter(getActivity(),
-		                                   null,
-		                                   null);
+				null,
+				null);
 		setListAdapter(listAdapter);
 
 		getLoaderManager().initLoader(LOADER_ID_SHOWS, null, this);
@@ -130,29 +130,29 @@ public class ShowsListFragment
 
 		// hide refresh all option if no shows exist
 		final boolean showsExist =
-			(showsData != null && showsData.moveToFirst());
+				(showsData != null && showsData.moveToFirst());
 
 		menu.findItem(R.id.menu_refresh_all_shows).setVisible(showsExist);
 
 		/* set the currently selected filter's menu item as checked */
 		final SharedPreferences prefs =
-			PreferenceManager.getDefaultSharedPreferences(getActivity());
+				PreferenceManager.getDefaultSharedPreferences(getActivity());
 		final int filter =
-			prefs.getInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ALL);
+				prefs.getInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ALL);
 
 		switch (filter) {
-		case SHOWS_FILTER_ALL:
-			menu.findItem(R.id.menu_filter_all).setChecked(true);
-			break;
-		case SHOWS_FILTER_STARRED:
-			menu.findItem(R.id.menu_filter_starred).setChecked(true);
-			break;
-		case SHOWS_FILTER_UNCOMPLETED:
-			menu.findItem(R.id.menu_filter_uncompleted).setChecked(true);
-			break;
-		case SHOWS_FILTER_ARCHIVED:
-			menu.findItem(R.id.menu_filter_archived).setChecked(true);
-			break;
+			case SHOWS_FILTER_ALL:
+				menu.findItem(R.id.menu_filter_all).setChecked(true);
+				break;
+			case SHOWS_FILTER_STARRED:
+				menu.findItem(R.id.menu_filter_starred).setChecked(true);
+				break;
+			case SHOWS_FILTER_UNCOMPLETED:
+				menu.findItem(R.id.menu_filter_uncompleted).setChecked(true);
+				break;
+			case SHOWS_FILTER_ARCHIVED:
+				menu.findItem(R.id.menu_filter_archived).setChecked(true);
+				break;
 		}
 
 		super.onPrepareOptionsMenu(menu);
@@ -161,36 +161,36 @@ public class ShowsListFragment
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menu_refresh_all_shows:
-			refreshAllShows();
-			return true;
+			case R.id.menu_refresh_all_shows:
+				refreshAllShows();
+				return true;
 
-		case R.id.menu_filter_all:
-		case R.id.menu_filter_starred:
-		case R.id.menu_filter_uncompleted:
-		case R.id.menu_filter_archived:
-			if (!item.isChecked()) {
-				item.setChecked(true);
-			}
+			case R.id.menu_filter_all:
+			case R.id.menu_filter_starred:
+			case R.id.menu_filter_uncompleted:
+			case R.id.menu_filter_archived:
+				if (!item.isChecked()) {
+					item.setChecked(true);
+				}
 
-			final SharedPreferences prefs =
-				PreferenceManager.getDefaultSharedPreferences(getActivity());
-			final SharedPreferences.Editor editor = prefs.edit();
-			if (item.getItemId() == R.id.menu_filter_all) {
-				editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ALL);
-			} else if (item.getItemId() == R.id.menu_filter_starred) {
-				editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_STARRED);
-			} else if (item.getItemId() == R.id.menu_filter_uncompleted) {
-				editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_UNCOMPLETED);
-			} else if (item.getItemId() == R.id.menu_filter_archived) {
-				editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ARCHIVED);
-			}
-			editor.apply();
+				final SharedPreferences prefs =
+						PreferenceManager.getDefaultSharedPreferences(getActivity());
+				final SharedPreferences.Editor editor = prefs.edit();
+				if (item.getItemId() == R.id.menu_filter_all) {
+					editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ALL);
+				} else if (item.getItemId() == R.id.menu_filter_starred) {
+					editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_STARRED);
+				} else if (item.getItemId() == R.id.menu_filter_uncompleted) {
+					editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_UNCOMPLETED);
+				} else if (item.getItemId() == R.id.menu_filter_archived) {
+					editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ARCHIVED);
+				}
+				editor.apply();
 
-			return true;
+				return true;
 
-		default:
-			return super.onOptionsItemSelected(item);
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -198,38 +198,38 @@ public class ShowsListFragment
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		if (id == LOADER_ID_SHOWS) {
 			final String[] projection = {
-				ShowsTable.COLUMN_ID,
-				ShowsTable.COLUMN_NAME,
-				ShowsTable.COLUMN_STARRED,
-				ShowsTable.COLUMN_ARCHIVED,
-				ShowsTable.COLUMN_BANNER_PATH
+					ShowsTable.COLUMN_ID,
+					ShowsTable.COLUMN_NAME,
+					ShowsTable.COLUMN_STARRED,
+					ShowsTable.COLUMN_ARCHIVED,
+					ShowsTable.COLUMN_BANNER_PATH
 			};
 			return new CursorLoader(getActivity(),
-			                        ShowsProvider.CONTENT_URI_SHOWS,
-			                        projection,
-			                        null,
-			                        null,
-			                        ShowsTable.COLUMN_STARRED + " DESC," +
-			                        ShowsTable.COLUMN_NAME + " ASC");
+					ShowsProvider.CONTENT_URI_SHOWS,
+					projection,
+					null,
+					null,
+					ShowsTable.COLUMN_STARRED + " DESC," +
+							ShowsTable.COLUMN_NAME + " ASC");
 
 		} else if (id == LOADER_ID_EPISODES) {
 			final String[] projection = {
-				EpisodesTable.COLUMN_SHOW_ID,
-				EpisodesTable.COLUMN_SEASON_NUMBER,
-				EpisodesTable.COLUMN_FIRST_AIRED,
-				EpisodesTable.COLUMN_WATCHED
+					EpisodesTable.COLUMN_SHOW_ID,
+					EpisodesTable.COLUMN_SEASON_NUMBER,
+					EpisodesTable.COLUMN_FIRST_AIRED,
+					EpisodesTable.COLUMN_WATCHED
 			};
 			final String selection =
-				String.format("%s!=?", EpisodesTable.COLUMN_SEASON_NUMBER);
+					String.format("%s!=?", EpisodesTable.COLUMN_SEASON_NUMBER);
 			final String[] selectionArgs = {
-				"0"
+					"0"
 			};
 			return new CursorLoader(getActivity(),
-			                        ShowsProvider.CONTENT_URI_EPISODES,
-			                        projection,
-			                        selection,
-			                        selectionArgs,
-			                        null);
+					ShowsProvider.CONTENT_URI_EPISODES,
+					projection,
+					selection,
+					selectionArgs,
+					null);
 
 		} else {
 			throw new IllegalArgumentException("invalid loader id");
@@ -239,15 +239,15 @@ public class ShowsListFragment
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		switch (loader.getId()) {
-		case LOADER_ID_SHOWS:
-			showsData = data;
-			listAdapter.swapShowsCursor(data);
-			break;
+			case LOADER_ID_SHOWS:
+				showsData = data;
+				listAdapter.swapShowsCursor(data);
+				break;
 
-		case LOADER_ID_EPISODES:
-			episodesData = data;
-			listAdapter.swapEpisodesCursor(data);
-			break;
+			case LOADER_ID_EPISODES:
+				episodesData = data;
+				listAdapter.swapEpisodesCursor(data);
+				break;
 		}
 
 		getActivity().supportInvalidateOptionsMenu();
@@ -264,38 +264,12 @@ public class ShowsListFragment
 	}
 
 	private void refreshAllShows() {
-		if (showsData != null && showsData.moveToFirst()) {
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getContext(), "episodes_channel_id");
-            notificationBuilder
-                    .setContentTitle("Syncing Shows")
-                    .setContentText("Sync in progress...")
-                    .setSmallIcon(R.drawable.ic_show_starred)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-            int PROGRESS_MAX = showsData.getCount();
-            int PROGRESS_CURRENT = 0;
-            notificationBuilder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
-            notificationManager.notify(0, notificationBuilder.build());
-
-			do {
-				final int idColumnIndex = showsData.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
-				final int id = showsData.getInt(idColumnIndex);
-				final Intent intent = new Intent(getActivity(), RefreshShowService.class);
-				intent.putExtra("showId", id);
-				getActivity().startService(intent);
-				PROGRESS_CURRENT += 1;
-				notificationBuilder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
-                notificationManager.notify(0, notificationBuilder.build());
-			} while (showsData.moveToNext());
-
-			notificationBuilder.setContentText("Sync complete").setProgress(0, 0, false);
-			notificationManager.notify(0, notificationBuilder.build());
-		}
+		new RefreshAllShowsTask().execute();
 	}
 
 	private static class ShowsListAdapter
-		extends BaseAdapter
-		implements SharedPreferences.OnSharedPreferenceChangeListener
+			extends BaseAdapter
+			implements SharedPreferences.OnSharedPreferenceChangeListener
 	{
 		private Context context;
 		private Cursor showsCursor;
@@ -307,15 +281,15 @@ public class ShowsListFragment
 		private List<Integer> filteredShows;
 
 		public ShowsListAdapter(Context context,
-		                        Cursor showsCursor,
-		                        Cursor episodesCursor) {
+								Cursor showsCursor,
+								Cursor episodesCursor) {
 			this.context = context;
 
 			episodesCounter = new EpisodesCounter(EpisodesTable.COLUMN_SHOW_ID);
 			episodesCounter.swapCursor(episodesCursor);
 
 			final SharedPreferences prefs =
-				PreferenceManager.getDefaultSharedPreferences(context);
+					PreferenceManager.getDefaultSharedPreferences(context);
 			prefs.registerOnSharedPreferenceChangeListener(this);
 			filter = prefs.getInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ALL);
 
@@ -342,10 +316,10 @@ public class ShowsListFragment
 
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-		                                      String key) {
+											  String key) {
 			if (key.equals(KEY_PREF_SHOWS_FILTER)) {
 				filter = sharedPreferences.getInt(KEY_PREF_SHOWS_FILTER,
-				                                  SHOWS_FILTER_ALL);
+						SHOWS_FILTER_ALL);
 
 				if (showsCursor != null) {
 					updateFilter();
@@ -363,38 +337,38 @@ public class ShowsListFragment
 
 			do {
 				switch (filter) {
-				case SHOWS_FILTER_STARRED:
-					final int starredColumnIndex =
-						showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
-					if (showsCursor.getInt(starredColumnIndex) > 0) {
-						filteredShows.add(showsCursor.getPosition());
-					}
-					break;
+					case SHOWS_FILTER_STARRED:
+						final int starredColumnIndex =
+								showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
+						if (showsCursor.getInt(starredColumnIndex) > 0) {
+							filteredShows.add(showsCursor.getPosition());
+						}
+						break;
 
-				case SHOWS_FILTER_ARCHIVED:
-					final int archivedColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED);
-					if (showsCursor.getInt(archivedColumnIndex) > 0) {
-						filteredShows.add(showsCursor.getPosition());
-					}
-					break;
+					case SHOWS_FILTER_ARCHIVED:
+						final int archivedColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED);
+						if (showsCursor.getInt(archivedColumnIndex) > 0) {
+							filteredShows.add(showsCursor.getPosition());
+						}
+						break;
 
-				case SHOWS_FILTER_UNCOMPLETED:
-					final int idColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
-					final int id = showsCursor.getInt(idColumnIndex);
+					case SHOWS_FILTER_UNCOMPLETED:
+						final int idColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
+						final int id = showsCursor.getInt(idColumnIndex);
 
-					if ((episodesCounter.getNumWatchedEpisodes(id) < episodesCounter.getNumAiredEpisodes(id)) &&
-					    showsCursor.getInt(showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED)) == 0)
-					{
-						filteredShows.add(showsCursor.getPosition());
-					}
-					break;
+						if ((episodesCounter.getNumWatchedEpisodes(id) < episodesCounter.getNumAiredEpisodes(id)) &&
+								showsCursor.getInt(showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED)) == 0)
+						{
+							filteredShows.add(showsCursor.getPosition());
+						}
+						break;
 
-				default:
-					final int columnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED);
-					if (showsCursor.getInt(columnIndex) == 0) {
-						filteredShows.add(showsCursor.getPosition());
-					}
-					break;
+					default:
+						final int columnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED);
+						if (showsCursor.getInt(columnIndex) == 0) {
+							filteredShows.add(showsCursor.getPosition());
+						}
+						break;
 				}
 			} while (showsCursor.moveToNext());
 		}
@@ -418,124 +392,108 @@ public class ShowsListFragment
 			showsCursor.moveToPosition(filteredShows.get(position));
 
 			final int idColumnIndex =
-				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
+					showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
 			return showsCursor.getInt(idColumnIndex);
 		}
 
 		@Override
 		public View getView(int position,
-		                    View convertView,
-		                    ViewGroup parent) {
+							View convertView,
+							ViewGroup parent) {
 
 			final LayoutInflater inflater = LayoutInflater.from(context);
 			if(convertView == null) {
 				convertView = inflater.inflate(R.layout.shows_list_item,
-				                               parent,
-				                               false);
+						parent,
+						false);
 			}
 
 			showsCursor.moveToPosition(filteredShows.get(position));
 
-			final int idColumnIndex =
-				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
+			final int idColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
 			final int id = showsCursor.getInt(idColumnIndex);
 
-			final ContentResolver contentResolver =
-				context.getContentResolver();
+			final ContentResolver contentResolver = context.getContentResolver();
 
-			final TextView nameView =
-				(TextView)convertView.findViewById(R.id.show_name_view);
-			final int nameColumnIndex =
-				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
+			final TextView nameView = convertView.findViewById(R.id.show_name_view);
+			final int nameColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_NAME);
 			final String name = showsCursor.getString(nameColumnIndex);
 			nameView.setText(name);
 
-			final ImageView bannerView =
-				(ImageView)convertView.findViewById(R.id.banner_view);
-			final int bannerPathColumnIndex =
-				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_BANNER_PATH);
+			final ImageView bannerView = convertView.findViewById(R.id.banner_view);
+			final int bannerPathColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_BANNER_PATH);
 			final String bannerPath = showsCursor.getString(bannerPathColumnIndex);
 
 			bannerView.setImageResource(R.drawable.blank_show_banner);
 			if (bannerPath != null && !bannerPath.equals("")) {
-				final String bannerUrl =
-					String.format("https://thetvdb.com/banners/%s", bannerPath);
+				final String bannerUrl = String.format("https://thetvdb.com/banners/%s", bannerPath);
 
-				final DisplayImageOptions options =
-					new DisplayImageOptions.Builder()
-					.cacheInMemory(true)
-					.cacheOnDisk(true)
-					.build();
-				ImageLoader.getInstance().displayImage(bannerUrl,
-				                                       bannerView,
-				                                       options);
+				Glide.with(convertView)
+						.load(bannerUrl)
+						.diskCacheStrategy(DiskCacheStrategy.ALL)
+						.placeholder(R.drawable.blank_show_banner)
+						.into(bannerView);
 			}
 
-			final ToggleButton starredToggle =
-				(ToggleButton)convertView.findViewById(R.id.show_starred_toggle);
-			final int starredColumnIndex =
-				showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
-			final boolean starred =
-				showsCursor.getInt(starredColumnIndex) > 0 ? true : false;
+			final ToggleButton starredToggle = (ToggleButton)convertView.findViewById(R.id.show_starred_toggle);
+			final int starredColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_STARRED);
+			final boolean starred = showsCursor.getInt(starredColumnIndex) > 0;
 
 			starredToggle.setOnCheckedChangeListener(null);
 			starredToggle.setChecked(starred);
 
 			starredToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-					public void onCheckedChanged(CompoundButton buttonView,
-					                             boolean isChecked) {
-						final AsyncQueryHandler handler =
-							new AsyncQueryHandler(contentResolver) {};
-						final ContentValues showValues = new ContentValues();
-						showValues.put(ShowsTable.COLUMN_STARRED, isChecked);
+				public void onCheckedChanged(CompoundButton buttonView,
+											 boolean isChecked) {
+					final AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
+					final ContentValues showValues = new ContentValues();
+					showValues.put(ShowsTable.COLUMN_STARRED, isChecked);
 
-						final Uri showUri =
-							Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-							                     String.valueOf(id));
-						handler.startUpdate(0,
-						                    null,
-						                    showUri,
-						                    showValues,
-						                    null,
-						                    null);
-					}
-				});
+					final Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS, String.valueOf(id));
+					handler.startUpdate(0,
+							null,
+							showUri,
+							showValues,
+							null,
+							null);
+				}
+			});
 
 			final ToggleButton archivedToggle = (ToggleButton)convertView.findViewById(R.id.show_archived_toggle);
 			final int archivedColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED);
-			final boolean archived = showsCursor.getInt(archivedColumnIndex) > 0 ? true : false;
+			final boolean archived = showsCursor.getInt(archivedColumnIndex) > 0;
 
 			archivedToggle.setOnCheckedChangeListener(null);
 			archivedToggle.setChecked(archived);
 
 			archivedToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-						final AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
-						final ContentValues showValues = new ContentValues();
-						showValues.put(ShowsTable.COLUMN_ARCHIVED, isChecked);
-						final Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS, String.valueOf(id));
-						handler.startUpdate(0, null, showUri, showValues, null, null);
-					}
-				});
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					final AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
+					final ContentValues showValues = new ContentValues();
+					showValues.put(ShowsTable.COLUMN_ARCHIVED, isChecked);
+					final Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS, String.valueOf(id));
+					handler.startUpdate(0, null, showUri, showValues, null, null);
+				}
+			});
 
 			final int numAired = episodesCounter.getNumAiredEpisodes(id);
 			final int numWatched = episodesCounter.getNumWatchedEpisodes(id);
 			final int numUpcoming = episodesCounter.getNumUpcomingEpisodes(id);
 
 			final ProgressBar progressBar =
-				(ProgressBar)convertView.findViewById(R.id.show_progress_bar);
+					(ProgressBar)convertView.findViewById(R.id.show_progress_bar);
 			progressBar.setMax(numAired);
 			progressBar.setProgress(numWatched);
 
 			final TextView watchedCountView =
-				(TextView)convertView.findViewById(R.id.watched_count_view);
+					(TextView)convertView.findViewById(R.id.watched_count_view);
 			String watchedCountText = context.getString(R.string.watched_count,
-			                                            numWatched,
-			                                            numAired);
+					numWatched,
+					numAired);
 			if (numUpcoming != 0) {
 				watchedCountText += " " +
-					context.getString(R.string.upcoming_count,
-					                  numUpcoming);
+						context.getString(R.string.upcoming_count,
+								numUpcoming);
 			}
 			watchedCountView.setText(watchedCountText);
 

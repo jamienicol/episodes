@@ -21,7 +21,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import java.util.List;
 import org.jamienicol.episodes.db.EpisodesTable;
@@ -31,12 +31,10 @@ import org.jamienicol.episodes.tvdb.Client;
 import org.jamienicol.episodes.tvdb.Episode;
 import org.jamienicol.episodes.tvdb.Show;
 
-public class RefreshShowUtil
-{
+public class RefreshShowUtil {
 	private static final String TAG = RefreshShowUtil.class.getName();
 
-	public static void refreshShow(int showId,
-	                               ContentResolver contentResolver) {
+	public static void refreshShow(int showId, ContentResolver contentResolver) {
 		final Client tvdbClient = new Client();
 
 		Log.i(TAG, String.format("Refreshing show %d", showId));
@@ -57,36 +55,29 @@ public class RefreshShowUtil
 		}
 	}
 
-	private static int getShowTvdbId(int showId,
-	                                 ContentResolver contentResolver) {
-		final Uri showUri =
-			Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-			                     String.valueOf(showId));
+	private static int getShowTvdbId(int showId, ContentResolver contentResolver) {
+		final Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS, String.valueOf(showId));
 		final String[] projection = {
 			ShowsTable.COLUMN_TVDB_ID
 		};
 
-		final Cursor showCursor = contentResolver.query(showUri,
-		                                                projection,
-		                                                null,
-		                                                null,
-		                                                null);
-
-		final int tvdbIdColumnIndex =
-			showCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_TVDB_ID);
+		final Cursor showCursor = contentResolver.query(showUri, projection, null, null, null);
+		final int tvdbIdColumnIndex = showCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_TVDB_ID);
 		showCursor.moveToFirst();
-
-		return showCursor.getInt(tvdbIdColumnIndex);
+		final int tvdbId = showCursor.getInt(tvdbIdColumnIndex);
+		showCursor.close();
+		return tvdbId;
 	}
 
 	private static String getShowLanguage(int showId, ContentResolver contentResolver) {
-		final Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-												 String.valueOf(showId));
+		final Uri showUri = Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS, String.valueOf(showId));
 		final String[] projection = { ShowsTable.COLUMN_LANGUAGE };
 		final Cursor showCursor = contentResolver.query(showUri, projection, null, null, null);
 		final int columnIndex = showCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_LANGUAGE);
 		showCursor.moveToFirst();
-		return showCursor.getString(columnIndex);
+		final String showLanguage = showCursor.getString(columnIndex);
+		showCursor.close();
+		return showLanguage;
 	}
 
 	private static void updateShow(int showId,
@@ -145,15 +136,11 @@ public class RefreshShowUtil
 				epValues.put(EpisodesTable.COLUMN_SHOW_ID, showId);
 				epValues.put(EpisodesTable.COLUMN_NAME, episode.getName());
 				epValues.put(EpisodesTable.COLUMN_LANGUAGE, episode.getLanguage());
-				epValues.put(EpisodesTable.COLUMN_OVERVIEW,
-				             episode.getOverview());
-				epValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER,
-				             episode.getEpisodeNumber());
-				epValues.put(EpisodesTable.COLUMN_SEASON_NUMBER,
-				             episode.getSeasonNumber());
+				epValues.put(EpisodesTable.COLUMN_OVERVIEW, episode.getOverview());
+				epValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER, episode.getEpisodeNumber());
+				epValues.put(EpisodesTable.COLUMN_SEASON_NUMBER, episode.getSeasonNumber());
 				if (episode.getFirstAired() != null) {
-					epValues.put(EpisodesTable.COLUMN_FIRST_AIRED,
-					             episode.getFirstAired().getTime() / 1000);
+					epValues.put(EpisodesTable.COLUMN_FIRST_AIRED, episode.getFirstAired().getTime() / 1000);
 				}
 
 				Log.i(TAG, String.format("Updating episode %d.", episodeId));
@@ -186,8 +173,7 @@ public class RefreshShowUtil
                               null);
 	}
 
-	private static Episode findEpisodeWithTvdbId(List<Episode> episodes,
-	                                             int episodeTvdbId) {
+	private static Episode findEpisodeWithTvdbId(List<Episode> episodes, int episodeTvdbId) {
 		for (Episode ep : episodes) {
 			if (ep.getId() == episodeTvdbId) {
 				return ep;
@@ -207,20 +193,15 @@ public class RefreshShowUtil
 			epValues.put(EpisodesTable.COLUMN_SHOW_ID, showId);
 			epValues.put(EpisodesTable.COLUMN_NAME, episode.getName());
 			epValues.put(EpisodesTable.COLUMN_LANGUAGE, episode.getLanguage());
-			epValues.put(EpisodesTable.COLUMN_OVERVIEW,
-			             episode.getOverview());
-			epValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER,
-			             episode.getEpisodeNumber());
-			epValues.put(EpisodesTable.COLUMN_SEASON_NUMBER,
-			             episode.getSeasonNumber());
+			epValues.put(EpisodesTable.COLUMN_OVERVIEW, episode.getOverview());
+			epValues.put(EpisodesTable.COLUMN_EPISODE_NUMBER, episode.getEpisodeNumber());
+			epValues.put(EpisodesTable.COLUMN_SEASON_NUMBER, episode.getSeasonNumber());
 			if (episode.getFirstAired() != null) {
-				epValues.put(EpisodesTable.COLUMN_FIRST_AIRED,
-				             episode.getFirstAired().getTime() / 1000);
+				epValues.put(EpisodesTable.COLUMN_FIRST_AIRED, episode.getFirstAired().getTime() / 1000);
 			}
 
 			Log.i(TAG, "Adding new episode.");
-			contentResolver.insert(ShowsProvider.CONTENT_URI_EPISODES,
-			                       epValues);
+			contentResolver.insert(ShowsProvider.CONTENT_URI_EPISODES, epValues);
 		}
 	}
 }

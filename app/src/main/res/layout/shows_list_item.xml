@@ -2,9 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="2dp" >
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
   <FrameLayout
       android:id="@+id/name_banner_frame"
       android:layout_width="match_parent"
@@ -46,7 +45,7 @@
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_below="@id/name_banner_frame" >
+      android:layout_below="@id/name_banner_frame">
     <ProgressBar
         android:id="@+id/show_progress_bar"
         android:layout_width="match_parent"

@@ -24,8 +24,6 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.uwetrottmann.thetvdb.TheTvdb;
 
 public class EpisodesApplication
@@ -53,12 +51,6 @@ public class EpisodesApplication
 		} catch (Exception e) {
 			Log.d(TAG, "Error initialising TvdbClient", e);
 		}
-
-		final ImageLoaderConfiguration imageLoaderConfig =
-			new ImageLoaderConfiguration.Builder(this)
-			.build();
-
-		ImageLoader.getInstance().init(imageLoaderConfig);
 
 		createNotificationChannel();
 	}

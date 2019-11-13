@@ -27,25 +27,24 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
@@ -230,21 +229,15 @@ public class ShowActivity
 				supportInvalidateOptionsMenu();
 			}
 
-			final int fanartPathColumnIndex =
-				data.getColumnIndexOrThrow(ShowsTable.COLUMN_FANART_PATH);
+			final int fanartPathColumnIndex = data.getColumnIndexOrThrow(ShowsTable.COLUMN_FANART_PATH);
 			final String fanartPath = data.getString(fanartPathColumnIndex);
 			if (fanartPath != null && !fanartPath.equals("")) {
-				final String fanartUrl =
-					String.format("https://thetvdb.com/banners/%s", fanartPath);
+				final String fanartUrl = String.format("https://thetvdb.com/banners/%s", fanartPath);
 
-				final DisplayImageOptions options =
-					new DisplayImageOptions.Builder()
-					.cacheInMemory(true)
-					.cacheOnDisk(true)
-					.build();
-				ImageLoader.getInstance().displayImage(fanartUrl,
-				                                       headerImage,
-				                                       options);
+				Glide.with(this)
+						.load(fanartUrl)
+						.diskCacheStrategy(DiskCacheStrategy.ALL)
+						.into(headerImage);
 			}
 		}
 	}
