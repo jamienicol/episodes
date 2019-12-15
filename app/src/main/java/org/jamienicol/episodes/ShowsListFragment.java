@@ -41,6 +41,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.ListFragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -52,6 +53,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
+import org.jamienicol.episodes.services.AsyncTask;
 import org.jamienicol.episodes.services.RefreshAllShowsTask;
 
 import java.util.ArrayList;
@@ -121,7 +123,7 @@ public class ShowsListFragment
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+	public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.shows_list_fragment, menu);
 	}
 
@@ -250,7 +252,7 @@ public class ShowsListFragment
 				break;
 		}
 
-		getActivity().supportInvalidateOptionsMenu();
+		getActivity().invalidateOptionsMenu();
 	}
 
 	@Override
@@ -264,7 +266,7 @@ public class ShowsListFragment
 	}
 
 	private void refreshAllShows() {
-		new RefreshAllShowsTask().execute();
+		new AsyncTask().executeAsync(new RefreshAllShowsTask());
 	}
 
 	private static class ShowsListAdapter
@@ -426,11 +428,11 @@ public class ShowsListFragment
 
 			bannerView.setImageResource(R.drawable.blank_show_banner);
 			if (bannerPath != null && !bannerPath.equals("")) {
-				final String bannerUrl = String.format("https://thetvdb.com/banners/%s", bannerPath);
+				final String bannerUrl = String.format("https://artworks.thetvdb.com/banners/%s", bannerPath);
 
 				Glide.with(convertView)
 						.load(bannerUrl)
-						.diskCacheStrategy(DiskCacheStrategy.ALL)
+						.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
 						.placeholder(R.drawable.blank_show_banner)
 						.into(bannerView);
 			}

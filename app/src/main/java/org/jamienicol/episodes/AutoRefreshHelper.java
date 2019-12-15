@@ -35,6 +35,8 @@ import androidx.core.net.ConnectivityManagerCompat;
 import android.util.Log;
 import org.jamienicol.episodes.db.ShowsTable;
 import org.jamienicol.episodes.db.ShowsProvider;
+import org.jamienicol.episodes.services.AsyncTask;
+import org.jamienicol.episodes.services.RefreshAllShowsTask;
 
 public class AutoRefreshHelper
 	implements SharedPreferences.OnSharedPreferenceChangeListener
@@ -184,18 +186,7 @@ public class AutoRefreshHelper
 
 			if (helper.checkNetwork()) {
 				Log.i(TAG, "Refreshing all shows.");
-
-				final ContentResolver contentResolver = getContentResolver();
-				final Cursor cursor = getShowsCursor(contentResolver);
-
-				while (cursor.moveToNext()) {
-					final int showIdColumnIndex =
-						cursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
-					final int showId = cursor.getInt(showIdColumnIndex);
-
-					RefreshShowUtil.refreshShow(showId, contentResolver);
-				}
-
+				new AsyncTask().executeAsync(new RefreshAllShowsTask());
 				helper.setPrevAutoRefreshTime(System.currentTimeMillis());
 				helper.rescheduleAlarm();
 

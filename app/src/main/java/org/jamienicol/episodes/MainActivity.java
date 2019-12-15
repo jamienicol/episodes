@@ -34,7 +34,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import org.jamienicol.episodes.db.BackUpRestoreHelper;
+import org.jamienicol.episodes.services.AsyncTask;
+import org.jamienicol.episodes.services.BackupTask;
+import org.jamienicol.episodes.services.RestoreTask;
 
 public class MainActivity
     extends AppCompatActivity
@@ -129,8 +131,8 @@ public class MainActivity
 	    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private boolean checkStoragePermission() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
+    private boolean hasStoragePermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestStoragePermission() {
@@ -139,30 +141,30 @@ public class MainActivity
     }
 
     private void back_up() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkStoragePermission()) {
-                requestStoragePermission();
-            }
-        }
-
-        BackUpRestoreHelper.backUp(getApplicationContext());
+		if (hasStoragePermission()) {
+			new AsyncTask().executeAsync(new BackupTask());
+		} else {
+			if (Build.VERSION.SDK_INT >= 23) {
+				requestStoragePermission();
+			}
+		}
     }
 
     private void restore() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkStoragePermission()) {
-                requestStoragePermission();
-            }
-        }
-
-        final FragmentManager fm = getSupportFragmentManager();
-        final SelectBackupDialog dialog = new SelectBackupDialog();
-        dialog.show(fm, "select_backup_dialog");
+		if (hasStoragePermission()) {
+			final FragmentManager fm = getSupportFragmentManager();
+			final SelectBackupDialog dialog = new SelectBackupDialog();
+			dialog.show(fm, "select_backup_dialog");
+		} else {
+			if (Build.VERSION.SDK_INT >= 23) {
+				requestStoragePermission();
+			}
+		}
     }
 
 	@Override
 	public void onBackupSelected(String backupFilename) {
-		BackUpRestoreHelper.restore(getApplicationContext(), backupFilename);
+		new AsyncTask().executeAsync(new RestoreTask(backupFilename));
 	}
 
 	private void showSettings() {

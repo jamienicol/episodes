@@ -3,9 +3,9 @@
   <string name="about_description">Keep track of which episodes you\'ve watched of your favourite TV shows</string>
   <string name="about_license">Episodes is free software licensed under the GNU GPL (version 3 or later). Please file bugs, write code, or do anything else you can to help!</string>
   <string name="about_title">About</string>
-  <string name="about_tvdb">TV show information is supplied by TheTVDB.com, and is licensed under the Creative Commons Attribution license. Please contribute information or artwork to TheTVDB.com if you can.</string>
-  <string name="about_website">http://github.com/jamienicol/episodes</string>
-  <string name="app_name">Episodes</string>
+  <string name="about_tvdb">TV show information is supplied by TheTVDB.com and is licensed under the Creative Commons Attribution license. Please contribute information or artwork to TheTVDB.com if you can.</string>
+  <string name="about_website" translatable="false">http://github.com/red-coracle/episodes</string>
+  <string name="app_name" translatable="false">Episodes</string>
   <string name="adding_show">Adding %s to library</string>
   <string name="back_up_error_message">Error backing up library</string>
   <string name="back_up_success_message">Back up complete: \'%s\'</string>
@@ -17,11 +17,11 @@
   <string name="menu_add_show">Add show to library</string>
   <string name="menu_back_up">Back up library</string>
   <string name="menu_delete_show">Delete show</string>
-  <string name="menu_filter_all">All shows</string>
   <string name="menu_filter_shows_list">Filter shows</string>
-  <string name="menu_filter_starred">Starred shows</string>
-  <string name="menu_filter_archived">Archived shows</string>
-  <string name="menu_filter_uncompleted">Uncompleted shows</string>
+  <string name="menu_filter_all">All</string>
+  <string name="menu_filter_starred">Starred</string>
+  <string name="menu_filter_archived">Archived</string>
+  <string name="menu_filter_uncompleted">In progress</string>
   <string name="menu_mark_season_not_watched">Mark season as not watched</string>
   <string name="menu_mark_season_watched">Mark season as watched</string>
   <string name="menu_mark_show_not_watched">Mark show as not watched</string>
@@ -34,9 +34,9 @@
   <string name="menu_unstar_show">Unstar show</string>
   <string name="menu_archive_show">Archive show</string>
   <string name="menu_unarchive_show">Unarchive show</string>
-  <string name="pref_auto_refresh_period_title">Refresh frequency</string>
-  <string name="pref_auto_refresh_enabled_title">Auto-refresh library</string>
-  <string name="pref_auto_refresh_wifi_only_title">Refresh only via Wi-Fi</string>
+  <string name="pref_auto_refresh_period_title">Interval</string>
+  <string name="pref_auto_refresh_enabled_title">Auto-refresh Enabled</string>
+  <string name="pref_auto_refresh_wifi_only_title">Only on unmetered connexions</string>
   <string name="pref_language_title">Language</string>
   <string name="pref_reverse_sort_order">Reverse sort order</string>
   <string name="pref_reverse_sort_order_summary">Display newest season first</string>
@@ -59,4 +59,6 @@
   <string name="watched_count">Watched %1$d of %2$d episodes</string>
   <string name="channel_name">Show Sync</string>
   <string name="channel_description">Notification when syncing shows</string>
+  <string name="pref_auto_refresh_category">Series auto-refresh</string>
+  <string name="pref_interface_category">Interface</string>
 </resources>

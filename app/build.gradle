@@ -12,10 +12,6 @@ android {
     }
     flavorDimensions "flavor"
     productFlavors {
-        fdroid {
-            dimension "flavor"
-            applicationId = "org.jamienicol.episodes"
-        }
         standard {
             dimension "flavor"
             applicationId = "com.redcoracle.episodes"
@@ -27,12 +23,16 @@ android {
             versionNameSuffix '-DEBUG'
         }
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     lintOptions {
         abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
     if (project.hasProperty('signingStoreLocation') &&
             project.hasProperty('signingStorePassword') &&
@@ -57,13 +57,13 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
-    implementation 'com.uwetrottmann.thetvdb-java:thetvdb-java:2.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.uwetrottmann.thetvdb-java:thetvdb-java:2.2.0'
     implementation 'com.github.bumptech.glide:glide:4.10.0'
-    implementation 'com.github.bumptech.glide:okhttp3-integration:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
 }

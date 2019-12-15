@@ -18,15 +18,15 @@
 package org.jamienicol.episodes;
 
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.database.Cursor;
 import android.util.SparseIntArray;
+
+import org.jamienicol.episodes.db.EpisodesTable;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
-import org.jamienicol.episodes.Preferences;
-import org.jamienicol.episodes.db.EpisodesTable;
 
 public class EpisodesCounter
 {

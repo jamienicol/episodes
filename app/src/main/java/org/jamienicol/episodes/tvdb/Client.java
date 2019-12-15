@@ -21,7 +21,6 @@ import android.util.Log;
 
 import com.uwetrottmann.thetvdb.TheTvdb;
 import com.uwetrottmann.thetvdb.entities.EpisodesResponse;
-import com.uwetrottmann.thetvdb.entities.SeriesImageQueryResultResponse;
 import com.uwetrottmann.thetvdb.entities.SeriesResponse;
 import com.uwetrottmann.thetvdb.entities.SeriesResultsResponse;
 
@@ -51,7 +50,7 @@ public class Client
 					tvdb.search().series(escapedQuery, null, null, null, language).execute();
 			if (response.isSuccessful()) {
 				final SearchShowsParser parser = new SearchShowsParser();
-				return parser.parse(response);
+				return parser.parse(response, language);
 			} else {
 				return new LinkedList<>();
 			}
@@ -67,41 +66,18 @@ public class Client
 			Log.d(TAG, String.format("Received response %d: %s", seriesResponse.code(), seriesResponse.message()));
 			if (seriesResponse.isSuccessful()) {
 				final GetShowParser parser = new GetShowParser();
-				Show show = parser.parse(seriesResponse.body().data);
+				Show show = parser.parse(seriesResponse.body().data, language);
 
 				if (show != null) {
-				    // Parse episodes
                     ArrayList<Episode> episodes = new ArrayList<>();
 				    final GetEpisodesParser episodesParser = new GetEpisodesParser();
-
-				    // There are occasions where a series has no episodes yet.
-                    // TODO: Cleanup here?
-                    retrofit2.Response<EpisodesResponse> episodesResponse = tvdb.series().episodes(show.getId(), 1, "en").execute();
-                    if (episodesResponse.isSuccessful()) {
-                        int pages = episodesResponse.body().links.last;
-                        int current_page = 1;
-                        while (current_page < pages) {
-                            episodes.addAll(episodesParser.parse(episodesResponse.body()));
-                            current_page += 1;
-                            episodesResponse = tvdb.series().episodes(show.getId(), current_page, "en").execute();
-                        }
-                        // Parse the last page.
-                        episodes.addAll(episodesParser.parse(episodesResponse.body()));
-                        show.setEpisodes(episodes);
-                    }
-
-                    // Parse fanart
-                    retrofit2.Response<SeriesImageQueryResultResponse> fanartResponse =
-                            tvdb.series().imagesQuery(
-                                    show.getId(),
-                                    "fanart",
-                                    null,
-                                    "graphical",
-                                    null)
-                             .execute();
-                    if (fanartResponse.isSuccessful() && fanartResponse.body().data.size() > 0) {
-                        show.setFanartPath(fanartResponse.body().data.get(0).fileName);
-                    }
+					Integer page = 1;
+					while (page != null) {
+						EpisodesResponse episodesResponse = tvdb.series().episodes(show.getId(), page, language).execute().body();
+						episodes.addAll(episodesParser.parse(episodesResponse));
+						page = episodesResponse.links.next;
+					}
+					show.setEpisodes(episodes);
                 }
                 return show;
 			} else {

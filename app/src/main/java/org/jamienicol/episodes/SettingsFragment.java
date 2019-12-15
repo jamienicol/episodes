@@ -17,15 +17,13 @@
 
 package org.jamienicol.episodes;
 
-import android.preference.PreferenceFragment;
 import android.os.Bundle;
 
-public class SettingsFragment
-	extends PreferenceFragment
-{
+import androidx.preference.PreferenceFragmentCompat;
+
+public class SettingsFragment extends PreferenceFragmentCompat {
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
+	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+		setPreferencesFromResource(R.xml.preferences, rootKey);
 	}
 }

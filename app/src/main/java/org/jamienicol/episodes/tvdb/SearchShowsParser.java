@@ -32,28 +32,29 @@ import java.util.Locale;
 
 import retrofit2.Response;
 
-class SearchShowsParser
-{
-	private static final String TAG = "SearchShowsParser";
+class SearchShowsParser {
+    private static final String TAG = SearchShowsParser.class.getName();
 
     private List<Show> parsed;
 
-	List<Show> parse(Response<SeriesResultsResponse> response) {
-		try {
-			List<Series> series = response.body().data;
-			parsed = new LinkedList<>();
-			for(Series s : series) {
-			    Show show = new Show();
-			    show.setId(s.id);
-			    show.setName(s.seriesName);
-			    show.setLanguage("en");
-			    show.setOverview(s.overview);
+    List<Show> parse(Response<SeriesResultsResponse> response, String language) {
+        try {
+            List<Series> series = response.body().data;
+            parsed = new LinkedList<>();
+            for(Series s : series) {
+                Show show = new Show();
+                show.setId(s.id);
+                show.setName(s.seriesName);
+                show.setLanguage(language);
+                show.setOverview(s.overview);
                 try {
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-                    Date firstAired = df.parse(s.firstAired);
-
-                    Log.i(TAG, String.format("Parsed first aired date: %s", firstAired.toString()));
-                    show.setFirstAired(firstAired);
+                    if (s.firstAired == null) {
+                        show.setFirstAired(null);
+                    } else {
+                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                        Date firstAired = df.parse(s.firstAired);
+                        show.setFirstAired(firstAired);
+                    }
 
                 } catch (ParseException e) {
                     Log.w(TAG, "Error parsing first aired date: " + e.toString());
@@ -61,9 +62,9 @@ class SearchShowsParser
                 }
                 parsed.add(show);
             }
-		} catch (Exception e) {
-			Log.w(TAG, e);
-		}
-		return parsed;
-	}
+        } catch (Exception e) {
+            Log.w(TAG, e);
+        }
+        return parsed;
+    }
 }

@@ -20,40 +20,37 @@ package org.jamienicol.episodes;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+
 import java.io.File;
 import java.util.Arrays;
-import java.util.Comparator;
-import org.jamienicol.episodes.db.BackUpRestoreHelper;
 
-public class SelectBackupDialog
-	extends DialogFragment
-{
+public class SelectBackupDialog extends DialogFragment {
 	public interface OnBackupSelectedListener {
-		public void onBackupSelected(String backupFilename);
+		void onBackupSelected(String backupFilename);
 	}
 	private OnBackupSelectedListener onBackupSelectedListener;
+	private Context context;
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-
-		try {
-			onBackupSelectedListener = (OnBackupSelectedListener)activity;
-		} catch (ClassCastException e) {
-			final String message =
-				String.format("%s must implement OnBackupSelectedListener",
-				              activity.toString());
-			throw new ClassCastException(message);
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context = context;
+		Activity activity;
+		if (context instanceof Activity) {
+			activity = (Activity) context;
+			onBackupSelectedListener = (OnBackupSelectedListener) activity;
 		}
 	}
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		final AlertDialog.Builder builder =
-			new AlertDialog.Builder(getActivity());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
 		final File[] backups = getBackupFiles();
 
@@ -65,47 +62,35 @@ public class SelectBackupDialog
 	}
 
 	private File[] getBackupFiles() {
-		final File[] files = BackUpRestoreHelper.getBackupDir().listFiles();
+		final File[] files = new File(this.context.getExternalFilesDir(null), "episodes").listFiles();
 
 		if (files != null) {
-			Arrays.sort(files, new Comparator<File>() {
-				public int compare(File lhs, File rhs) {
-					return Long.valueOf(rhs.lastModified()).
-						compareTo(lhs.lastModified());
-				}
-			});
+			Arrays.sort(files, (lhs, rhs) -> Long.compare(rhs.lastModified(), lhs.lastModified()));
 			return files;
 		} else {
 			return null;
 		}
 	}
 
-	private Dialog createDialogBackups(AlertDialog.Builder builder,
-	                                   final File[] backups) {
+	private Dialog createDialogBackups(AlertDialog.Builder builder, final File[] backups) {
 		final String[] names = new String[backups.length];
 		for (int i = 0; i < backups.length; i++) {
 			names[i] = backups[i].getName();
 		}
 
 		builder.setTitle(R.string.restore_dialog_title)
-			.setItems(names, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					final String path = backups[which].getPath();
-					onBackupSelectedListener.onBackupSelected(path);
-				}
+			.setItems(names, (dialog, which) -> {
+				final String path = backups[which].getPath();
+				onBackupSelectedListener.onBackupSelected(path);
 			});
 
 		return builder.create();
 	}
 
 	private Dialog createDialogNoBackups(AlertDialog.Builder builder) {
-		final String message =
-			getActivity().getString(R.string.restore_dialog_no_backups_message,
-			                        BackUpRestoreHelper.getBackupDir());
-
-		builder.setTitle(R.string.restore_dialog_title)
-			.setMessage(message);
-
+		final File directory = new File(this.context.getExternalFilesDir(null), "episodes");
+		final String message = getActivity().getString(R.string.restore_dialog_no_backups_message, directory);
+		builder.setTitle(R.string.restore_dialog_title).setMessage(message);
 		return builder.create();
 	}
 }

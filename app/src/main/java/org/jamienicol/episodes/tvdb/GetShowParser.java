@@ -31,14 +31,14 @@ class GetShowParser
 {
 	private static final String TAG = "GetShowParser";
 
-    Show parse(Series series) {
+    Show parse(Series series, String language) {
         Show show;
         try {
             show = new Show();
 
             show.setId(series.id);
             show.setName(series.seriesName);
-            show.setLanguage("en");
+            show.setLanguage(language);
             show.setOverview(series.overview);
             try {
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd",
@@ -54,6 +54,8 @@ class GetShowParser
                 show.setFirstAired(null);
             }
             show.setBannerPath(series.banner);
+            show.setFanartPath(series.fanart);
+            show.setPosterPath(series.poster);
         } catch (Exception e) {
 	        Log.w(TAG, e);
             return null;

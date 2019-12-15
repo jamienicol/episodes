@@ -17,7 +17,6 @@
 
 package org.jamienicol.episodes;
 
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,7 +29,8 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import org.jamienicol.episodes.services.AddShowService;
+import org.jamienicol.episodes.services.AddShowTask;
+import org.jamienicol.episodes.services.AsyncTask;
 import org.jamienicol.episodes.tvdb.Show;
 
 public class AddShowPreviewFragment
@@ -109,11 +109,6 @@ public class AddShowPreviewFragment
 	}
 
 	private void addShow() {
-		Intent intent = new Intent(getActivity(), AddShowService.class);
-		intent.putExtra("tvdbId", show.getId());
-		intent.putExtra("showName", show.getName());
-		intent.putExtra("showLanguage", show.getLanguage());
-
-		getActivity().startService(intent);
+		new AsyncTask().executeAsync(new AddShowTask(show.getId(), show.getName(), show.getLanguage()));
 	}
 }

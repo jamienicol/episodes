@@ -21,18 +21,13 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.uwetrottmann.thetvdb.TheTvdb;
 
-public class EpisodesApplication
-	extends Application
-{
+public class EpisodesApplication extends Application {
 	private static final String TAG = EpisodesApplication.class.getName();
-
 	private static EpisodesApplication instance;
-
     private TheTvdb tvdbClient;
 
 	@Override
@@ -44,7 +39,9 @@ public class EpisodesApplication
 		// ensure the default settings are initialised at first launch,
 		// rather than waiting for the settings screen to be opened.
 		// do this before anything that needs these settings is instantiated.
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		// TODO: Is this needed?
+		//PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
 
         try {
 			tvdbClient = new TheTvdb(BuildConfig.TVDB_KEY);

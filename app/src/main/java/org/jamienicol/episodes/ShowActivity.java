@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -31,12 +32,15 @@ import android.preference.PreferenceManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.tabs.TabLayout;
+
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -48,7 +52,9 @@ import android.widget.TextView;
 import org.jamienicol.episodes.db.EpisodesTable;
 import org.jamienicol.episodes.db.ShowsProvider;
 import org.jamienicol.episodes.db.ShowsTable;
-import org.jamienicol.episodes.services.RefreshShowService;
+import org.jamienicol.episodes.services.AsyncTask;
+import org.jamienicol.episodes.services.DeleteShowTask;
+import org.jamienicol.episodes.services.RefreshShowTask;
 
 public class ShowActivity
 	extends AppCompatActivity
@@ -85,28 +91,25 @@ public class ShowActivity
 		loaderArgs.putInt("showId", showId);
 		getSupportLoaderManager().initLoader(0, loaderArgs, this);
 
-		headerImage = (ImageView)findViewById(R.id.header_image);
+		headerImage = findViewById(R.id.header_image);
 
-		toolbar = (Toolbar)findViewById(R.id.toolbar);
+		toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		titleView = (TextView)findViewById(R.id.title);
+		titleView = findViewById(R.id.title);
 
-		pagerAdapter =
-			new PagerAdapter(this, getSupportFragmentManager(), showId);
-
-		pager = (ViewPager)findViewById(R.id.pager);
+		pagerAdapter = new PagerAdapter(this, getSupportFragmentManager(), showId);
+		pager = findViewById(R.id.pager);
 		pager.setAdapter(pagerAdapter);
-		pager.setOnPageChangeListener(this);
+		pager.addOnPageChangeListener(this);
 
-		tabStrip = (TabLayout)findViewById(R.id.tab_strip);
+		tabStrip = findViewById(R.id.tab_strip);
 		tabStrip.setTabTextColors(getResources().getColorStateList(R.color.tab_text));
 		tabStrip.setupWithViewPager(pager);
 
 		// Set the default tab from preferences.
-		final SharedPreferences prefs =
-				PreferenceManager.getDefaultSharedPreferences(this);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		pager.setCurrentItem(prefs.getInt(KEY_DEFAULT_TAB, 0));
 	}
 
@@ -190,7 +193,8 @@ public class ShowActivity
 			ShowsTable.COLUMN_NAME,
 			ShowsTable.COLUMN_STARRED,
 			ShowsTable.COLUMN_ARCHIVED,
-			ShowsTable.COLUMN_FANART_PATH
+			ShowsTable.COLUMN_FANART_PATH,
+			ShowsTable.COLUMN_POSTER_PATH
 		};
 		return new CursorLoader(this,
 		                        uri,
@@ -230,13 +234,30 @@ public class ShowActivity
 			}
 
 			final int fanartPathColumnIndex = data.getColumnIndexOrThrow(ShowsTable.COLUMN_FANART_PATH);
+			final int posterPathColumnIndex = data.getColumnIndexOrThrow(ShowsTable.COLUMN_POSTER_PATH);
 			final String fanartPath = data.getString(fanartPathColumnIndex);
+			final String posterPath = data.getString(posterPathColumnIndex);
+			final String artPath;
 			if (fanartPath != null && !fanartPath.equals("")) {
-				final String fanartUrl = String.format("https://thetvdb.com/banners/%s", fanartPath);
+				artPath = fanartPath;
+			} else if (posterPath != null && !posterPath.equals("")) {
+				artPath = posterPath;
+			} else {
+				artPath = null;
+			}
+			if (artPath != null) {
+				CircularProgressDrawable placeholder = new CircularProgressDrawable(this);
+				placeholder.setColorFilter(ContextCompat.getColor(this, R.color.accent), PorterDuff.Mode.SRC_IN);
+				placeholder.setStrokeWidth(5f);
+				placeholder.setCenterRadius(60f);
+
+				placeholder.start();
+				final String artUrl = String.format("https://artworks.thetvdb.com/banners/%s", artPath);
 
 				Glide.with(this)
-						.load(fanartUrl)
-						.diskCacheStrategy(DiskCacheStrategy.ALL)
+						.load(artUrl)
+						.placeholder(placeholder)
+						.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
 						.into(headerImage);
 			}
 		}
@@ -315,10 +336,7 @@ public class ShowActivity
 
 
 	private void refreshShow() {
-		final Intent intent = new Intent(this, RefreshShowService.class);
-		intent.putExtra("showId", showId);
-
-		startService(intent);
+		new AsyncTask().executeAsync(new RefreshShowTask(this.showId));
 	}
 
 	private void markShowWatched(boolean watched) {
@@ -345,32 +363,7 @@ public class ShowActivity
 	}
 
 	private void deleteShow() {
-		final ContentResolver contentResolver = getContentResolver();
-		final AsyncQueryHandler handler =
-			new AsyncQueryHandler(contentResolver) {};
-
-		/* delete all the show's episodes */
-		final String epSelection =
-			String.format("%s=?", EpisodesTable.COLUMN_SHOW_ID);
-		final String[] epSelectionArgs = {
-			String.valueOf(showId)
-		};
-
-		handler.startDelete(0,
-		                    null,
-		                    ShowsProvider.CONTENT_URI_EPISODES,
-		                    epSelection,
-		                    epSelectionArgs);
-
-		/* delete the show itself */
-		final Uri showUri =
-			Uri.withAppendedPath(ShowsProvider.CONTENT_URI_SHOWS,
-			                     String.valueOf(showId));
-		handler.startDelete(0,
-		                    null,
-		                    showUri,
-		                    null,
-		                    null);
+		new AsyncTask().executeAsync(new DeleteShowTask(this.showId));
 	}
 
 	private static class PagerAdapter
