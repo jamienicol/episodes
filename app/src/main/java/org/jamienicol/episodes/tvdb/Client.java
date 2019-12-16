@@ -64,7 +64,7 @@ public class Client
 		try {
 			final retrofit2.Response<SeriesResponse> seriesResponse = tvdb.series().series(id, language).execute();
 			Log.d(TAG, String.format("Received response %d: %s", seriesResponse.code(), seriesResponse.message()));
-			if (seriesResponse.isSuccessful()) {
+			if (seriesResponse.isSuccessful() && seriesResponse.body() != null) {
 				final GetShowParser parser = new GetShowParser();
 				Show show = parser.parse(seriesResponse.body().data, language);
 
@@ -74,8 +74,12 @@ public class Client
 					Integer page = 1;
 					while (page != null) {
 						EpisodesResponse episodesResponse = tvdb.series().episodes(show.getId(), page, language).execute().body();
-						episodes.addAll(episodesParser.parse(episodesResponse));
-						page = episodesResponse.links.next;
+						if (episodesResponse != null) {
+							episodes.addAll(episodesParser.parse(episodesResponse));
+							page = episodesResponse.links != null ? episodesResponse.links.next : null;
+						} else {
+							page = null;
+						}
 					}
 					show.setEpisodes(episodes);
                 }

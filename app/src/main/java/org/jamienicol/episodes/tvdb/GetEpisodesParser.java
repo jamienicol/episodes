@@ -28,9 +28,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-class GetEpisodesParser
-{
-    private static final String TAG = "GetShowParser";
+class GetEpisodesParser {
+    private static final String TAG = GetEpisodesParser.class.getName();
 
     // TODO: Cleanup the variable names.
     ArrayList<Episode> parse(EpisodesResponse episodesResponse) {
@@ -47,11 +46,9 @@ class GetEpisodesParser
                 try {
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
                     Date firstAired = df.parse(episode.firstAired);
-                    Log.i(TAG, String.format("Parsed first aired date: %s", firstAired.toString()));
                     e.setFirstAired(firstAired);
 
                 } catch (ParseException ex) {
-                    Log.w(TAG, "Error parsing first aired date: " + ex.toString());
                     e.setFirstAired(null);
                 }
                 episodes.add(e);
