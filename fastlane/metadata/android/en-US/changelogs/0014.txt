@@ -1,0 +1,5 @@
+- Upgrade SDK and gradle versions
+- Switch from support library to androidx
+- Replace universal-image-loader with Glide
+- Use newer OkHttp & TVDB client versions
+- Fix sync notification/progress

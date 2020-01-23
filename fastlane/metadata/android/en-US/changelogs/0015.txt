@@ -1,0 +1,6 @@
+- Replace deprecated AsyncTask
+- Searching and adding shows now uses language preference
+- Use poster image if fanart image is unavailable
+- Display loading indicator when fetching fanart/poster image
+- Add preference categories and use switches instead of checkboxes
+- Update dependencies and gradle
