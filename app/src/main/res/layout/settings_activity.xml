@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/settings_layout">
   <fragment
-      android:name="org.jamienicol.episodes.SettingsFragment"
+      android:name="com.redcoracle.episodes.SettingsFragment"
       android:id="@+id/settings_fragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent"/>
