@@ -21,6 +21,9 @@
         <item
             android:id="@+id/menu_filter_uncompleted"
             android:title="@string/menu_filter_uncompleted"/>
+        <item
+            android:id="@+id/menu_filter_upcoming"
+            android:title="@string/menu_filter_upcoming"/>
       </group>
     </menu>
   </item>

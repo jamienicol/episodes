@@ -71,6 +71,7 @@ public class ShowsListFragment
 	private static final int SHOWS_FILTER_STARRED = 1;
 	private static final int SHOWS_FILTER_UNCOMPLETED = 2;
 	private static final int SHOWS_FILTER_ARCHIVED = 3;
+	private static final int SHOWS_FILTER_UPCOMING = 4;
 
 	private ShowsListAdapter listAdapter;
 	private Cursor showsData;
@@ -154,6 +155,9 @@ public class ShowsListFragment
 			case SHOWS_FILTER_ARCHIVED:
 				menu.findItem(R.id.menu_filter_archived).setChecked(true);
 				break;
+			case SHOWS_FILTER_UPCOMING:
+				menu.findItem(R.id.menu_filter_upcoming).setChecked(true);
+				break;
 		}
 
 		super.onPrepareOptionsMenu(menu);
@@ -170,6 +174,7 @@ public class ShowsListFragment
 			case R.id.menu_filter_starred:
 			case R.id.menu_filter_uncompleted:
 			case R.id.menu_filter_archived:
+			case R.id.menu_filter_upcoming:
 				if (!item.isChecked()) {
 					item.setChecked(true);
 				}
@@ -185,6 +190,8 @@ public class ShowsListFragment
 					editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_UNCOMPLETED);
 				} else if (item.getItemId() == R.id.menu_filter_archived) {
 					editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ARCHIVED);
+				} else if (item.getItemId() == R.id.menu_filter_upcoming) {
+					editor.putInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_UPCOMING);
 				}
 				editor.apply();
 
@@ -354,10 +361,21 @@ public class ShowsListFragment
 						break;
 
 					case SHOWS_FILTER_UNCOMPLETED:
-						final int idColumnIndex = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
-						final int id = showsCursor.getInt(idColumnIndex);
+						final int idColumnIndexUncompleted = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID);
+						final int idUncompleted = showsCursor.getInt(idColumnIndexUncompleted);
 
-						if ((episodesCounter.getNumWatchedEpisodes(id) < episodesCounter.getNumAiredEpisodes(id)) &&
+						if ((episodesCounter.getNumWatchedEpisodes(idUncompleted) < episodesCounter.getNumAiredEpisodes(idUncompleted)) &&
+								showsCursor.getInt(showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED)) == 0)
+						{
+							filteredShows.add(showsCursor.getPosition());
+						}
+						break;
+
+					case SHOWS_FILTER_UPCOMING:
+						final int idColumnIndexUpcoming = showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ID); //change to meaningful variable
+						final int idUpcoming = showsCursor.getInt(idColumnIndexUpcoming);
+
+						if((episodesCounter.getNumUpcomingEpisodes(idUpcoming) > 0) && (episodesCounter.getNumWatchedEpisodes(idUpcoming) == episodesCounter.getNumAiredEpisodes(idUpcoming)) &&
 								showsCursor.getInt(showsCursor.getColumnIndexOrThrow(ShowsTable.COLUMN_ARCHIVED)) == 0)
 						{
 							filteredShows.add(showsCursor.getPosition());

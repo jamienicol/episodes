@@ -22,6 +22,7 @@
   <string name="menu_filter_starred">Starred</string>
   <string name="menu_filter_archived">Archived</string>
   <string name="menu_filter_uncompleted">In progress</string>
+  <string name="menu_filter_upcoming">Upcoming</string>
   <string name="menu_mark_season_not_watched">Mark season as not watched</string>
   <string name="menu_mark_season_watched">Mark season as watched</string>
   <string name="menu_mark_show_not_watched">Mark show as not watched</string>
