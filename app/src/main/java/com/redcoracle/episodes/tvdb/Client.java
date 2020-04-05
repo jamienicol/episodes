@@ -55,7 +55,7 @@ public class Client
 			}
 		} catch (IOException e) {
 			Log.w(TAG, e);
-			return null;
+			return new LinkedList<>();
 		}
 	}
 
