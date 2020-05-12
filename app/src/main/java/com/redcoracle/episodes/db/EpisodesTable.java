@@ -17,69 +17,72 @@
 
 package com.redcoracle.episodes.db;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 import android.util.Log;
 
-public class EpisodesTable
-{
-	private static final String TAG = "EpisodesTable";
+import java.util.Arrays;
 
-	static final String TABLE_NAME = "episodes";
+public class EpisodesTable {
+    private static final String TAG = "EpisodesTable";
 
-	public static final String COLUMN_ID = BaseColumns._ID;
-	public static final String COLUMN_TVDB_ID = "tvdb_id";
-	public static final String COLUMN_SHOW_ID = "show_id";
-	public static final String COLUMN_NAME = "name";
-	public static final String COLUMN_LANGUAGE = "language";
-	public static final String COLUMN_OVERVIEW = "overview";
-	public static final String COLUMN_EPISODE_NUMBER = "episode_number";
-	public static final String COLUMN_SEASON_NUMBER = "season_number";
-	public static final String COLUMN_FIRST_AIRED = "first_aired";
-	public static final String COLUMN_WATCHED = "watched";
+    static final String TABLE_NAME = "episodes";
 
-	public static void onCreate(SQLiteDatabase db) {
-		String create =
-			String.format("CREATE TABLE %s ("  +
-			              "    %s INTEGER PRIMARY KEY," +
-			              "    %s INTEGER UNIQUE NOT NULL," +
-			              "    %s INTEGER NOT NULL," +
-			              "    %s VARCHAR(200) NOT NULL," +
-			              "    %s TEXT," +
-						  "    %s TEXT," +
-			              "    %s INTEGER," +
-			              "    %s INTEGER," +
-			              "    %s DATE," +
-			              "    %s BOOLEAN" +
-			              ");",
-			              TABLE_NAME,
-			              COLUMN_ID,
-			              COLUMN_TVDB_ID,
-			              COLUMN_SHOW_ID,
-			              COLUMN_NAME,
-						  COLUMN_LANGUAGE,
-			              COLUMN_OVERVIEW,
-			              COLUMN_EPISODE_NUMBER,
-			              COLUMN_SEASON_NUMBER,
-			              COLUMN_FIRST_AIRED,
-			              COLUMN_WATCHED);
+    public static final String COLUMN_ID = BaseColumns._ID;
+    public static final String COLUMN_TVDB_ID = "tvdb_id";
+    public static final String COLUMN_SHOW_ID = "show_id";
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_LANGUAGE = "language";
+    public static final String COLUMN_OVERVIEW = "overview";
+    public static final String COLUMN_EPISODE_NUMBER = "episode_number";
+    public static final String COLUMN_SEASON_NUMBER = "season_number";
+    public static final String COLUMN_FIRST_AIRED = "first_aired";
+    public static final String COLUMN_WATCHED = "watched";
 
-		Log.d(TAG, String.format("creating episodes table: %s", create));
+    public static void onCreate(SQLiteDatabase db) {
+        String create = String.format("CREATE TABLE %s ("  +
+                                      "%s INTEGER PRIMARY KEY," +
+                                      "%s INTEGER UNIQUE NOT NULL," +
+                                      "%s INTEGER NOT NULL," +
+                                      "%s VARCHAR(200) NOT NULL," +
+                                      "%s TEXT," +
+                                      "%s TEXT," +
+                                      "%s INTEGER," +
+                                      "%s INTEGER," +
+                                      "%s DATE," +
+                                      "%s BOOLEAN" +
+                                      ");",
+                                      TABLE_NAME,
+                                      COLUMN_ID,
+                                      COLUMN_TVDB_ID,
+                                      COLUMN_SHOW_ID,
+                                      COLUMN_NAME,
+                                      COLUMN_LANGUAGE,
+                                      COLUMN_OVERVIEW,
+                                      COLUMN_EPISODE_NUMBER,
+                                      COLUMN_SEASON_NUMBER,
+                                      COLUMN_FIRST_AIRED,
+                                      COLUMN_WATCHED);
 
-		db.execSQL(create);
-	}
+        Log.d(TAG, String.format("creating episodes table: %s", create));
 
-	static void onUpgrade(SQLiteDatabase db,
-						  int oldVersion,
-						  int newVersion) {
-		switch (oldVersion) {
-			case 5:
-				// Add language column
-				Log.d(TAG, "upgrading episodes table: adding language column");
-				db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s TEXT",
-					TABLE_NAME,
-					COLUMN_LANGUAGE));
-				// fall through
-		}
-	}
+        db.execSQL(create);
+    }
+
+    static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        switch (oldVersion) {
+            case 5:
+            case 6:
+            case 7:
+                // Add language column
+                Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+                String[] columns = cursor.getColumnNames();
+                if (!Arrays.asList(columns).contains(COLUMN_LANGUAGE)) {
+                    Log.d(TAG, "upgrading episodes table: adding language column");
+                    db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s TEXT", TABLE_NAME, COLUMN_LANGUAGE));
+                }
+                cursor.close();
+        }
+    }
 }
