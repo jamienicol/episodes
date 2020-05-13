@@ -33,9 +33,12 @@
 # Okio
 -dontwarn org.codehaus.mojo.animal_sniffer.*
 
-#Glide
+# Glide
 -keep public class * extends com.bumptech.glide.module.AppGlideModule
 -keep class com.bumptech.glide.GeneratedAppGlideModuleImpl
+
+# TVDB
+-keep class com.uwetrottmann.thetvdb.entities.** { *; }
 
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
