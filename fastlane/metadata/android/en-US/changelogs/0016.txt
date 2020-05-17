@@ -1,0 +1,4 @@
+- Add filter for upcoming shows
+- Fix app crash when searching for shows
+- Add language column to episodes table if it does not exist
+- Update dependencies/gradle
