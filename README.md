@@ -1,13 +1,13 @@
 # Episodes
 
-Keep track of which episodes you've watched of your favourite TV shows.
+Keep track of which episodes you've watched of your favourite shows.
 
-TV Show information is supplied by TheTVDB.com.
+Show info supplied by TheTVDB.com.
 
 ## Contributing
 
-Contributions are very welcome. Please file bugs, fork the repository, and send pull requests.
+Contributions are very welcome. Please file bugs, fork the repository, [translate](https://hosted.weblate.org/projects/episodes/) and send pull requests.
 
 ## License
 
-Licensed under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.txt) or later.
+Copylefted libre software licensed [GPLv3](http://www.gnu.org/licenses/gpl-3.0.txt)+.
