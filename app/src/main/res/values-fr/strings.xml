@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_about">À propos</string>
+    <string name="first_aired">Date de parution : %s</string>
+    <string name="about_title">À propos</string>
+</resources>
