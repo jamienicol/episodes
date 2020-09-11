@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="about_description">Keep track of which episodes you\'ve watched of your favourite TV shows</string>
-  <string name="about_license">Episodes is free software licensed under the GNU GPL (version 3 or later). Please file bugs, write code, or do anything else you can to help!</string>
+  <string name="about_description">Keep track of which episodes you\'ve watched of your favourite shows</string>
+  <string name="about_license">Episodes is copylefted libre software licensed GPLv3+. Please file bugs, write code, translate or do anything else you can to help!</string>
   <string name="about_title">About</string>
-  <string name="about_tvdb">TV show information is supplied by TheTVDB.com and is licensed under the Creative Commons Attribution license. Please contribute information or artwork to TheTVDB.com if you can.</string>
+  <string name="about_tvdb">Show info supplied by TheTVDB.com and is licensed CC-BY. Please contribute info or artwork to TheTVDB.com.</string>
   <string name="about_website" translatable="false">http://github.com/red-coracle/episodes</string>
   <string name="app_name" translatable="false">Episodes</string>
   <string name="adding_show">Adding %s to library</string>
-  <string name="back_up_error_message">Error backing up library</string>
-  <string name="back_up_success_message">Back up complete: \'%s\'</string>
-  <string name="error_adding_show">Error adding %s to library</string>
+  <string name="back_up_error_message">Could not back up library</string>
+  <string name="back_up_success_message">Back-up complete: \'%s\'</string>
+  <string name="error_adding_show">Could not add %s to library</string>
   <string name="first_aired">First Aired: %s</string>
   <string name="menu_about">About</string>
   <string name="menu_add_show_search_hint">Search for new show</string>
@@ -21,11 +21,11 @@
   <string name="menu_filter_all">All</string>
   <string name="menu_filter_starred">Starred</string>
   <string name="menu_filter_archived">Archived</string>
-  <string name="menu_filter_uncompleted">In progress</string>
+  <string name="menu_filter_uncompleted">Underway</string>
   <string name="menu_filter_upcoming">Upcoming</string>
-  <string name="menu_mark_season_not_watched">Mark season as not watched</string>
+  <string name="menu_mark_season_not_watched">Mark season as unwatched</string>
   <string name="menu_mark_season_watched">Mark season as watched</string>
-  <string name="menu_mark_show_not_watched">Mark show as not watched</string>
+  <string name="menu_mark_show_not_watched">Mark show as unwatched</string>
   <string name="menu_mark_show_watched">Mark show as watched</string>
   <string name="menu_refresh_all_shows">Refresh all shows</string>
   <string name="menu_refresh_show">Refresh show</string>
@@ -34,32 +34,32 @@
   <string name="menu_star_show">Star show</string>
   <string name="menu_unstar_show">Unstar show</string>
   <string name="menu_archive_show">Archive show</string>
-  <string name="menu_unarchive_show">Unarchive show</string>
+  <string name="menu_unarchive_show">Remove show from archive</string>
   <string name="pref_auto_refresh_period_title">Interval</string>
-  <string name="pref_auto_refresh_enabled_title">Auto-refresh Enabled</string>
-  <string name="pref_auto_refresh_wifi_only_title">Only on unmetered connexions</string>
+  <string name="pref_auto_refresh_enabled_title">Auto-refresh on</string>
+  <string name="pref_auto_refresh_wifi_only_title">Only on unmetered connections</string>
   <string name="pref_language_title">Language</string>
-  <string name="pref_reverse_sort_order">Reverse sort order</string>
-  <string name="pref_reverse_sort_order_summary">Display newest season first</string>
-  <string name="restore_dialog_no_backups_message">No backups found in folder \'%s\'.</string>
+  <string name="pref_reverse_sort_order">Reverse sorting order</string>
+  <string name="pref_reverse_sort_order_summary">Displays the newest season first</string>
+  <string name="restore_dialog_no_backups_message">No backups found in \'%s\' folder.</string>
   <string name="restore_dialog_title">Restore from backup</string>
-  <string name="restore_error_message">Error restoring library</string>
+  <string name="restore_error_message">Could not restore library</string>
   <string name="restore_success_message">Library restored</string>
   <string name="season_episode_prefix">"%1$02dx%2$02d - "</string>
   <string name="season_name">Season %d</string>
   <string name="season_name_specials">Specials</string>
   <string name="settings_title">Settings</string>
   <string name="show_added">%s added to library</string>
-  <string name="show_already_added">%s is already in library</string>
+  <string name="show_already_added">%s already in library</string>
   <string name="show_tab_episodes">Episodes</string>
   <string name="show_tab_next">Next</string>
   <string name="show_tab_notes">Notes</string>
   <string name="show_tab_overview">Overview</string>
   <string name="upcoming_count">(+ %d upcoming)</string>
   <string name="watched_check_box">Watched</string>
-  <string name="watched_count">Watched %1$d of %2$d episodes</string>
-  <string name="channel_name">Show Sync</string>
+  <string name="watched_count">%1$d of %2$d episodes seen</string>
+  <string name="channel_name">Show sync</string>
   <string name="channel_description">Notification when syncing shows</string>
-  <string name="pref_auto_refresh_category">Series auto-refresh</string>
+  <string name="pref_auto_refresh_category">Auto-refresh series</string>
   <string name="pref_interface_category">Interface</string>
 </resources>
