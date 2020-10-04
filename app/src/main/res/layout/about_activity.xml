@@ -37,4 +37,11 @@
       android:text="@string/about_tvdb"
       android:textAppearance="?android:attr/textAppearanceSmall"
       android:padding="4dp" />
+  <TextView
+      android:id="@+id/version_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/version"
+      android:textAppearance="?android:attr/textAppearanceSmall"
+      android:padding="4dp" />
 </LinearLayout>

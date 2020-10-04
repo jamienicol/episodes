@@ -19,6 +19,7 @@ package com.redcoracle.episodes;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,6 +32,13 @@ public class AboutActivity
 
 		setContentView(R.layout.about_activity);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+		TextView versionInfoView = findViewById(R.id.version_view);
+		versionInfoView.setText(
+				getBaseContext().getString(
+						R.string.version,
+						BuildConfig.VERSION_NAME,
+						BuildConfig.GIT_COMMIT_ID));
 	}
 
 	@Override

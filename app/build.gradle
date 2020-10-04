@@ -1,5 +1,14 @@
 apply plugin: 'com.android.application'
 
+def getCommitId = { ->
+    def gitOutput = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = gitOutput
+    }
+    return gitOutput.toString().trim()
+}
+
 android {
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
@@ -9,6 +18,7 @@ android {
         versionCode 16
         versionName "0.13.3"
         buildConfigField "String", "TVDB_KEY", "\"E457AE7B767BC9F4\""
+        buildConfigField "String", "GIT_COMMIT_ID", "\"${getCommitId()}\""
     }
     flavorDimensions "flavor"
     productFlavors {
