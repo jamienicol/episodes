@@ -57,4 +57,7 @@
     <string name="about_tvdb">Informationen zu den Serien werden von TheTVDB.com bereitgestellt und sind unter CC-BY lizenziert. Bitte fülle auch TheTVDB.com mit Informationen und Bildern.</string>
     <string name="about_title">Über</string>
     <string name="about_license">Episodes ist freie Software unter GPLv3+. Hilf gern mit, indem Du Fehler meldest, Code oder Übersetzungen schreibst!</string>
+    <string name="channel_name">Synchronisierung anzeigen</string>
+    <string name="channel_description">Benachrichtigung beim Synchronisieren von Sendungen</string>
+    <string name="show_tab_notes">Anmerkungen</string>
 </resources>
