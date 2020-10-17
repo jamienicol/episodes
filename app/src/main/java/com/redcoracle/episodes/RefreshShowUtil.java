@@ -19,6 +19,7 @@ package com.redcoracle.episodes;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
@@ -42,11 +43,10 @@ public class RefreshShowUtil {
 		Log.i(TAG, String.format("Refreshing show %d", showId));
 
 		final int showTvdbId = getShowTvdbId(showId, contentResolver);
-		String showLanguage = getShowLanguage(showId, contentResolver);
-		if (showLanguage == null) {
-			// TODO: Fetch from preferences instead
-			showLanguage = "en";
-		}
+
+		SharedPreferences preferences = Preferences.getSharedPreferences();
+		final String showLanguage = preferences.getString("pref_language", "en");
+
 		// fetch full show + episode information from tvdb
 		final Show show = tvdbClient.getShow(showTvdbId, showLanguage);
 
