@@ -60,4 +60,5 @@
     <string name="back_up_success_message">Sigurnosna kopija gotova: „%s”</string>
     <string name="restore_dialog_no_backups_message">U mapi „%s” nema sigurnosnih kopija.</string>
     <string name="season_episode_prefix">"%1$02d × %2$02d - "</string>
+    <string name="version">Verzija %s (Izmjena %s)</string>
 </resources>

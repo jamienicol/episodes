@@ -60,4 +60,5 @@
     <string name="about_title">О приложении</string>
     <string name="about_license">Episodes - это бесплатное программное обеспечение с авторским левом под лицензией GPLv3 +. Пожалуйста, сообщайте об ошибках, пишите код, переводите или делайте что-нибудь ещё, чтобы помочь!</string>
     <string name="about_description">Следите за тем, какие серии любимых шоу вы смотрели</string>
+    <string name="version">Версия %s (Изменение %s)</string>
 </resources>

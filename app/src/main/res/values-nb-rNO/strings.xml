@@ -60,4 +60,5 @@
     <string name="about_title">Om</string>
     <string name="about_license">Episodes er gemenlig fri programvare lisensiert GPLv3+. Send inn feil, skriv kode, oversett og gjør hva du kan for å hjelpe til.</string>
     <string name="about_description">Hold orden på hvilke episoder du har sett av dine favoritt-programmer</string>
+    <string name="version">Versjon %s (innsendelse %s)</string>
 </resources>
