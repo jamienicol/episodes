@@ -60,4 +60,5 @@
     <string name="menu_filter_shows_list">Filtrer les séries</string>
     <string name="menu_delete_show">Supprimer la série</string>
     <string name="menu_back_up">Restaurer la bibliothèque</string>
+    <string name="version">%s verzió (Commit %s)</string>
 </resources>
