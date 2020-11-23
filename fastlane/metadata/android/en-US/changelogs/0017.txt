@@ -1,0 +1,4 @@
+- Added translations for Croatian, French, German, Norwegian Bokmål, Russian, and Spanish. Many thanks to the contributors on Weblate!
+- Add version and commit info to the About screen
+- Use the configured language when downloading show data
+- Update dependencies/gradle
