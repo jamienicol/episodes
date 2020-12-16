@@ -46,7 +46,7 @@
     <string name="menu_mark_show_not_watched">Marcar serie como no vista</string>
     <string name="menu_mark_season_watched">Marcar temporada como vista</string>
     <string name="menu_mark_season_not_watched">Marcar temporada como no vista</string>
-    <string name="menu_filter_archived">Archivada</string>
+    <string name="menu_filter_archived">Archivadas</string>
     <string name="menu_filter_starred">Destacadas</string>
     <string name="menu_filter_all">Todas</string>
     <string name="menu_filter_shows_list">Filtrar series</string>
