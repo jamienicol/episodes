@@ -18,7 +18,7 @@
     <string name="restore_success_message">Bibliothek wiederhergestellt</string>
     <string name="restore_error_message">Bibliothek konnte nicht wiederhergestellt werden</string>
     <string name="restore_dialog_title">Backup wiederherstellen</string>
-    <string name="restore_dialog_no_backups_message">Keine Backups im Ordner \'%s\' gefunden</string>
+    <string name="restore_dialog_no_backups_message">Keine Datensicherungen im Ordner „%s“ gefunden</string>
     <string name="pref_reverse_sort_order_summary">Neueste Staffel zuerst</string>
     <string name="pref_reverse_sort_order">Reihenfolge umkehren</string>
     <string name="pref_language_title">Sprache</string>
@@ -51,7 +51,7 @@
     <string name="menu_about">Über</string>
     <string name="first_aired">Erstausstrahlung: %s</string>
     <string name="error_adding_show">%s konnte nicht zur Bibliothek hinzugefügt werden</string>
-    <string name="back_up_success_message">Backup fertiggestellt: \'%s\'</string>
+    <string name="back_up_success_message">Datensicherung fertiggestellt: „%s“</string>
     <string name="back_up_error_message">Backup der Bibliothek konnte nicht erstellt werden</string>
     <string name="adding_show">%s wird zur Bibliothek hinzugefügt</string>
     <string name="about_tvdb">Informationen zu den Serien werden von TheTVDB.com bereitgestellt und sind unter CC-BY lizenziert. Bitte fülle auch TheTVDB.com mit Informationen und Bildern.</string>

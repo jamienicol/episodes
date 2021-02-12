@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="menu_about">À propos</string>
-    <string name="first_aired">Date de parution : %s</string>
+    <string name="first_aired">Première diffusion : %s</string>
     <string name="about_title">À propos</string>
     <string name="adding_show">Ajout de %s à la bibliothèque</string>
     <string name="about_tvdb">Les informations des séries sont fournies par TheTVDB.com et sont sous licence CC-BY. Vous pouvez contribuer aux infos et couvertures sur TheTVDB.com.</string>
@@ -11,8 +11,8 @@
     <string name="menu_add_new_show">Ajouter une nouvelle série à la bibliothèque</string>
     <string name="menu_add_show_search_hint">Rechercher une nouvelle série</string>
     <string name="error_adding_show">Impossible d\'ajouter %s à la bibliothèque</string>
-    <string name="back_up_success_message">Restauration terminée : « %s »</string>
-    <string name="back_up_error_message">Impossible de restaurer la bibliothèque</string>
+    <string name="back_up_success_message">Sauvegarde terminée : « %s »</string>
+    <string name="back_up_error_message">Impossible de sauvegarder la bibliothèque</string>
     <string name="pref_interface_category">Interface</string>
     <string name="pref_auto_refresh_category">Actualiser automatiquement les séries</string>
     <string name="channel_description">Notification lors de la synchronisation des séries</string>
