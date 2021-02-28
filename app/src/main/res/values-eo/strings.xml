@@ -1,2 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="pref_interface_category">Interfaco</string>
+    <string name="watched_count">%1$d de %2$d epizodoj spektitaj</string>
+    <string name="watched_check_box">Spektita</string>
+    <string name="show_tab_overview">Superrigardo</string>
+    <string name="show_tab_notes">Notoj</string>
+    <string name="show_tab_episodes">Epizodoj</string>
+    <string name="show_already_added">%s jam en biblioteko</string>
+    <string name="show_added">%s aldonita al biblioteko</string>
+    <string name="settings_title">Agordoj</string>
+    <string name="season_name">%d sezono</string>
+    <string name="restore_success_message">Biblioteko restaŭrita</string>
+    <string name="restore_error_message">Ne povis restaŭri bibliotekon</string>
+    <string name="restore_dialog_title">Restaŭri el savkopio</string>
+    <string name="restore_dialog_no_backups_message">Neniu savkopio trovita en \'%s\' dosierujo.</string>
+    <string name="pref_language_title">Lingvo</string>
+    <string name="menu_unarchive_show">Forigi serion el arkivo</string>
+    <string name="menu_archive_show">Enarkivigi serion</string>
+    <string name="menu_unstar_show">Malmarki kiel plej ŝatata</string>
+    <string name="menu_star_show">Marki kiel plej ŝatata</string>
+    <string name="menu_settings">Agordoj</string>
+    <string name="menu_mark_show_watched">Marki serion kiel spektita</string>
+    <string name="menu_mark_show_not_watched">Marki serion kiel nespektita</string>
+    <string name="menu_mark_season_watched">Marki sezonon kiel spektita</string>
+    <string name="menu_mark_season_not_watched">Marki sezonon kiel nespektita</string>
+    <string name="menu_filter_archived">Arkivita</string>
+    <string name="menu_filter_starred">Plej ŝatataj</string>
+    <string name="menu_filter_all">Ĉiuj</string>
+    <string name="menu_delete_show">Forigi serion</string>
+    <string name="menu_back_up">Savkopii bibliotekon</string>
+    <string name="menu_add_show">Aldoni serion al biblioteko</string>
+    <string name="menu_add_new_show">Aldoni novan serion al biblioteko</string>
+    <string name="menu_add_show_search_hint">Serĉi por novan serion</string>
+    <string name="menu_about">Pri</string>
+    <string name="error_adding_show">Ne povis aldoni %s al biblioteko</string>
+    <string name="back_up_success_message">Savkopio kompleta: \'%s\'</string>
+    <string name="back_up_error_message">Ne povis savkopii bibliotekon</string>
+    <string name="adding_show">Aldonas %s al biblioteko</string>
+    <string name="about_title">Pri</string>
+</resources>
