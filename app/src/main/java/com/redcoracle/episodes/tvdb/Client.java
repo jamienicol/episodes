@@ -26,7 +26,6 @@ import com.uwetrottmann.thetvdb.entities.SeriesResponse;
 import com.uwetrottmann.thetvdb.entities.SeriesResultsResponse;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,9 +43,8 @@ public class Client
 	public List<Show> searchShows(String query, String language) {
 
 		try {
-			final String escapedQuery = URLEncoder.encode(query, "UTF-8");
 			final retrofit2.Response<SeriesResultsResponse> response =
-					tvdb.search().series(escapedQuery, null, null, null, language).execute();
+					tvdb.search().series(query, null, null, null, language).execute();
 			if (response.isSuccessful()) {
 				final SearchShowsParser parser = new SearchShowsParser();
 				return parser.parse(response, language);
