@@ -5,7 +5,7 @@
     <string name="about_title">À propos</string>
     <string name="adding_show">Ajout de %s à la bibliothèque</string>
     <string name="about_tvdb">Les informations des séries sont fournies par TheTVDB.com et sont sous licence CC-BY. Vous pouvez contribuer aux infos et couvertures sur TheTVDB.com.</string>
-    <string name="about_license">Episodes est un logiciel libre sous licence GPLv3+. Vous pouvez signaler des bugs, écrire du code, traduire ou faire quoi que ce soit d\'autre pour contribuer !</string>
+    <string name="about_license">Episodes est un logiciel libre sous licence GPLv3+. Vous pouvez signaler des erreurs, écrire du code, traduire ou faire quoi que ce soit d\'autre pour contribuer !</string>
     <string name="about_description">Gardez une trace des épisodes que vous avez regardés dans vos séries préférées</string>
     <string name="menu_add_show">Ajouter la série à la bibliothèque</string>
     <string name="menu_add_new_show">Ajouter une nouvelle série à la bibliothèque</string>

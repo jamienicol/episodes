@@ -17,12 +17,12 @@
     <string name="season_episode_prefix">"%1$02dx%2$02d - "</string>
     <string name="restore_success_message">Bibliothek wiederhergestellt</string>
     <string name="restore_error_message">Bibliothek konnte nicht wiederhergestellt werden</string>
-    <string name="restore_dialog_title">Backup wiederherstellen</string>
+    <string name="restore_dialog_title">Aus einer Sicherung wiederherstellen</string>
     <string name="restore_dialog_no_backups_message">Keine Datensicherungen im Ordner „%s“ gefunden</string>
     <string name="pref_reverse_sort_order_summary">Neueste Staffel zuerst</string>
     <string name="pref_reverse_sort_order">Reihenfolge umkehren</string>
     <string name="pref_language_title">Sprache</string>
-    <string name="pref_auto_refresh_wifi_only_title">Nur im WLAN</string>
+    <string name="pref_auto_refresh_wifi_only_title">Nur bei nicht gemessenen Verbindungen</string>
     <string name="pref_auto_refresh_enabled_title">Automatisch aktualisieren</string>
     <string name="pref_auto_refresh_period_title">Intervall</string>
     <string name="menu_unarchive_show">Serie aus Archiv entfernen</string>
@@ -30,7 +30,7 @@
     <string name="menu_unstar_show">Serie aus Favoriten entfernen</string>
     <string name="menu_star_show">Serie favorisieren</string>
     <string name="menu_settings">Einstellungen</string>
-    <string name="menu_restore">Backup wiederherstellen</string>
+    <string name="menu_restore">Datensicherung wiederherstellen</string>
     <string name="menu_refresh_show">Serie aktualisieren</string>
     <string name="menu_refresh_all_shows">Serien aktualisieren</string>
     <string name="menu_mark_show_watched">Folge als gesehen markieren</string>
@@ -44,7 +44,7 @@
     <string name="menu_filter_all">Alle</string>
     <string name="menu_filter_shows_list">Serien filtern</string>
     <string name="menu_delete_show">Serie löschen</string>
-    <string name="menu_back_up">Backup erstellen</string>
+    <string name="menu_back_up">Datensicherung erstellen</string>
     <string name="menu_add_show">Serie hinzufügen</string>
     <string name="menu_add_new_show">Serie hinzufügen</string>
     <string name="menu_add_show_search_hint">Neue Serie suchen</string>
@@ -52,7 +52,7 @@
     <string name="first_aired">Erstausstrahlung: %s</string>
     <string name="error_adding_show">%s konnte nicht zur Bibliothek hinzugefügt werden</string>
     <string name="back_up_success_message">Datensicherung fertiggestellt: „%s“</string>
-    <string name="back_up_error_message">Backup der Bibliothek konnte nicht erstellt werden</string>
+    <string name="back_up_error_message">Datensicherung der Bibliothek konnte nicht erstellt werden</string>
     <string name="adding_show">%s wird zur Bibliothek hinzugefügt</string>
     <string name="about_tvdb">Informationen zu den Serien werden von TheTVDB.com bereitgestellt und sind unter CC-BY lizenziert. Bitte fülle auch TheTVDB.com mit Informationen und Bildern.</string>
     <string name="about_title">Über</string>
