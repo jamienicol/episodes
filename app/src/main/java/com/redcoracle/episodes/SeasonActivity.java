@@ -39,6 +39,9 @@ import com.redcoracle.episodes.db.EpisodesTable;
 import com.redcoracle.episodes.db.ShowsProvider;
 import com.redcoracle.episodes.db.ShowsTable;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 public class SeasonActivity
 	extends AppCompatActivity
 	implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -67,7 +70,7 @@ public class SeasonActivity
 
 		final Bundle loaderArgs = new Bundle();
 		loaderArgs.putInt("showId", showId);
-		getSupportLoaderManager().initLoader(0, loaderArgs, this);
+		LoaderManager.getInstance(this).initLoader(0, loaderArgs, this);
 
 		final ActionBar actionBar = getSupportActionBar();
 		if (seasonNumber == 0) {
@@ -132,28 +135,24 @@ public class SeasonActivity
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
+		int item_id = item.getItemId();
+		if (item_id == R.id.home) {
 			finish();
 			return true;
-
-		case R.id.menu_mark_season_watched:
+		} else if (item_id == R.id.menu_mark_season_watched) {
 			markSeasonWatched(true);
 			return true;
-
-		case R.id.menu_mark_season_not_watched:
+		} else if (item_id == R.id.menu_mark_season_not_watched) {
 			markSeasonWatched(false);
 			return true;
-
-		default:
+		} else {
 			return super.onOptionsItemSelected(item);
 		}
 	}
 
 	@Override
 	public void onEpisodeSelected(int episodeId) {
-		final Intent intent = new Intent(this,
-		                                 EpisodeActivity.class);
+		final Intent intent = new Intent(this, EpisodeActivity.class);
 		intent.putExtra("showId", showId);
 		intent.putExtra("seasonNumber", seasonNumber);
 		intent.putExtra("initialEpisodeId", episodeId);
@@ -162,24 +161,38 @@ public class SeasonActivity
 
 	private void markSeasonWatched(boolean watched) {
 		final ContentResolver contentResolver = getContentResolver();
-		final AsyncQueryHandler handler =
-			new AsyncQueryHandler(contentResolver) {};
+		final AsyncQueryHandler handler = new AsyncQueryHandler(contentResolver) {};
 		final ContentValues epValues = new ContentValues();
+		final Date now = new Date();
 		epValues.put(EpisodesTable.COLUMN_WATCHED, watched);
-		final String selection =
-			String.format("%s=? AND %s=?",
-			              EpisodesTable.COLUMN_SHOW_ID,
-			              EpisodesTable.COLUMN_SEASON_NUMBER);
-		final String[] selectionArgs = {
-			String.valueOf(showId),
-			String.valueOf(seasonNumber)
+		String selection = String.format(
+			"%s=? AND %s=?",
+			EpisodesTable.COLUMN_SHOW_ID,
+			EpisodesTable.COLUMN_SEASON_NUMBER
+		);
+		ArrayList<String> selectionArgs = new ArrayList<String>(){
+			{
+				add(String.valueOf(showId));
+				add(String.valueOf(seasonNumber));
+			}
 		};
+
+		if (watched) {
+			// Only mark episodes that have aired.
+			selection = String.format(
+				"%s AND %s <= ? AND %s IS NOT NULL",
+				selection,
+				EpisodesTable.COLUMN_FIRST_AIRED,
+				EpisodesTable.COLUMN_FIRST_AIRED
+			);
+			selectionArgs.add(String.valueOf(now.getTime() / 1000));
+		}
 
 		handler.startUpdate(0,
 		                    null,
 		                    ShowsProvider.CONTENT_URI_EPISODES,
 		                    epValues,
 		                    selection,
-		                    selectionArgs);
+		                    selectionArgs.toArray(new String[0]));
 	}
 }
