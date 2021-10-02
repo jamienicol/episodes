@@ -1,0 +1,5 @@
+- Display a message when a search returns no results
+- Show a loading spinner when searching for new shows
+- When marking a season as watched, only mark aired episodes
+- Updated dependencies
+- Updated translations
