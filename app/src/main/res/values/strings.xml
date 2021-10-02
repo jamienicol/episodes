@@ -63,4 +63,5 @@
   <string name="pref_auto_refresh_category">Auto-refresh series</string>
   <string name="pref_interface_category">Interface</string>
   <string name="version">Version %s (Commit %s)</string>
+  <string name="no_search_results_found">No search results found</string>
 </resources>
