@@ -136,7 +136,7 @@ public class SeasonActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int item_id = item.getItemId();
-		if (item_id == R.id.home) {
+		if (item_id == android.R.id.home) {
 			finish();
 			return true;
 		} else if (item_id == R.id.menu_mark_season_watched) {
