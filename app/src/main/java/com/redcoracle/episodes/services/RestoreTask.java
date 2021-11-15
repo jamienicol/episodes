@@ -3,9 +3,13 @@ package com.redcoracle.episodes.services;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.redcoracle.episodes.EpisodesApplication;
+import com.redcoracle.episodes.R;
 import com.redcoracle.episodes.db.DatabaseOpenHelper;
 import com.redcoracle.episodes.db.ShowsProvider;
 
@@ -38,6 +42,11 @@ public class RestoreTask implements Callable<Void> {
             FileChannel dest = new FileOutputStream(databaseFile).getChannel();
             dest.transferFrom(src, 0, src.size());
             Glide.get(this.context).clearDiskCache();
+            ContextCompat.getMainExecutor(this.context).execute(() -> Toast.makeText(
+                this.context,
+                this.context.getString(R.string.restore_success_message),
+                Toast.LENGTH_LONG
+            ).show());
             Log.i(TAG, "Library restored successfully.");
         } catch (IOException e) {
             Log.e(TAG, String.format("Error restoring library: %s", e.toString()));
