@@ -1,0 +1,3 @@
+- Update badges in README
+- New launcher icon
+- Use storage framework on API19+
