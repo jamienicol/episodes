@@ -1,1 +1,3 @@
-Keep track of which episodes you’ve watched of your favourite TV shows. The data is sourced from TheTVDB.com, the content of which is licensed under CC-BY-NC.
+Keep track of which episodes you’ve watched of your favourite TV shows. The data is sourced from TheTVDB.com
+
+Anti-Feature: NonFreeNet - uses a non-free network service which is impossible, or not easy to replace without rebuilding the app
