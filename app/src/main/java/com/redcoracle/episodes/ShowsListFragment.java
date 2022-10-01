@@ -17,14 +17,17 @@
 
 package com.redcoracle.episodes;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -41,7 +44,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.ListFragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -77,6 +83,9 @@ public class ShowsListFragment
 	private Cursor showsData;
 	private Cursor episodesData;
 
+	private ActivityResultLauncher<String> reqNotificationPermission;
+
+
 	public interface OnShowSelectedListener {
 		public void onShowSelected(int showId);
 	}
@@ -99,8 +108,11 @@ public class ShowsListFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setHasOptionsMenu(true);
+		reqNotificationPermission = registerForActivityResult(
+			new ActivityResultContracts.RequestPermission(),
+			granted -> {}
+		);
 	}
 
 	public View onCreateView(LayoutInflater inflater,
@@ -131,16 +143,12 @@ public class ShowsListFragment
 	public void onPrepareOptionsMenu(Menu menu) {
 
 		// hide refresh all option if no shows exist
-		final boolean showsExist =
-				(showsData != null && showsData.moveToFirst());
-
+		final boolean showsExist = (showsData != null && showsData.moveToFirst());
 		menu.findItem(R.id.menu_refresh_all_shows).setVisible(showsExist);
 
 		/* set the currently selected filter's menu item as checked */
-		final SharedPreferences prefs =
-				PreferenceManager.getDefaultSharedPreferences(getActivity());
-		final int filter =
-				prefs.getInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ALL);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		final int filter = prefs.getInt(KEY_PREF_SHOWS_FILTER, SHOWS_FILTER_ALL);
 
 		switch (filter) {
 			case SHOWS_FILTER_ALL:
@@ -271,7 +279,23 @@ public class ShowsListFragment
 		onShowSelectedListener.onShowSelected((int)id);
 	}
 
+	private void checkNotificationPermission() {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+			return;
+		}
+
+		boolean granted = ContextCompat.checkSelfPermission(
+			this.requireContext(),
+			Manifest.permission.POST_NOTIFICATIONS
+		) == PackageManager.PERMISSION_GRANTED;
+
+		if (!granted) {
+			reqNotificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS);
+		}
+	}
+
 	private void refreshAllShows() {
+		checkNotificationPermission();
 		new AsyncTask().executeAsync(new RefreshAllShowsTask());
 	}
 
