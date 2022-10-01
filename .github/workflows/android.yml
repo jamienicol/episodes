@@ -6,7 +6,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup JDK
         uses: actions/setup-java@v2
         with:
@@ -18,7 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Setup JDK
       uses: actions/setup-java@v2
       with:
@@ -29,7 +29,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: Upload APK
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
         name: app-debug
         path: app/build/outputs/apk/standard/debug/app-standard-debug.apk
