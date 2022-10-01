@@ -15,8 +15,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 22
-        versionName "0.15.0"
+        versionCode 23
+        versionName "0.15.1"
         buildConfigField "String", "TVDB_KEY", "\"E457AE7B767BC9F4\""
         buildConfigField "String", "GIT_COMMIT_ID", "\"${getCommitId()}\""
     }

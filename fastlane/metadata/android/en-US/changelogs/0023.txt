@@ -1,0 +1,5 @@
+- Final release with TVDB as metadata provider
+- Target version 33 (Android 13)
+- Raise minimum version to 21 (Android L)
+- Request notification permission on Android 13+
+- Update gradle version
