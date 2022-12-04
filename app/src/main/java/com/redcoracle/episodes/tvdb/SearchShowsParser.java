@@ -19,47 +19,29 @@ package com.redcoracle.episodes.tvdb;
 
 import android.util.Log;
 
-import com.uwetrottmann.thetvdb.entities.Series;
-import com.uwetrottmann.thetvdb.entities.SeriesResultsResponse;
+import com.uwetrottmann.tmdb2.entities.BaseTvShow;
+import com.uwetrottmann.tmdb2.entities.TvShowResultsPage;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-
-import retrofit2.Response;
 
 class SearchShowsParser {
     private static final String TAG = SearchShowsParser.class.getName();
 
     private List<Show> parsed;
 
-    List<Show> parse(Response<SeriesResultsResponse> response, String language) {
+    List<Show> parse(TvShowResultsPage results, String language) {
         try {
-            List<Series> series = response.body().data;
+            List<BaseTvShow> series = results.results;
             parsed = new LinkedList<>();
-            for(Series s : series) {
+            for(BaseTvShow s : series) {
                 Show show = new Show();
                 show.setId(s.id);
-                show.setName(s.seriesName);
+                show.setTmdbId(s.id);
+                show.setName(s.name);
                 show.setLanguage(language);
                 show.setOverview(s.overview);
-                try {
-                    if (s.firstAired == null) {
-                        show.setFirstAired(null);
-                    } else {
-                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-                        Date firstAired = df.parse(s.firstAired);
-                        show.setFirstAired(firstAired);
-                    }
-
-                } catch (ParseException e) {
-                    Log.w(TAG, "Error parsing first aired date: " + e.toString());
-                    show.setFirstAired(null);
-                }
+                show.setFirstAired(s.first_air_date);
                 parsed.add(show);
             }
         } catch (Exception e) {
@@ -67,4 +49,5 @@ class SearchShowsParser {
         }
         return parsed;
     }
+
 }

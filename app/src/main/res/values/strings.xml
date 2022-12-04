@@ -3,8 +3,8 @@
   <string name="about_description">Keep track of which episodes you\'ve watched of your favourite shows</string>
   <string name="about_license">Episodes is copylefted libre software licensed GPLv3+. Please file bugs, write code, translate or do anything else you can to help!</string>
   <string name="about_title">About</string>
-  <string name="about_tvdb">Show info supplied by TheTVDB.com and is licensed CC-BY. Please contribute info or artwork to TheTVDB.com.</string>
-  <string name="about_website" translatable="false">http://github.com/red-coracle/episodes</string>
+  <string name="about_tmdb">This product uses the TMDB API but is not endorsed or certified by TMDB.</string>
+  <string name="about_website" translatable="false">https://github.com/red-coracle/episodes</string>
   <string name="app_name" translatable="false">Episodes</string>
   <string name="adding_show">Adding %s to library</string>
   <string name="back_up_error_message">Could not back up library</string>
@@ -64,4 +64,8 @@
   <string name="pref_interface_category">Interface</string>
   <string name="version">Version %s (Commit %s)</string>
   <string name="no_search_results_found">No search results found</string>
+  <string name="provider_change_warning_detail">Metadata provider has switched to TMDB. We recommend backing up your database before refreshing all metadata. Press Continue to proceed with refreshing all shows or Cancel to return.</string>
+  <string name="provider_change_warning_title">Metadata Provider Change</string>
+  <string name="provider_change_warning_confirm">Continue</string>
+  <string name="provider_change_warning_cancel">Cancel</string>
 </resources>

@@ -23,52 +23,45 @@ import android.app.NotificationManager;
 import android.os.Build;
 import android.util.Log;
 
-import com.uwetrottmann.thetvdb.TheTvdb;
+import com.uwetrottmann.tmdb2.Tmdb;
 
 public class EpisodesApplication extends Application {
-	private static final String TAG = EpisodesApplication.class.getName();
-	private static EpisodesApplication instance;
-    private TheTvdb tvdbClient;
+    private static final String TAG = EpisodesApplication.class.getName();
+    private static EpisodesApplication instance;
+    private Tmdb tmdbClient;
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-		instance = this;
-
-		// ensure the default settings are initialised at first launch,
-		// rather than waiting for the settings screen to be opened.
-		// do this before anything that needs these settings is instantiated.
-		// TODO: Is this needed?
-		//PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-
+        instance = this;
 
         try {
-			tvdbClient = new TheTvdb(BuildConfig.TVDB_KEY);
-		} catch (Exception e) {
-			Log.d(TAG, "Error initialising TvdbClient", e);
-		}
+            this.tmdbClient = new Tmdb(BuildConfig.TMDB_KEY);
+        } catch (Exception e) {
+            Log.d(TAG, "Error initialising TmdbClient", e);
+        }
 
-		createNotificationChannel();
-	}
+        createNotificationChannel();
+    }
 
-	public static EpisodesApplication getInstance() {
-		return instance;
-	}
+    public static EpisodesApplication getInstance() {
+        return instance;
+    }
 
-	public TheTvdb getTvdbClient() {
-		return tvdbClient;
-	}
+    public Tmdb getTmdbClient() {
+        return this.tmdbClient;
+    }
 
-	private void createNotificationChannel(){
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			CharSequence name = getString(R.string.channel_name);
-			String description = getString(R.string.channel_description);
-			int importance = NotificationManager.IMPORTANCE_LOW;
-			NotificationChannel channel = new NotificationChannel("episodes_channel_id", name, importance);
-			channel.setDescription(description);
-			NotificationManager notificationManager = getSystemService(NotificationManager.class);
-			notificationManager.createNotificationChannel(channel);
-		}
-	}
+    private void createNotificationChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel("episodes_channel_id", name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 }

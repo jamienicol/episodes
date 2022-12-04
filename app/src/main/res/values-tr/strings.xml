@@ -57,7 +57,6 @@
     <string name="back_up_success_message">Yedekleme tamamlandı: \'%s\'</string>
     <string name="back_up_error_message">Kitaplık yedeklenemedi</string>
     <string name="adding_show">%s kitaplığa ekleniyor</string>
-    <string name="about_tvdb">CC-BY lisanslı TheTVDB.com tarafından sağlanan bilgileri gösterir. Lütfen TheTVDB.com\'a bilgi veya sanat eseri ile katkıda bulunun.</string>
     <string name="about_title">Hakkında</string>
     <string name="about_license">Episodes, GPLv3+ lisanslı copyleft özgür yazılımdır. Lütfen hataları bildirin, kod yazın, tercüme edin veya yardım etmek için elinizden gelen her şeyi yapın!</string>
     <string name="about_description">En sevdiğiniz dizilerin hangi bölümlerini izlediğinizi takip edin</string>

@@ -1,3 +1,4 @@
-Keep track of which episodes you’ve watched of your favourite TV shows. The data is sourced from TheTVDB.com
+Keep track of which episodes you’ve watched of your favourite TV shows.
+This product uses the TMDB API but is not endorsed or certified by TMDB.
 
 Anti-Feature: NonFreeNet - uses a non-free network service which is impossible, or not easy to replace without rebuilding the app

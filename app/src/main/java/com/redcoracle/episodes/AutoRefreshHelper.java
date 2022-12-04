@@ -44,6 +44,7 @@ public class AutoRefreshHelper implements SharedPreferences.OnSharedPreferenceCh
 	private static final String KEY_PREF_AUTO_REFRESH_PERIOD = "pref_auto_refresh_period";
 	private static final String KEY_PREF_AUTO_REFRESH_WIFI_ONLY = "pref_auto_refresh_wifi_only";
 	private static final String KEY_LAST_AUTO_REFRESH_TIME = "last_auto_refresh_time";
+	private static final String KEY_PREF_CONFIRMED_BACKUP = "pref_confirmed_backup";
 
 	private static AutoRefreshHelper instance;
 
@@ -130,6 +131,10 @@ public class AutoRefreshHelper implements SharedPreferences.OnSharedPreferenceCh
 		return okay;
 	}
 
+	private boolean checkBackup() {
+		return preferences.getBoolean(KEY_PREF_CONFIRMED_BACKUP, false);
+	}
+
 	public void rescheduleAlarm() {
 		NetworkStateReceiver.disable(context);
 
@@ -169,7 +174,7 @@ public class AutoRefreshHelper implements SharedPreferences.OnSharedPreferenceCh
 		protected void onHandleIntent(Intent intent) {
 			final AutoRefreshHelper helper = AutoRefreshHelper.getInstance(getApplicationContext());
 
-			if (helper.checkNetwork()) {
+			if (helper.checkNetwork() && helper.checkBackup()) {
 				Log.i(TAG, "Refreshing all shows.");
 				new AsyncTask().executeAsync(new RefreshAllShowsTask());
 				helper.setPrevAutoRefreshTime(System.currentTimeMillis());

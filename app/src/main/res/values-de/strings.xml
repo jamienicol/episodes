@@ -54,7 +54,6 @@
     <string name="back_up_success_message">Datensicherung fertiggestellt: „%s“</string>
     <string name="back_up_error_message">Datensicherung der Bibliothek konnte nicht erstellt werden</string>
     <string name="adding_show">%s wird zur Bibliothek hinzugefügt</string>
-    <string name="about_tvdb">Informationen zu den Serien werden von TheTVDB.com bereitgestellt und sind unter CC-BY lizenziert. Bitte fülle auch TheTVDB.com mit Informationen und Bildern.</string>
     <string name="about_title">Über</string>
     <string name="about_license">Episodes ist freie Software unter GPLv3+. Hilf gern mit, indem Du Fehler meldest, Code oder Übersetzungen schreibst!</string>
     <string name="channel_name">Synchronisierung anzeigen</string>

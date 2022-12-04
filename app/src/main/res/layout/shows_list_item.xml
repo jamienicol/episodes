@@ -11,17 +11,28 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentTop="true" >
-    <TextView
-        android:id="@+id/show_name_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="2dp"
-        style="@style/ListItemHeading" />
+
     <ImageView
         android:id="@+id/banner_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true" />
+
+    <TextView
+        android:id="@+id/show_name_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="2dp"
+        android:paddingLeft="4dp"
+        android:paddingStart="2dp"
+        android:textSize="22sp"
+        android:textColor="#FBFBFB"
+        android:shadowColor="#7F000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        android:background="@drawable/shows_list_gradient"
+        style="@style/ListItemHeading" />
   </FrameLayout>
   <ToggleButton
       android:id="@+id/show_starred_toggle"

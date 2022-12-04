@@ -17,8 +17,15 @@
   public *;
 }
 
-# TVDB
--keep class com.uwetrottmann.thetvdb.entities.** { *; }
+# TMDB
+-keep class com.uwetrottmann.tmdb2.entities.** { *; }
+-keep class com.uwetrottmann.tmdb2.enumerations.** { *; }
+
+# OkHttp platform used only on JVM and when Conscrypt and other security providers are available.
+-dontwarn okhttp3.internal.platform.**
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.openjsse.**
 
 # R8 said to add these
 -dontwarn kotlin.coroutines.Continuation

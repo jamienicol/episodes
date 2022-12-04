@@ -56,7 +56,6 @@
     <string name="back_up_success_message">Sikkerhetskopi utført: «%s»</string>
     <string name="back_up_error_message">Klarte ikke å sikkerhetskopiere bibliotek</string>
     <string name="adding_show">Legger til %s i biblioteket</string>
-    <string name="about_tvdb">Programinfo tilbys av TheTVDB.com og er lisensiert under Creative Commons-navngivelse-lisens. Bidra med info og relatert bildemateriale til TheTVDB.com.</string>
     <string name="about_title">Om</string>
     <string name="about_license">Episodes er gemenlig fri programvare lisensiert GPLv3+. Send inn feil, skriv kode, oversett og gjør hva du kan for å hjelpe til.</string>
     <string name="about_description">Hold orden på hvilke episoder du har sett av dine favoritt-programmer</string>

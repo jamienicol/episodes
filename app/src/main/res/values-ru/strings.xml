@@ -56,7 +56,6 @@
     <string name="back_up_success_message">Резервное копирование завершено: \'%s\'</string>
     <string name="back_up_error_message">Не удалось создать резервную копию библиотеки</string>
     <string name="adding_show">Добавление %s в библиотеку</string>
-    <string name="about_tvdb">Информация о шоу предоставлена TheTVDB.com и имеет лицензию CC-BY. Пожалуйста, делитесь информацией или иллюстрациями на TheTVDB.com.</string>
     <string name="about_title">О приложении</string>
     <string name="about_license">Episodes - это бесплатное программное обеспечение с авторским левом под лицензией GPLv3 +. Пожалуйста, сообщайте об ошибках, пишите код, переводите или делайте что-нибудь ещё, чтобы помочь!</string>
     <string name="about_description">Следите за тем, какие серии любимых шоу вы смотрели</string>

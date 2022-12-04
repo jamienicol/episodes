@@ -57,7 +57,6 @@
     <string name="back_up_success_message">Babeskopia osatua: \'%s\'</string>
     <string name="back_up_error_message">Ezin izan da liburutegiaren segurtasun kopia egin</string>
     <string name="adding_show">liburutegian %s gehitzen</string>
-    <string name="about_tvdb">Erakutsi TheTVDB.com webguneak emandako eta CC-BY lizentzia duen informazioa. Mesedez, lagundu informazioa edo artelanak TheTVDB.com webgunera.</string>
     <string name="about_title">Buruz</string>
     <string name="about_license">Episodes copylefted libre software lizentziadun GPLv3 + da. Mesedez, bidali akatsak, idatzi kodea, itzuli edo egin ezazu laguntzeko duzun guztia!</string>
     <string name="about_description">Jarrai itzazu zure saio gogokoenen atalak ikusi dituzunak</string>

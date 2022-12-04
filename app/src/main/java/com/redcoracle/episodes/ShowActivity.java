@@ -233,32 +233,20 @@ public class ShowActivity
 				supportInvalidateOptionsMenu();
 			}
 
-			final int fanartPathColumnIndex = data.getColumnIndexOrThrow(ShowsTable.COLUMN_FANART_PATH);
 			final int posterPathColumnIndex = data.getColumnIndexOrThrow(ShowsTable.COLUMN_POSTER_PATH);
-			final String fanartPath = data.getString(fanartPathColumnIndex);
 			final String posterPath = data.getString(posterPathColumnIndex);
-			final String artPath;
-			if (fanartPath != null && !fanartPath.equals("")) {
-				artPath = fanartPath;
-			} else if (posterPath != null && !posterPath.equals("")) {
-				artPath = posterPath;
-			} else {
-				artPath = null;
-			}
-			if (artPath != null) {
+			if (posterPath != null) {
 				CircularProgressDrawable placeholder = new CircularProgressDrawable(this);
 				placeholder.setColorFilter(ContextCompat.getColor(this, R.color.accent), PorterDuff.Mode.SRC_IN);
 				placeholder.setStrokeWidth(5f);
 				placeholder.setCenterRadius(60f);
-
 				placeholder.start();
-				final String artUrl = String.format("https://artworks.thetvdb.com/banners/%s", artPath);
-
+				final String artUrl = String.format("https://image.tmdb.org/t/p/w1280/%s", posterPath);
 				Glide.with(this)
-						.load(artUrl)
-						.placeholder(placeholder)
-						.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-						.into(headerImage);
+					.load(artUrl)
+					.placeholder(placeholder)
+					.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+					.into(headerImage);
 			}
 		}
 	}

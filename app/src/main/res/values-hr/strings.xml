@@ -24,7 +24,6 @@
     <string name="menu_filter_upcoming">Predstojeće</string>
     <string name="back_up_error_message">Neuspjelo spremanje sigurnosne kopije biblioteke</string>
     <string name="about_license">„Epizode” je copyleft slobodni softver s licencom GPLv3+. Prijavi greške, programiraj, prevodi ili pomogni na bilo koji drugi način!</string>
-    <string name="about_tvdb">Prikaz podataka od TheTVDB.com, pod licencom CC-BY. Pošalji podatke ili ilustracije na TheTVDB.com.</string>
     <string name="show_tab_overview">Pregled</string>
     <string name="show_already_added">Emisija „%s” se već nalazi u biblioteci</string>
     <string name="pref_reverse_sort_order_summary">Prikazuje najnoviju sezonu na prvom mjestu</string>

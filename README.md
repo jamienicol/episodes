@@ -5,7 +5,7 @@
 
 Keep track of which episodes you've watched of your favourite shows.
 
-Show info supplied by TheTVDB.com.
+This product uses the [TMDB](https://www.themoviedb.org) API but is not endorsed or certified by TMDB.
 
 ## Contributing
 

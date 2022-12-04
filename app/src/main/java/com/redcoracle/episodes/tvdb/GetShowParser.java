@@ -19,43 +19,36 @@ package com.redcoracle.episodes.tvdb;
 
 import android.util.Log;
 
-import com.uwetrottmann.thetvdb.entities.Series;
+import com.uwetrottmann.tmdb2.entities.TvShow;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-class GetShowParser
-{
+class GetShowParser {
 	private static final String TAG = "GetShowParser";
 
-    Show parse(Series series, String language) {
+    Show parse(TvShow series, String language) {
         Show show;
         try {
             show = new Show();
-
-            show.setId(series.id);
-            show.setName(series.seriesName);
+            if (series.id != null) {
+                show.setId(series.id);
+                show.setTmdbId(series.id);
+            } else {
+                Log.w(TAG, String.format("Show does not have an ID: %s", series.name));
+                return null;
+            }
+            if (series.external_ids != null) {
+                if (series.external_ids.tvdb_id != null) {
+                    show.setTvdbId(series.external_ids.tvdb_id);
+                }
+                if (series.external_ids.imdb_id != null) {
+                    show.setImdbId(series.external_ids.imdb_id);
+                }
+            }
+            show.setName(series.name);
             show.setLanguage(language);
             show.setOverview(series.overview);
-            try {
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd",
-                        Locale.US);
-                Date firstAired = df.parse(series.firstAired);
-
-                Log.i(TAG, String.format("Parsed first aired date: %s",
-                        firstAired.toString()));
-                show.setFirstAired(firstAired);
-
-            } catch (ParseException e) {
-                Log.w(TAG, "Error parsing first aired date: " + e.toString());
-                show.setFirstAired(null);
-            }
-            show.setBannerPath(series.banner);
-            show.setFanartPath(series.fanart);
-            show.setPosterPath(series.poster);
+            show.setFirstAired(series.first_air_date);
+            show.setBannerPath(series.backdrop_path);
+            show.setPosterPath(series.poster_path);
         } catch (Exception e) {
 	        Log.w(TAG, e);
             return null;

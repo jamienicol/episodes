@@ -34,7 +34,7 @@
   <TextView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/about_tvdb"
+      android:text="@string/about_tmdb"
       android:textAppearance="?android:attr/textAppearanceSmall"
       android:padding="4dp" />
   <TextView

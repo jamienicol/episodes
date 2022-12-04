@@ -54,7 +54,6 @@
     <string name="upcoming_count">(+ %d kommande)</string>
     <string name="about_description">Håll koll på vilka avsnitt du har tittat på av dina favoritprogram</string>
     <string name="about_license">Episodes är copylefted libre software licensierad GPLv3+. Var snäll och skicka in felrapporter, skriv kod, översätt eller gör vad du kan för att hjälpa till!</string>
-    <string name="about_tvdb">Programinformation tillhandahålls av TheTVDB.com och är licensierad CC-BY. Bidra gärna med information eller bilder till TheTVDB.com.</string>
     <string name="menu_mark_season_not_watched">Markera säsong som osedd</string>
     <string name="menu_mark_season_watched">Markera säsong som sedd</string>
     <string name="menu_mark_show_not_watched">Markera program som osett</string>

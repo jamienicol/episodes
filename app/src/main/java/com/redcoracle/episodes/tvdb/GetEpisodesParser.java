@@ -19,38 +19,34 @@ package com.redcoracle.episodes.tvdb;
 
 import android.util.Log;
 
-import com.uwetrottmann.thetvdb.entities.EpisodesResponse;
+import com.uwetrottmann.tmdb2.entities.TvEpisode;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import java.util.List;
 
 class GetEpisodesParser {
     private static final String TAG = GetEpisodesParser.class.getName();
 
-    // TODO: Cleanup the variable names.
-    ArrayList<Episode> parse(EpisodesResponse episodesResponse) {
+    ArrayList<Episode> parse(List<TvEpisode> tmdbEpisodes) {
         try {
-            ArrayList<Episode> episodes = new ArrayList<>();
-
-            for (com.uwetrottmann.thetvdb.entities.Episode episode : episodesResponse.data) {
+            ArrayList<Episode> episodes = new ArrayList<>(tmdbEpisodes.size());
+            for (TvEpisode episode : tmdbEpisodes) {
                 Episode e = new Episode();
                 e.setId(episode.id);
-                e.setName((episode.episodeName) != null ? episode.episodeName : "");
-                e.setOverview(episode.overview);
-                e.setEpisodeNumber(episode.airedEpisodeNumber);
-                e.setSeasonNumber(episode.airedSeason);
-                try {
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-                    Date firstAired = df.parse(episode.firstAired);
-                    e.setFirstAired(firstAired);
-
-                } catch (ParseException ex) {
-                    e.setFirstAired(null);
+                e.setTmdbId(episode.id);
+                if (episode.external_ids != null) {
+                    if (episode.external_ids.tvdb_id != null) {
+                        e.setTvdbId(episode.external_ids.tvdb_id);
+                    }
+                    if (episode.external_ids.imdb_id != null) {
+                        e.setImdbId(episode.external_ids.imdb_id);
+                    }
                 }
+                e.setName(episode.name != null ? episode.name : "");
+                e.setOverview(episode.overview);
+                e.setSeasonNumber(episode.season_number);
+                e.setEpisodeNumber(episode.episode_number);
+                e.setFirstAired(episode.air_date);
                 episodes.add(e);
             }
             return episodes;

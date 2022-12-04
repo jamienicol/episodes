@@ -50,7 +50,6 @@
     <string name="channel_description">Sciigo pri sinkronigo de spektaĵoj</string>
     <string name="menu_refresh_show">Reŝargi spektaĵon</string>
     <string name="menu_refresh_all_shows">Reŝargi ĉiujn spektaĵojn</string>
-    <string name="about_tvdb">Informojn pri spektaĵoj liveras TheTVDB.com sub la permesilo CC-BY. Bonvolu kontribui informojn aŭ artaĵojn al TheTVDB.com.</string>
     <string name="about_license">Episodes estas kopilasita libera programo sub la permesiloj GPLv3+. Bonvolu raporti cimojn, skribi kodojn, traduki aŭ helpi ĉiel ajn!</string>
     <string name="about_description">Marku la spektitajn epizodojn de viaj plej ŝatataj spektaĵoj</string>
     <string name="pref_auto_refresh_category">Aŭtomate reŝargi spektaĵon</string>

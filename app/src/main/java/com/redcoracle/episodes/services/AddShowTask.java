@@ -19,17 +19,18 @@ import com.redcoracle.episodes.tvdb.Client;
 import com.redcoracle.episodes.tvdb.Episode;
 import com.redcoracle.episodes.tvdb.Show;
 
+import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
 public class AddShowTask implements Callable<Void> {
     private static final String TAG = "AddShowTask";
-    private final int tvdbId;
+    private final int tmdbId;
     private final String showName;
     private final String showLanguage;
     private final Context context;
 
-    public AddShowTask(int tvdbId, String showName, String showLanguage) {
-        this.tvdbId = tvdbId;
+    public AddShowTask(int tmdbId, String showName, String showLanguage) {
+        this.tmdbId = tmdbId;
         this.showName = showName;
         this.showLanguage = showLanguage;
         this.context = EpisodesApplication.getInstance().getApplicationContext();
@@ -37,29 +38,43 @@ public class AddShowTask implements Callable<Void> {
 
     @Override
     public Void call() {
-        if (!checkAlreadyAdded()) {
+        final Client tmdbClient = new Client();
+        Show show = tmdbClient.getShow(this.tmdbId, this.showLanguage, false);
+
+        if (!checkAlreadyAdded(show)) {
             this.showMessage(this.context.getString(R.string.adding_show, showName));
-            final Client tvdbClient = new Client();
-            final Show show = tvdbClient.getShow(this.tvdbId, this.showLanguage);
-            if (show != null) {
-                final int showId = insertShow(show);
-                this.insertEpisodes(show.getEpisodes().toArray(new Episode[0]), showId);
-                showMessage(this.context.getString(R.string.show_added, showName));
-            } else {
-                showMessage(this.context.getString(R.string.error_adding_show, showName));
-            }
+            show = tmdbClient.getShow(this.tmdbId, this.showLanguage, true);
+            final int showId = insertShow(show);
+            this.insertEpisodes(show.getEpisodes().toArray(new Episode[0]), showId);
+            showMessage(this.context.getString(R.string.show_added, showName));
         } else {
             showMessage(this.context.getString(R.string.show_already_added, showName));
         }
         return null;
     }
 
-    private boolean checkAlreadyAdded() {
+    private boolean checkAlreadyAdded(Show show) {
         final String[] projection = {};
-        final String selection = String.format("%s=?", ShowsTable.COLUMN_TVDB_ID);
-        final String[] selectionArgs = {Integer.valueOf(this.tvdbId).toString()};
+        String selection = String.format("%s=?", ShowsTable.COLUMN_TMDB_ID);
+        LinkedList<String> selectionArgs = new LinkedList<>();
+        selectionArgs.add(Integer.valueOf(show.getTmdbId()).toString());
+
+        if (show.getTvdbId() > 0) {
+            selection += String.format(" OR %s=?", ShowsTable.COLUMN_TVDB_ID);
+            selectionArgs.add(Integer.valueOf(show.getTvdbId()).toString());
+        }
+        if (show.getImdbId() != null && !show.getImdbId().equals("")) {
+            selection += String.format(" OR %s=?", ShowsTable.COLUMN_IMDB_ID);
+            selectionArgs.add(show.getImdbId());
+        }
         final ContentResolver resolver = this.context.getContentResolver();
-        final Cursor cursor = resolver.query(ShowsProvider.CONTENT_URI_SHOWS, projection, selection, selectionArgs,null);
+        final Cursor cursor = resolver.query(
+            ShowsProvider.CONTENT_URI_SHOWS,
+            projection,
+            selection,
+            selectionArgs.toArray(new String[0]),
+            null
+        );
         final boolean existing = cursor.moveToFirst();
         cursor.close();
         return existing;
@@ -67,7 +82,9 @@ public class AddShowTask implements Callable<Void> {
 
     private int insertShow(Show show){
         final ContentValues showValues = new ContentValues();
-        showValues.put(ShowsTable.COLUMN_TVDB_ID, show.getId());
+        showValues.put(ShowsTable.COLUMN_TVDB_ID, show.getTvdbId());
+        showValues.put(ShowsTable.COLUMN_TMDB_ID, show.getTmdbId());
+        showValues.put(ShowsTable.COLUMN_IMDB_ID, show.getImdbId());
         showValues.put(ShowsTable.COLUMN_NAME, show.getName());
         showValues.put(ShowsTable.COLUMN_LANGUAGE, show.getLanguage());
         showValues.put(ShowsTable.COLUMN_OVERVIEW, show.getOverview());
@@ -89,7 +106,9 @@ public class AddShowTask implements Callable<Void> {
 
         for (int i = 0; i < episodes.length; i++) {
             ContentValues value = new ContentValues();
-            value.put(EpisodesTable.COLUMN_TVDB_ID, episodes[i].getId());
+            value.put(EpisodesTable.COLUMN_TVDB_ID, episodes[i].getTvdbId());
+            value.put(EpisodesTable.COLUMN_TMDB_ID, episodes[i].getTmdbId());
+            value.put(EpisodesTable.COLUMN_IMDB_ID, episodes[i].getImdbId());
             value.put(EpisodesTable.COLUMN_SHOW_ID, showId);
             value.put(EpisodesTable.COLUMN_NAME, episodes[i].getName());
             value.put(EpisodesTable.COLUMN_LANGUAGE, episodes[i].getLanguage());
@@ -102,7 +121,9 @@ public class AddShowTask implements Callable<Void> {
             values[i] = value;
         }
 
-        this.context.getContentResolver().bulkInsert(ShowsProvider.CONTENT_URI_EPISODES, values);
+        for (ContentValues value : values) {
+            this.context.getContentResolver().insert(ShowsProvider.CONTENT_URI_EPISODES, value);
+        }
     }
 
     private void showMessage(String message) {

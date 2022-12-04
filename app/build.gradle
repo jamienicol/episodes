@@ -17,7 +17,7 @@ android {
         targetSdkVersion 33
         versionCode 23
         versionName "0.15.1"
-        buildConfigField "String", "TVDB_KEY", "\"E457AE7B767BC9F4\""
+        buildConfigField "String", "TMDB_KEY", "\"1553d2e4fa2912fc0953305d4d3e7c44\""
         buildConfigField "String", "GIT_COMMIT_ID", "\"${getCommitId()}\""
     }
     flavorDimensions "flavor"
@@ -74,8 +74,9 @@ dependencies {
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'com.google.android.material:material:1.6.1'
-    implementation 'com.uwetrottmann.thetvdb-java:thetvdb-java:2.4.0'
     implementation 'com.github.bumptech.glide:glide:4.14.1'
+    implementation 'com.uwetrottmann.tmdb2:tmdb-java:2.8.1'
+    implementation 'org.apache.commons:commons-collections4:4.4'
     debugImplementation 'com.android.support:multidex:2.0.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.1'
 }

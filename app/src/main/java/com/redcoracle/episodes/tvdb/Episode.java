@@ -19,9 +19,11 @@ package com.redcoracle.episodes.tvdb;
 
 import java.util.Date;
 
-public class Episode
-{
+public class Episode {
 	private int id;
+	private Integer tvdbId;
+	private Integer tmdbId;
+	private String imdbId;
 	private String name;
 	private String language;
 	private String overview;
@@ -30,13 +32,10 @@ public class Episode
 	private Date firstAired;
 
 	Episode() {
-		id = 0;
-		name = "";
-		language = "";
-		overview = "";
-		episodeNumber = 0;
-		seasonNumber = 0;
-		firstAired = null;
+	}
+
+	public String identifier() {
+		return String.format("%s-%s", this.seasonNumber, this.episodeNumber);
 	}
 
 	public int getId() {
@@ -45,6 +44,30 @@ public class Episode
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public Integer getTvdbId() {
+		return this.tvdbId;
+	}
+
+	public void setTvdbId(Integer id) {
+		this.tvdbId = id;
+	}
+
+	public int getTmdbId() {
+		return this.tmdbId;
+	}
+
+	public void setTmdbId(int id) {
+		this.tmdbId = id;
+	}
+
+	public String getImdbId() {
+		return this.imdbId;
+	}
+
+	public void setImdbId(String id) {
+		this.imdbId = id;
 	}
 
 	public String getName() {

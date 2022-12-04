@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="adding_show">Aggiunta di %s alla libreria</string>
-    <string name="about_tvdb">Mostra informazioni fornite da TheTVDB.com ed è concesso in licenza CC-BY. Si prega di contribuire con informazioni o materiale grafico a TheTVDB.com.</string>
     <string name="about_title">Informazioni</string>
     <string name="about_license">Episodes è un software libero con copyleft di licenza GPLv3+. Per favore, segnalate errori, scrivete codice, traducete o fate qualsiasi altra cosa per aiutare!</string>
     <string name="about_description">Tieni traccia di quali episodi hai guardato dei tuoi programmi preferiti</string>

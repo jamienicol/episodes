@@ -118,17 +118,17 @@ public class AddShowSearchFragment
 
 		@Override
 		public List<Show> loadInBackground() {
-			Client tvdbClient = new Client();
+			Client tmdbClient = new Client();
 			String language = preferences.getString("pref_language", "en");
 
-			List<Show> results = tvdbClient.searchShows(query, language);
+			List<Show> results = tmdbClient.searchShows(query, language);
 
 			// If there are no results, try searching all languages or substituting &
-			if(results.size() == 0 && query.contains(" and ")) {
-				results = tvdbClient.searchShows(query.replace(" and ", " & "), "all");
+			if (results.size() == 0 && query.contains(" and ")) {
+				results = tmdbClient.searchShows(query.replace(" and ", " & "), null);
 			}
-			if(results.size() == 0) {
-				results =  tvdbClient.searchShows(query, "all");
+			if (results.size() == 0) {
+				results =  tmdbClient.searchShows(query, null);
 			}
 
 			return results;

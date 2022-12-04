@@ -22,38 +22,35 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class DatabaseOpenHelper extends SQLiteOpenHelper
-{
-	private static final String name = "episodes.db";
-	private static final int version = 8;
+public class DatabaseOpenHelper extends SQLiteOpenHelper {
+    private static final String TAG = "DatabaseOpenHelper";
+    private static final String name = "episodes.db";
+    private static final int version = 9;
 
-	private static final String TAG = "DatabaseOpenHelper";
+    DatabaseOpenHelper(Context context) {
+        super(context, name, null, version);
+    }
 
-	DatabaseOpenHelper(Context context) {
-		super(context, name, null, version);
-	}
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        Log.d(TAG, "creating database");
+        ShowsTable.onCreate(db);
+        EpisodesTable.onCreate(db);
+    }
 
-	@Override
-	public void onCreate(SQLiteDatabase db) {
-		Log.d(TAG, "creating database");
-		ShowsTable.onCreate(db);
-		EpisodesTable.onCreate(db);
-	}
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.d(TAG, String.format("upgrading database from version %d to %d", oldVersion, newVersion));
+        ShowsTable.onUpgrade(db, oldVersion, newVersion);
+        EpisodesTable.onUpgrade(db, oldVersion, newVersion);
+    }
 
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.d(TAG, String.format("upgrading database from version %d to %d",
-		                         oldVersion, newVersion));
-		ShowsTable.onUpgrade(db, oldVersion, newVersion);
-		EpisodesTable.onUpgrade(db, oldVersion, newVersion);
-	}
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        Log.d(TAG, "opening database.");
+    }
 
-	@Override
-	public void onOpen(SQLiteDatabase db) {
-		Log.d(TAG, "opening database.");
-	}
-
-	public static String getDbName() {
-		return name;
-	}
+    public static String getDbName() {
+        return name;
+    }
 }

@@ -47,6 +47,7 @@ import android.widget.ToggleButton;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.ListFragment;
 import androidx.loader.app.LoaderManager;
@@ -72,6 +73,7 @@ public class ShowsListFragment
 	private static final int LOADER_ID_EPISODES = 1;
 
 	private static final String KEY_PREF_SHOWS_FILTER = "pref_shows_filter";
+	private static final String KEY_PREF_CONFIRMED_BACKUP = "pref_confirmed_backup";
 
 	private static final int SHOWS_FILTER_ALL = 0;
 	private static final int SHOWS_FILTER_STARRED = 1;
@@ -225,8 +227,7 @@ public class ShowsListFragment
 					projection,
 					null,
 					null,
-					ShowsTable.COLUMN_STARRED + " DESC," +
-							ShowsTable.COLUMN_NAME + " ASC");
+					ShowsTable.COLUMN_NAME + " ASC");
 
 		} else if (id == LOADER_ID_EPISODES) {
 			final String[] projection = {
@@ -296,7 +297,22 @@ public class ShowsListFragment
 
 	private void refreshAllShows() {
 		checkNotificationPermission();
-		new AsyncTask().executeAsync(new RefreshAllShowsTask());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.requireContext());
+		boolean confirmed_backup = prefs.getBoolean(KEY_PREF_CONFIRMED_BACKUP, false);
+
+		if (confirmed_backup) {
+			new AsyncTask().executeAsync(new RefreshAllShowsTask());
+		} else {
+			new AlertDialog.Builder(this.requireContext())
+			.setTitle(R.string.provider_change_warning_title)
+			.setMessage(R.string.provider_change_warning_detail)
+			.setPositiveButton(R.string.provider_change_warning_confirm, (dialogInterface, i) -> {
+				prefs.edit().putBoolean(KEY_PREF_CONFIRMED_BACKUP, true).apply();
+				new AsyncTask().executeAsync(new RefreshAllShowsTask());
+			})
+			.setNegativeButton(R.string.provider_change_warning_cancel, (dialogInterface, i) -> {})
+			.show();
+		}
 	}
 
 	private static class ShowsListAdapter
@@ -469,11 +485,12 @@ public class ShowsListFragment
 
 			bannerView.setImageResource(R.drawable.blank_show_banner);
 			if (bannerPath != null && !bannerPath.equals("")) {
-				final String bannerUrl = String.format("https://artworks.thetvdb.com/banners/%s", bannerPath);
+				final String bannerUrl = String.format("https://image.tmdb.org/t/p/w1280/%s", bannerPath);
 
 				Glide.with(convertView)
 						.load(bannerUrl)
 						.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+						.centerCrop()
 						.placeholder(R.drawable.blank_show_banner)
 						.into(bannerView);
 			}

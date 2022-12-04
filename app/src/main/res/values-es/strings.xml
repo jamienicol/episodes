@@ -6,7 +6,6 @@
     <string name="menu_filter_upcoming">Próximamente</string>
     <string name="menu_filter_uncompleted">En emisión</string>
     <string name="first_aired">Emitida por primera vez: %s</string>
-    <string name="about_tvdb">Información sobre la serie facilitada por TheTVDB.com licenciada bajo CC-BY. Por favor contribuye con información o ilustraciones a TheTVDB.com.</string>
     <string name="about_license">Episodes es software libre copyleft bajo licencia GPLv3+. ¡Por favor registra bugs, escribe código, traduce o haz cualquier cosa que puedas para ayudar!</string>
     <string name="about_description">Mantén un registro de qué episodios de tus series favoritas has visto</string>
     <string name="version">Versión %s (Commit %s)</string>

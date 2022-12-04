@@ -56,7 +56,6 @@
     <string name="pref_auto_refresh_period_title">Интервал</string>
     <string name="menu_unarchive_show">Премахни показването от архива</string>
     <string name="menu_archive_show">Архивно шоу</string>
-    <string name="about_tvdb">Показване на информацията, предоставена от TheTVDB.com и е лицензирана CC-BY. Моля, дайте информация или произведения на изкуството в TheTVDB.com.</string>
     <string name="about_license">Епизодите са софтуер за GPLv3+. Моля, пиши bugs, писане на код, превеждайте или направете всичко друго, което можете да направите, за да помогнете!</string>
     <string name="about_description">Следете кои епизоди сте гледали от любимите си предавания</string>
     <string name="menu_back_up">Архивиране на библиотека</string>
