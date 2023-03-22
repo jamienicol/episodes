@@ -15,8 +15,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 23
-        versionName "0.15.1"
+        versionCode 24
+        versionName "0.16.0"
         buildConfigField "String", "TMDB_KEY", "\"1553d2e4fa2912fc0953305d4d3e7c44\""
         buildConfigField "String", "GIT_COMMIT_ID", "\"${getCommitId()}\""
     }

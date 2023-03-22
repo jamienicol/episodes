@@ -1,0 +1,4 @@
+- Switch to TMDB as metadata provider
+- Add support for themed app icons
+- Fix for null/zero TVDB ID
+- Update setup-java CI action
