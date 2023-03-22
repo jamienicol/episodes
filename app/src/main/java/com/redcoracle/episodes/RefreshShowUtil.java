@@ -83,7 +83,9 @@ public class RefreshShowUtil {
 
 	private static void updateShow(int showId, Show show, ContentResolver contentResolver) {
 		final ContentValues showValues = new ContentValues();
-		showValues.put(ShowsTable.COLUMN_TVDB_ID, show.getTvdbId());
+		if (show.getTvdbId() != 0) {
+			showValues.put(ShowsTable.COLUMN_TVDB_ID, show.getTvdbId());
+		}
 		showValues.put(ShowsTable.COLUMN_TMDB_ID, show.getTmdbId());
 		showValues.put(ShowsTable.COLUMN_IMDB_ID, show.getImdbId());
 		showValues.put(ShowsTable.COLUMN_NAME, show.getName());
