@@ -227,7 +227,8 @@ public class ShowsListFragment
 					projection,
 					null,
 					null,
-					ShowsTable.COLUMN_NAME + " ASC");
+					ShowsTable.COLUMN_STARRED + " DESC, " +
+					ShowsTable.COLUMN_NAME + " COLLATE LOCALIZED ASC");
 
 		} else if (id == LOADER_ID_EPISODES) {
 			final String[] projection = {
